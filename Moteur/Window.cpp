@@ -1,6 +1,8 @@
 #include "Window.h"
-
-Window::Window(const char* _name, int _width, int _height, int x, int y)
+/*
+* _x et _y : coordonées (x, y) du coin supérieur gauche de la fenêtre
+*/
+Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	:
 	width(_width),
 	height(_height),
@@ -15,19 +17,19 @@ Window::Window(const char* _name, int _width, int _height, int x, int y)
 
 	// Agrandissement de la taille de la fenêtre pour prendre en compte son style et ses bordures
 	RECT winRect{};
-	winRect.left = x;
-	winRect.right = x + width;
-	winRect.top = y;
-	winRect.bottom = y + height;
+	winRect.left = _x;
+	winRect.right = _x + width;
+	winRect.top = _y;
+	winRect.bottom = _y + height;
 	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
 
 	// Création de la fenêtre (voir readme Windows.h)
 	hWnd = CreateWindow(
 		windowName, _name,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		x, y, winRect.right - winRect.left, winRect.bottom - winRect.top,
+		_x, _y, winRect.right - winRect.left, winRect.bottom - winRect.top,
 		nullptr, nullptr, hInstance, this
-	);
+	);// (voir readme Windows.h)
 
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -56,10 +58,10 @@ bool Window::ProcessMessages()
 }
 
 /*
-* hWnd : handle pour la fenêtre
-* msg : message reçu de DispatchMessage()
-* wParam : information supplémentaire sur le message
-* lParam : information supplémentaire sur le message
+* _hWnd : handle pour la fenêtre
+* _msg : message reçu de DispatchMessage()
+* _wParam : information supplémentaire sur le message
+* _lParam : information supplémentaire sur le message
 */
 LRESULT _stdcall Window::WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
 {
