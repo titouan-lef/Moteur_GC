@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include "resource.h"
 
 class Window
 {
@@ -10,7 +11,8 @@ public:
 
 private:
 	static LRESULT _stdcall WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);// Action à réaliser en fonction du message retourner par ProcessMessages()
-
+	
+	
 	int width, height;
 	const char* windowName = "DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
 	HWND hWnd;// Handle de la fenêtre

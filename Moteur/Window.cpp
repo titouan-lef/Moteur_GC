@@ -1,19 +1,24 @@
 #include "Window.h"
+
 /*
 * _x et _y : coordonées (x, y) du coin supérieur gauche de la fenêtre
 */
+
 Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	:
 	width(_width),
 	height(_height),
-	hInstance(GetModuleHandle(nullptr))// GetModuleHandle(nullptr)  : handle vers notre application
+	hInstance(GetModuleHandle(nullptr)) // GetModuleHandle(nullptr)  : handle vers notre application
 {
+
 	// Création d'une classe de fenêtre
 	WNDCLASS wc = {};
-	wc.lpfnWndProc = WindowProc;
+	wc.lpfnWndProc = WindowProc; 
 	wc.hInstance = hInstance;
 	wc.lpszClassName = windowName;
+	wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_Unity));		//Ajout d'un icon
 	RegisterClass(&wc);
+	
 
 	// Agrandissement de la taille de la fenêtre pour prendre en compte son style et ses bordures
 	RECT winRect{};
