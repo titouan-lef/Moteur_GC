@@ -10,6 +10,8 @@
 
 - handle : référence permettant de gérer et d'identifier de manière unique des ressources, des objets ou des données
 - message : événement Windows
+- vertex/vertices : vertex se traduit en français par un sommet et vertices par des sommets
+- buffer : zone de mémoire temporaire utilisée pour stocker des données
 
 ## Convention :
 

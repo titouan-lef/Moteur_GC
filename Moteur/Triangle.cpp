@@ -21,3 +21,13 @@ Triangle::Triangle(int _x1, int _y1, int _z1, int _x2, int _y2, int _z2, int _x3
 Triangle::~Triangle()
 {
 }
+
+size_t Triangle::Size()
+{
+	return sizeof(tabVertices);
+}
+
+Triangle::Vertex* Triangle::GetTabVertices()
+{
+	return tabVertices;
+}
