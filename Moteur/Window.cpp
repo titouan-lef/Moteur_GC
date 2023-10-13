@@ -6,7 +6,7 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	:
 	width(_width),
 	height(_height),
-	hInstance(GetModuleHandle(nullptr))// GetModuleHandle(nullptr)  : handle vers notre application
+	hInstance(GetModuleHandle(nullptr))// (voir readme Windows.h)
 {
 	// Création d'une classe de fenêtre
 	WNDCLASS wc = {};
@@ -23,13 +23,13 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	winRect.bottom = _y + height;
 	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
 
-	// Création de la fenêtre (voir readme Windows.h)
+	// Création de la fenêtre
 	hWnd = CreateWindow(
 		windowName, _name,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		_x, _y, winRect.right - winRect.left, winRect.bottom - winRect.top,
 		nullptr, nullptr, hInstance, this
-	);// (voir readme Windows.h)
+	);
 
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -50,8 +50,8 @@ bool Window::ProcessMessages()
 		if (msg.message == WM_QUIT)// Si le message indique la fermeture de la fenêtre
 			return true;
 
-		TranslateMessage(&msg);// Convertie le message à clé virtuelle en messages caractères
-		DispatchMessage(&msg);// Transmet le message à une procédure de fenêtre pour réaliser l'action : wc.lpfnWndProc
+		TranslateMessage(&msg);// (voir readme Windows.h)
+		DispatchMessage(&msg);// (voir readme Windows.h)
 	}
 
 	return false;
@@ -68,9 +68,9 @@ LRESULT _stdcall Window::WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARA
 	switch (_msg)
 	{
 	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenêtre
-		PostQuitMessage(0);// envoie du message WM_QUIT
+		PostQuitMessage(0);// (voir readme Windows.h)
 		break;
 	}
 
-	return DefWindowProc(_hWnd, _msg, _wParam, _lParam);// Réalise le traitement par défaut du message
+	return DefWindowProc(_hWnd, _msg, _wParam, _lParam);// (voir readme Windows.h)
 }
