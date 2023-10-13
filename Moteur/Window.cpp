@@ -74,3 +74,4 @@ LRESULT _stdcall Window::WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARA
 
 	return DefWindowProc(_hWnd, _msg, _wParam, _lParam);// Réalise le traitement par défaut du message
 }
+//Guillaume Message
