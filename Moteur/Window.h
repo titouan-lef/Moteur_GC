@@ -15,4 +15,5 @@ private:
 	const char* windowName = "DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
 	HWND hWnd;// Handle de la fenêtre
 	HINSTANCE hInstance;// Handle de l'instance de la fenêtre
+
 };

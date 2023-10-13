@@ -33,6 +33,7 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
 }
 
 Window::~Window()
@@ -56,6 +57,7 @@ bool Window::ProcessMessages()
 
 	return false;
 }
+
 
 /*
 * _hWnd : handle pour la fenêtre
