@@ -24,7 +24,7 @@ Triangle::~Triangle()
 
 size_t Triangle::Size()
 {
-	return sizeof(tabVertices);
+	return nbVertices * sizeof(Triangle::Vertex);
 }
 
 Triangle::Vertex* Triangle::GetTabVertices()

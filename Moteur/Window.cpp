@@ -33,6 +33,8 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	pGfx = std::make_unique<Graphic>(hWnd);
 }
 
 Window::~Window()
@@ -55,6 +57,11 @@ bool Window::ProcessMessages()
 	}
 
 	return false;
+}
+
+Graphic& Window::Gfx()
+{
+	return *pGfx;
 }
 
 /*

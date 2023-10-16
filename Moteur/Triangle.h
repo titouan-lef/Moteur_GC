@@ -2,7 +2,7 @@
 
 class Triangle
 {
-private:
+public:
 	class Vertex
 	{
 	public:
@@ -12,14 +12,16 @@ private:
 	private:
 		int x, y, z;
 	};
+
 public:
 	Triangle(int _x1, int _y1, int _z1, int _x2, int _y2, int _z2, int _x3, int _y3, int _z3);
 	~Triangle();
 
-	size_t Size();
+	static size_t Size();
 	Vertex* GetTabVertices();
 
 private:
-	Vertex tabVertices[3];
+	static const int nbVertices = 3;
+	Vertex tabVertices[nbVertices];
 };
 

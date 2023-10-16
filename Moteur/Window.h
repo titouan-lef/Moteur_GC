@@ -1,5 +1,8 @@
 #pragma once
 #include <Windows.h>
+#include <memory>
+
+#include "Graphic.h"
 
 class Window
 {
@@ -8,6 +11,8 @@ public:
 	~Window();
 	static bool ProcessMessages();// Gérer les messages de la fenêtre (agrandir, quitter, ...)
 
+	Graphic& Gfx();
+
 private:
 	static LRESULT _stdcall WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);// Action à réaliser en fonction du message retourner par ProcessMessages()
 
@@ -15,4 +20,5 @@ private:
 	const char* windowName = "DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
 	HWND hWnd;// Handle de la fenêtre
 	HINSTANCE hInstance;// Handle de l'instance de la fenêtre
+	std::unique_ptr<Graphic> pGfx;
 };

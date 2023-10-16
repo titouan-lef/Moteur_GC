@@ -14,5 +14,9 @@ int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 	{
 		if (Window::ProcessMessages())
 			return 0;
+
+
+		window.Gfx().ClearBuffer(1, 1, 1);
+		window.Gfx().EndFrame();
 	}
 }
