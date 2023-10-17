@@ -34,11 +34,13 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
-	pGfx = std::make_unique<Graphic>(hWnd);
+	pGfx = new Graphic(hWnd);
 }
 
 Window::~Window()
 {
+	delete pGfx;
+
 	UnregisterClass(windowName, hInstance);
 	DestroyWindow(hWnd);
 }

@@ -22,6 +22,19 @@ void Graphic::InitCmdList()
 	pCmdList->OMSetRenderTargets(1, &destDescriptor, FALSE, nullptr);
 }
 
+void Graphic::InitDestDescriptor()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
+	descriptorHeapDesc.NumDescriptors = 2; // Généralement, on a besoin de deux tampons de rendu pour la chaîne de swaps
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+
+	destDescriptor = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+}
+
 void Graphic::CreateSwapChain(HWND hWnd)
 {
 	InitCmdQueue();
@@ -53,16 +66,7 @@ void Graphic::CreateTargetRenderView()
 	ID3D12Resource* pBackBuffer = nullptr;
 	pSwapChain->GetBuffer(0, __uuidof(ID3D12Resource), reinterpret_cast<void**>(&pBackBuffer));
 
-
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
-	descriptorHeapDesc.NumDescriptors = 2; // Généralement, vous avez besoin de deux tampons de rendu pour la chaîne de swaps.
-	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	ID3D12DescriptorHeap* descriptorHeap = nullptr;
-	pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
-
-	destDescriptor = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	InitDestDescriptor();
 
 	pDevice->CreateRenderTargetView(
 		pBackBuffer,
@@ -90,7 +94,17 @@ Graphic::~Graphic()
 	if (pDevice != nullptr)
 		pDevice->Release();
 
-	//TO DO
+	if (pSwapChain != nullptr)
+		pSwapChain->Release();
+
+	if (pFactory != nullptr)
+		pFactory->Release();
+
+	if (pCmdQueue != nullptr)
+		pCmdQueue->Release();
+
+	if (pCmdList != nullptr)
+		pCmdList->Release();
 }
 
 void Graphic::EndFrame()

@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include <memory>
+//#include <memory> ?
 
 #include "Graphic.h"
 
@@ -20,5 +20,5 @@ private:
 	const char* windowName = "DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
 	HWND hWnd;// Handle de la fenêtre
 	HINSTANCE hInstance;// Handle de l'instance de la fenêtre
-	std::unique_ptr<Graphic> pGfx;
+	Graphic* pGfx = nullptr;
 };
