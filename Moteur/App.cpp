@@ -27,7 +27,7 @@ void App::DoFrame()
     // Fonction de rendu pour une frame.
 
     // Calcule une valeur "c" basée sur le temps (oscillation entre 0 et 1).
-    const float c = sin(timer.Peek()) / 2.0f + 0.5f;
+    const float c = sin(timer.Peek()) / 2.0f + 0.005f;
 
     // Efface le tampon de rendu (buffer) avec la couleur de fond "c" (teinte bleue variable).
     wnd.Gfx().ClearBuffer(c, c, 1.0f);
