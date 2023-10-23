@@ -93,9 +93,9 @@ void Graphics::DrawTestTriangle() {
         float y;
     };
     const Vertex vertices[] = {
-        { 0.0f, 0.5f },
+        { 0.0f,1.0f },
         { 0.5f, -0.5f },
-        { -0.5f, -0.5f },
+        { -0.5f, -1.0f },
     };
 
     wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
