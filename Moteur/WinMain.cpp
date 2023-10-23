@@ -16,7 +16,6 @@ int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 			return 0;
 
 
-		window.Gfx().ClearBuffer(0.5f, 0.5f, 0.5f);
 		window.Gfx().EndFrame();
 	}
 }

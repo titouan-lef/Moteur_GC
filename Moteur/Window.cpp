@@ -13,7 +13,13 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
 	wc.lpszClassName = windowName;
-	RegisterClass(&wc);
+	//RegisterClass(&wc);
+
+	// Si erreur lors de la création de la classe fenêtre
+	if (!RegisterClass(&wc)) {
+		MessageBeep(1);
+		MessageBoxA(0, "[Error] Register class", "Fatal Error", MB_OK);
+	}
 
 	// Agrandissement de la taille de la fenêtre pour prendre en compte son style et ses bordures
 	RECT winRect{};
@@ -30,6 +36,12 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 		_x, _y, winRect.right - winRect.left, winRect.bottom - winRect.top,
 		nullptr, nullptr, hInstance, this
 	);
+
+	// Si erreur lors de la création de la fenêtre
+	if (!hWnd) {
+		MessageBeep(1);
+		MessageBoxA(0, "[Error] Creating a window failed!", "Fatal Error", MB_OK | MB_ICONERROR);
+	}
 
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
