@@ -34,6 +34,8 @@ Window::Window(const char* _name, int _width, int _height, int _x, int _y)
 	// Affichage de la fenêtre
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
+	//Triangle t = Triangle(0, 0, 0, 100, 0, 0, 0, 100, 0);
+	//Triangle t = Triangle(0, 0, 0, 0, 100, 0, 100, 0, 0);
 	pGfx = new Graphic(hWnd);
 }
 

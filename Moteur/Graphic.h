@@ -1,9 +1,18 @@
 #pragma once
 #include <dxgi1_4.h>
 #include "d3dx12.h"
+#include <vector>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib,"d3d12.lib")
+
+
+
+struct Vertex
+{
+	float x, y, z;
+};
+
 
 class Graphic
 {
@@ -13,6 +22,9 @@ private:
 	void InitDestDescriptor();
 	void CreateSwapChain(HWND hWnd);
 	void CreateTargetRenderView();
+	void InitIndexBuffer(std::vector<Vertex> vertices);
+	void CreateRootSignature();
+	void CreatePipelineStateObject();
 
 public:
 	Graphic(HWND hWnd);
@@ -28,6 +40,7 @@ public:
 	{
 		const float color[] = { r, g, b, a };
 		pCmdList->ClearRenderTargetView(destDescriptor, color, 0, nullptr);
+		pCmdList->DrawIndexedInstanced(3, 1, 0, 0, 0);
 
 		pCmdList->Close();
 		ID3D12CommandList* ppCmdList[] = { pCmdList };
@@ -45,4 +58,21 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE destDescriptor = {};
 
 	ID3D12GraphicsCommandList* pCmdList = nullptr;
+
+
+	//Buffer vertices
+	ID3D12Resource* pIndexBuffer = nullptr;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView = {};
+
+	// Shaders
+	ID3D12PipelineState* pPipelineState = nullptr; // L'objet de pipeline
+	ID3D12RootSignature* pRootSignature = nullptr; // La signature racine
+
+	// Les objets shaders compilés
+	//ID3DBlob* pVertexShader = nullptr;
+	//ID3DBlob* pPixelShader = nullptr;
+
+
+	ID3D12Resource* pVertexBuffer = nullptr;
+
 };

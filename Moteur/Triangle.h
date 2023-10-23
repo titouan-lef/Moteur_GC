@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 class Triangle
 {
@@ -6,22 +7,25 @@ public:
 	class Vertex
 	{
 	public:
-		Vertex(int _x, int _y, int _z);
+		Vertex(float _x, float _y, float _z);
 		~Vertex();
 
 	private:
-		int x, y, z;
+		float x, y, z;
 	};
 
 public:
-	Triangle(int _x1, int _y1, int _z1, int _x2, int _y2, int _z2, int _x3, int _y3, int _z3);
+	Triangle();//int _x1, int _y1, int _z1, int _x2, int _y2, int _z2, int _x3, int _y3, int _z3;
 	~Triangle();
 
-	static size_t Size();
-	Vertex* GetTabVertices();
+	//static size_t Size();
+	//Vertex* GetTabVertices();
 
 private:
-	static const int nbVertices = 3;
-	Vertex tabVertices[nbVertices];
+	std::vector<Vertex> vertices = {
+	{ 0.0f, 1.0f, 0.0f }, // Sommet 0
+	{ 1.0f, -1.0f, 0.0f }, // Sommet 1
+	{ -1.0f, -1.0f, 0.0f } // Sommet 2
+	};
 };
 
