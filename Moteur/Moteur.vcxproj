@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7b74ef13-94ba-4da2-9395-f1a8baeb5d03}</ProjectGuid>
+    <ProjectGuid>{2512772C-C8A5-4236-B275-121512820629}</ProjectGuid>
     <RootNamespace>MOTEUR</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -152,12 +152,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MOTEUR.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\pythagoreanism.png" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
