@@ -240,7 +240,7 @@ void WindowManager::OnUpdate()
 
         for (Vertex vertex : vertices)
         {
-            vertex.position.y *= m_aspectRatio;
+            vertex.m_position.y *= m_aspectRatio;
             m_vertices.push_back(vertex);
         }
     }
