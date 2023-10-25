@@ -137,7 +137,7 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

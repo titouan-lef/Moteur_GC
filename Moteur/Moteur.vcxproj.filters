@@ -32,7 +32,7 @@
     <ClInclude Include="resource.h">
       <Filter>Fichiers de ressources</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="Shader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
