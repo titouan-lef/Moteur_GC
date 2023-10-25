@@ -31,57 +31,88 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 // Load the rendering pipeline dependencies.
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
-    UINT dxgiFactoryFlags = 0;
+    // Enable the debug layer if in debug mode.
+    SetupDebugLayer();
 
+    // Create a DXGI factory.
+    IDXGIFactory4* factory = CreateDXGIFactory();
+
+    // Create the Direct3D device.
+    CreateD3DDevice(factory);
+
+    // Create the command queue.
+    CreateCommandQueue();
+
+    // Create and configure the swap chain.
+    CreateSwapChain(hWnd, width, height, factory);
+
+    // Create descriptor heaps.
+    CreateDescriptorHeaps();
+
+    // Create frame resources (render targets).
+    CreateFrameResources();
+
+    // Create a command allocator.
+    CreateCommandAllocator();
+}
+#pragma region  SOUS_FONCTIONS_LOAD_PIPELINE
+// Enable the Direct3D debug layer (only in debug mode).
+void WindowManager::SetupDebugLayer()
+{
 #if defined(_DEBUG)
-    // Enable the debug layer (requires the Graphics Tools "optional feature").
-    // NOTE: Enabling the debug layer after device creation will invalidate the active device.
+    ID3D12Debug* debugController;
+    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
     {
-        ID3D12Debug* debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-        {
-            debugController->EnableDebugLayer();
-
-            // Enable additional debug layers.
-            dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-        }
+        debugController->EnableDebugLayer();
     }
+#endif
+}
+
+// Create a DXGI factory.
+IDXGIFactory4* WindowManager::CreateDXGIFactory()
+{
+    UINT dxgiFactoryFlags = 0;
+#if defined(_DEBUG)
+    dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
     IDXGIFactory4* factory;
     ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
 
+    return factory;
+}
+
+// Create the Direct3D device.
+void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
+{
     if (m_useWarpDevice)
     {
+        // Use the WARP (Software) adapter.
         IDXGIAdapter* warpAdapter;
         ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
-
-        ThrowIfFailed(D3D12CreateDevice(
-            warpAdapter,
-            D3D_FEATURE_LEVEL_11_0,
-            IID_PPV_ARGS(&m_device)
-        ));
+        ThrowIfFailed(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
     else
     {
+        // Use a hardware (GPU) adapter.
         IDXGIAdapter1* hardwareAdapter;
         GetHardwareAdapter(factory, &hardwareAdapter);
-
-        ThrowIfFailed(D3D12CreateDevice(
-            hardwareAdapter,
-            D3D_FEATURE_LEVEL_11_0,
-            IID_PPV_ARGS(&m_device)
-        ));
+        ThrowIfFailed(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
+}
 
-    // Describe and create the command queue.
+// Create the command queue.
+void WindowManager::CreateCommandQueue()
+{
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
     ThrowIfFailed(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+}
 
-    // Describe and create the swap chain.
+// Create and configure the swap chain.
+void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
+{
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = FrameCount;
     swapChainDesc.Width = width;
@@ -93,47 +124,56 @@ void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 
     IDXGISwapChain1* swapChain;
     ThrowIfFailed(factory->CreateSwapChainForHwnd(
-        m_commandQueue,        // Swap chain needs the queue so that it can force a flush on it.
-        hWnd,
-        &swapChainDesc,
-        nullptr,
-        nullptr,
-        &swapChain
+        m_commandQueue, hWnd, &swapChainDesc, nullptr, nullptr, &swapChain
     ));
 
-    // This sample does not support fullscreen transitions.
     ThrowIfFailed(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+}
 
-    // Create descriptor heaps.
+// Create descriptor heaps.
+void WindowManager::CreateDescriptorHeaps()
+{
+    D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+    rtvHeapDesc.NumDescriptors = FrameCount;
+    rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+    D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
+    cbvHeapDesc.NumDescriptors = 1; // Le nombre de vues de ressource constante que vous prévoyez d'utiliser.
+    cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; // Pour que le tas soit visible depuis les shaders.
+
+  
+    ThrowIfFailed( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+    m_cbvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+}
+
+// Create frame resources (render targets).
+void WindowManager::CreateFrameResources()
+{
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
+
+    for (UINT n = 0; n < FrameCount; n++)
     {
-        // Describe and create a render target view (RTV) descriptor heap.
-        D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-        rtvHeapDesc.NumDescriptors = FrameCount;
-        rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-        rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-        ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
-
-        m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);
+        rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
+}
 
-    // Create frame resources.
-    {
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
-
-        // Create a RTV for each frame.
-        for (UINT n = 0; n < FrameCount; n++)
-        {
-            ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
-            m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);
-            rtvHandle.Offset(1, m_rtvDescriptorSize);
-        }
-    }
-
+// Create a command allocator.
+void WindowManager::CreateCommandAllocator()
+{
     ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
+
+#pragma endregion SOUS_FONCTIONS_LOAD_PIPELINE
 
 // Load the sample assets.
 void WindowManager::LoadAssets()
@@ -190,7 +230,7 @@ void WindowManager::LoadAssets()
     }
 
     // Create the command list.
-    ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    (m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.
@@ -209,6 +249,15 @@ void WindowManager::LoadAssets()
             nullptr,
             IID_PPV_ARGS(&m_vertexBuffer)));
     }
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+    cbvDesc.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress(); // Emplacement mémoire du tampon
+    cbvDesc.SizeInBytes = 256; // Taille du tampon de constante
+
+    // Créez un descripteur CPU pour la vue de ressource constante
+    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
+    m_device->CreateConstantBufferView(&cbvDesc, cbvHandle);
+
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
@@ -236,6 +285,7 @@ void WindowManager::OnUpdate()
 
     for (GameObject* go : m_gameObjects)
     {
+        
         const std::vector<Vertex> vertices = go->GetVertices();
 
         for (Vertex vertex : vertices)
@@ -246,6 +296,7 @@ void WindowManager::OnUpdate()
     }
 
     const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+
 
     // Copy the triangle data to the vertex buffer.
     UINT8* pVertexDataBegin;
@@ -258,6 +309,9 @@ void WindowManager::OnUpdate()
     m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
     m_vertexBufferView.StrideInBytes = sizeof(Vertex);
     m_vertexBufferView.SizeInBytes = vertexBufferSize;
+
+
+
 }
 
 // Render the scene.
