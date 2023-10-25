@@ -3,8 +3,18 @@
 ## Propriété du projet "Moteur"
 
 - Configuration Propreties --> General --> C++ language Standard --> Preview - ...
+- Configuration Propreties --> Linker --> entrée --> dépendances supplémentaires --> d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)
+- Configuration Propreties --> Linker --> entrée --> Chargement différé des DLL --> d3d12.dll
 - Configuration Propreties --> Linker --> System --> SubSystem --> Windows (/SUBSYSTEM:WINDOWS)
-- Configuration Propreties --> Advanced --> Character Set --> Use Multi-Byte Character Set
+
+### Ajout des shaders
+
+- Créer un dossier "Shaders" dans le dossier "Fichiers de ressources" de l'explorateur Windows
+- Mettre les shaders dans ce dossier
+
+### Propriété des shaders (clic droit sur les shaders --> propriété)
+
+- Configuration Propreties --> General --> Exclu de la génération --> Oui
 
 ## Vocabulaire :
 

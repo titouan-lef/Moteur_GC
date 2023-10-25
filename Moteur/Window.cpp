@@ -1,85 +1,131 @@
+ï»¿#include "stdafx.h"
 #include "Window.h"
+
 /*
-* _x et _y : coordonées (x, y) du coin supérieur gauche de la fenêtre
+* x et y : coordonï¿½es (x, y) du coin supï¿½rieur gauche de la fenï¿½tre
 */
-Window::Window(const char* _name, int _width, int _height, int _x, int _y)
+Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	:
-	width(_width),
-	height(_height),
-	hInstance(GetModuleHandle(nullptr))// (voir readme Windows.h)
+	m_name(name),
+	m_width(width),
+	m_height(height),
+	m_x(x),
+	m_y(y),
+	m_hInstance(GetModuleHandle(nullptr))// (voir readme Windows.h)
 {
-	// Création d'une classe de fenêtre
-	WNDCLASS wc = {};
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = hInstance;
-	wc.lpszClassName = windowName;
-	RegisterClass(&wc);
-
-	// Agrandissement de la taille de la fenêtre pour prendre en compte son style et ses bordures
-	RECT winRect{};
-	winRect.left = _x;
-	winRect.right = _x + width;
-	winRect.top = _y;
-	winRect.bottom = _y + height;
-	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
-
-	// Création de la fenêtre
-	hWnd = CreateWindow(
-		windowName, _name,
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		_x, _y, winRect.right - winRect.left, winRect.bottom - winRect.top,
-		nullptr, nullptr, hInstance, this
-	);
-
-	// Affichage de la fenêtre
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
-
-	pGfx = new Graphic(hWnd);
+	Start();
 }
 
 Window::~Window()
 {
-	delete pGfx;
+	delete m_pWinManager;
 
-	UnregisterClass(windowName, hInstance);
-	DestroyWindow(hWnd);
+	UnregisterClass(m_windowName, m_hInstance);
+	DestroyWindow(m_hWnd);
 }
 
-
-bool Window::ProcessMessages()
+void Window::Start()
 {
-	MSG msg = {};
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Tant qu'un message de fenêtre est disponible (voir readme Windows.h)
-	{
-		if (msg.message == WM_QUIT)// Si le message indique la fermeture de la fenêtre
-			return true;
+	m_pWinManager = new WindowManager(m_width, m_height);
 
-		TranslateMessage(&msg);// (voir readme Windows.h)
-		DispatchMessage(&msg);// (voir readme Windows.h)
+	// Crï¿½ation d'une classe de fenï¿½tre
+	WNDCLASS wc = {};
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = m_hInstance;
+	wc.lpszClassName = m_windowName;
+	RegisterClass(&wc);
+
+	// Agrandissement de la taille de la fenï¿½tre pour prendre en compte son style et ses bordures
+	RECT winRect{};
+	winRect.left = m_x;
+	winRect.right = m_x + m_width;
+	winRect.top = m_y;
+	winRect.bottom = m_y + m_height;
+	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
+
+	// Crï¿½ation de la fenï¿½tre
+	m_hWnd = CreateWindow(
+		m_windowName, m_name,
+		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		m_x, m_y, winRect.right - winRect.left, winRect.bottom - winRect.top,
+		nullptr, nullptr, m_hInstance, m_pWinManager
+	);
+
+	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
+
+	// Affichage de la fenï¿½tre
+	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
+}
+
+int Window::Run()
+{
+	// Main sample loop.
+	MSG msg = {};
+	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fenï¿½tre
+	{
+		// Process any messages in the queue.
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fenï¿½tre est disponible (voir readme Windows.h)
+		{
+			TranslateMessage(&msg);// (voir readme Windows.h)
+			DispatchMessage(&msg);// (voir readme Windows.h)
+		}
 	}
 
-	return false;
+	return Finish(msg.wParam);
 }
 
-Graphic& Window::Gfx()
+int Window::Finish(WPARAM wParam)
 {
-	return *pGfx;
+	m_pWinManager->OnDestroy();
+
+	// Return this part of the WM_QUIT message to Windows.
+	return static_cast<char>(wParam);
 }
 
 /*
-* _hWnd : handle pour la fenêtre
-* _msg : message reçu de DispatchMessage()
-* _wParam : information supplémentaire sur le message
-* _lParam : information supplémentaire sur le message
+* _hWnd : handle pour la fenï¿½tre
+* _msg : message reï¿½u de DispatchMessage()
+* _wParam : information supplï¿½mentaire sur le message
+* _lParam : information supplï¿½mentaire sur le message
 */
-LRESULT _stdcall Window::WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
+LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (_msg)
+	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
+	switch (msg)
 	{
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenêtre
+	case WM_CREATE:
+	{
+		// Sauvegarde le WindowManager* passÃ© dans CreateWindow
+		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+	}
+	return 0;
+
+	case WM_KEYDOWN:
+		if (pWinManager)
+			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
+
+		return 0;
+
+	case WM_KEYUP:
+		if (pWinManager)
+			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
+
+		return 0;
+
+	case WM_PAINT:
+		if (pWinManager)
+		{
+			pWinManager->OnUpdate();
+			pWinManager->OnRender();
+		}
+		return 0;
+
+	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenï¿½tre
 		PostQuitMessage(0);// (voir readme Windows.h)
-		break;
+		return 0;
 	}
 
-	return DefWindowProc(_hWnd, _msg, _wParam, _lParam);// (voir readme Windows.h)
+	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
 }
