@@ -1,4 +1,16 @@
-float4 main(float2 pos : Position) : SV_Position
+struct VertexInput
 {
-    return float4(pos.x, pos.y, 0.0f, 1.0f);
+    float3 position : POSITION;
+};
+
+struct VertexOutput
+{
+    float4 position : SV_POSITION;
+};
+
+VertexOutput main(VertexInput input)
+{
+    VertexOutput output;
+    output.position = float4(input.position, 1.0);
+    return output;
 }

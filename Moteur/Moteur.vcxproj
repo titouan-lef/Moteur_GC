@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>17.0</VCProjectVersion>
+    <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2512772C-C8A5-4236-B275-121512820629}</ProjectGuid>
-    <RootNamespace>MOTEUR</RootNamespace>
+    <ProjectGuid>{2512772c-c8a5-4236-b275-121512820629}</ProjectGuid>
+    <RootNamespace>Moteur</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -75,12 +75,30 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -89,32 +107,62 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -123,50 +171,83 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="HeaderWin.h" />
-    <ClInclude Include="MyWindow.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Timer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MyWindow.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).cso</ObjectFileOutput>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowManager.h" />
+    <ClInclude Include="WindowManagerHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </DeploymentContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</TreatOutputAsContent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatOutputAsContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,19 +1,23 @@
-#pragma once
-#include <Windows.h>
+ï»¿#pragma once
+#include "WindowManager.h"
 
 class Window
 {
 public:
-	Window(const char* _name, int _width, int _height, int _x = CW_USEDEFAULT, int _y = CW_USEDEFAULT);
-	~Window();
-	static bool ProcessMessages();// Gérer les messages de la fenêtre (agrandir, quitter, ...)
+	Window(const wchar_t* name, UINT width, UINT height, UINT x = CW_USEDEFAULT, UINT y = CW_USEDEFAULT);
+	virtual ~Window();
+	int Run();
 
 private:
-	static LRESULT _stdcall WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);// Action à réaliser en fonction du message retourner par ProcessMessages()
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);// Action a rÃ©aliser en fonction du message retourner par ProcessMessages()
 
-	int width, height;
-	const char* windowName = "DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
-	HWND hWnd;// Handle de la fenêtre
-	HINSTANCE hInstance;// Handle de l'instance de la fenêtre
+	UINT m_width, m_height, m_x, m_y;
+	const wchar_t* m_name;// Nom affichï¿½ sur la fenÃªtre
+	const wchar_t* m_windowName = L"DirectX 12";// Nom de la fenï¿½tre
+	HWND m_hWnd;// Handle de la fenï¿½tre
+	HINSTANCE m_hInstance;// Handle de l'instance de la fenÃªtre
+	WindowManager* m_pWinManager = nullptr;
 
+	void Start();
+	int Finish(WPARAM wParam);
 };
