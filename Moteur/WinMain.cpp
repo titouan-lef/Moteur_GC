@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "TestTransform.h"
 
 /*
 * _hInstance : handle de notre application
@@ -6,6 +7,7 @@
 * _lpCmdLine : gère la ligne de commande de l'application
 * _nCmdShow : contrôle la façon dont la fenêtre sera affichée
 */
+
 int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	Window window("DirectX 12", 800, 600);
@@ -19,4 +21,6 @@ int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 		window.Gfx().ClearBuffer(1, 0.5f, 0.5f);
 		window.Gfx().EndFrame();
 	}
+
+	RunTest();
 }
