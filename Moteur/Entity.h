@@ -24,10 +24,17 @@ struct TRANSFORM
 #pragma region Getters/Setters
 	// Retourne la position
 	XMFLOAT3 GetPosition() { return Position; }
+	// Retourne l'echelle
+	XMFLOAT3 GetScale() { return Scale; }
 	// Change la position
 	void SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }
+	// Change l'echelle
+	void SetScale(float x, float y, float z) { Scale = XMFLOAT3(x, y, z); }
+	void SetScale(float mul) { Scale = XMFLOAT3(Scale.x*mul, Scale.y*mul, Scale.z*mul); }
 	// Retourne la matrice de transformation
 	XMMATRIX* GetMatrix() { return &Matrix; }
+	// Retourne la matrice de rotation
+	XMMATRIX* GetRotationMatrix() { return &RotationMatrix; }
 #pragma endregion
 
 	// Déplace la position en fonction d'un vecteur

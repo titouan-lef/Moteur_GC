@@ -11,6 +11,7 @@
 int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	Window window("DirectX 12", 800, 600);
+	RunTests();
 
 	while (true)
 	{
@@ -22,5 +23,4 @@ int _stdcall WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCm
 		window.Gfx().EndFrame();
 	}
 
-	RunTest();
 }
