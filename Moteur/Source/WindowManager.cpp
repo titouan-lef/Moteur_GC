@@ -166,6 +166,7 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+}
 
 // Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
@@ -269,7 +270,7 @@ void WindowManager::LoadAssets()
     }
 
     // Create the command list.
-    ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.

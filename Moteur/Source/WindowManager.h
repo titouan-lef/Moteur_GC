@@ -1,7 +1,5 @@
 #pragma once
 #include "framwork.h"
-#include "WindowManagerHelper.h"
-#include "stdafx.h"
 #include "EngineException.h"
 #include "GameObject.h"
 #include "DxgiInfoManager.h"
@@ -96,7 +94,7 @@ private:
     ID3D12PipelineState* m_pipelineState = nullptr;
     ID3D12GraphicsCommandList* m_commandList = nullptr;
     UINT m_rtvDescriptorSize;
-
+    UINT m_cbvDescriptorSize;
     // App resources.
 
     ID3D12Resource* m_vertexBuffer = nullptr;

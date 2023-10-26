@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------------------------
 
 #pragma once
-#include "stdafx.h"
+#include "framwork.h"
 #include <sal.h>
 
 #ifdef __cplusplus
