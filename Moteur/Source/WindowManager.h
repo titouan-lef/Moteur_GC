@@ -62,7 +62,27 @@ public:
         wchar_t* wString = new wchar_t[4096];
         MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
         return wString;
+    };
+    static std::string ConvertWStringToString(const wchar_t* wString)
+    {
+        int numChars = WideCharToMultiByte(CP_UTF8, 0, wString, -1, NULL, 0, NULL, NULL);
+        char* buf = new char[numChars];
+        WideCharToMultiByte(CP_UTF8, 0, wString, -1, buf, numChars, NULL, NULL);
+        std::string strResult(buf);
+        delete[] buf;
+        return strResult;
     }
+    static std::string ConvertWCharTToString(const wchar_t* wcharArray)
+    {
+        // Obtenir la taille nécessaire pour la chaîne de destination
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wcharArray, -1, NULL, 0, NULL, NULL);
+        std::string result_string(size_needed, 0);
+
+        // Convertir la chaîne wchar_t* en std::string
+        WideCharToMultiByte(CP_UTF8, 0, wcharArray, -1, &result_string[0], size_needed, NULL, NULL);
+
+        return result_string;
+    };
 
 private:
 #ifndef  NDEBUG

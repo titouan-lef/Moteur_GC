@@ -1,5 +1,6 @@
 #include "WindowManager.h"
 #include <sstream>
+#include <iostream>
 #include <string>
 #include "dxerr.h"
 
@@ -243,7 +244,7 @@ void WindowManager::LoadAssets()
 
         HRESULT hr;
 
-        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"Sourc/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
         GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
         // Define the vertex input layout.
@@ -541,14 +542,15 @@ WindowManager::HrException::HrException(int line, const char* file, HRESULT hr, 
 
 const char* WindowManager::HrException::what() const noexcept
 {
+   
     std::ostringstream oss;
     oss << GetType() << std::endl
-        << "[LINE] " << m_line << std::endl
 
         << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
         << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
         << "[Error String] " << GetErrorString() << std::endl
         << "[Description] " << GetErrorDescription() << std::endl;
+
 
     if (!info.empty())
     {
@@ -575,18 +577,18 @@ std::string WindowManager::HrException::GetErrorString() const noexcept
     std::wstring wStr = DXGetErrorString(hr);
 
     int length = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), -1, nullptr, 0, nullptr, nullptr);
-    std::string result(length, 0);
-    WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), -1, &result[0], length, nullptr, nullptr);
+    std::vector<char> buffer(length);
+    WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), -1, buffer.data(), length, nullptr, nullptr);
 
-    return result;
+    return std::string(buffer.data());
 }
 
 
 std::string WindowManager::HrException::GetErrorDescription() const noexcept
 {
-    char buf[512];
-    DXGetErrorDescription(hr, convertCharArrayToLPCWSTR(buf), sizeof(buf));
-    return buf;
+    wchar_t wbuf[512];
+    DXGetErrorDescription(hr, wbuf, sizeof(wbuf) / sizeof(wchar_t));
+    return ConvertWStringToString(wbuf);
 }
 
 std::string WindowManager::HrException::GetErrorInfo() const noexcept
