@@ -1,6 +1,5 @@
 #pragma once
-#include "MyWindow.h"
-#include "Timer.h"
+#include "Window.h"
 class App
 {
 public:
@@ -8,9 +7,7 @@ public:
 	//boucle de message
 	int Go();
 private:
-	void DoFrame();
-private:
-	MyWindow wnd;
-	Timer timer;
+	Window wnd;
+
 };
 

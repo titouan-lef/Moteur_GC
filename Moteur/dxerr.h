@@ -12,8 +12,7 @@
 //--------------------------------------------------------------------------------------
 
 #pragma once
-
-#include "HeaderWin.h"
+#include "stdafx.h"
 #include <sal.h>
 
 #ifdef __cplusplus

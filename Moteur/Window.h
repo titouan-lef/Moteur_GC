@@ -2,6 +2,8 @@
 #include "EngineException.h"
 #include "WindowManager.h"
 
+#include <optional>
+
 class Window
 {
 public:
@@ -35,8 +37,14 @@ public:
 public:
 	Window(const wchar_t* name, UINT width, UINT height, UINT x = CW_USEDEFAULT, UINT y = CW_USEDEFAULT);
 	virtual ~Window();
-	int Run();
+    static std::optional<int> Run();
+    static WindowManager* m_pWinManager;
+    static int Finish(WPARAM wParam);
 
+private:
+    static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+    static LRESULT CALLBACK HandleMsgThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept;
+    LRESULT  HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept;
 private:
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);// Action a réaliser en fonction du message retourner par ProcessMessages()
 
@@ -45,10 +53,8 @@ private:
 	const wchar_t* m_windowName = L"DirectX 12";// Nom de la fen�tre
 	HWND m_hWnd;// Handle de la fen�tre
 	HINSTANCE m_hInstance;// Handle de l'instance de la fenêtre
-	WindowManager* m_pWinManager = nullptr;
 
 	void Start();
-	int Finish(WPARAM wParam);
 };
 
 

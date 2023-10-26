@@ -3,7 +3,7 @@
 #include <sstream>
 
 
-
+WindowManager* Window::m_pWinManager = nullptr;
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
 */
@@ -33,7 +33,7 @@ void Window::Start()
 
 	// Cr�ation d'une classe de fen�tre
 	WNDCLASS wc = {};
-	wc.lpfnWndProc = WindowProc;
+	wc.lpfnWndProc = HandleMsgSetup;
 	wc.hInstance = m_hInstance;
 	wc.lpszClassName = m_windowName;
 	RegisterClass(&wc);
@@ -44,10 +44,10 @@ void Window::Start()
 	winRect.right = m_x + m_width;
 	winRect.top = m_y;
 	winRect.bottom = m_y + m_height;
-	if (AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)) {
+	if (AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)==0) {
 		throw EHWND_LAST_EXCEPT();
 	};// (voir readme Windows.h)
-
+	
 	// Cr�ation de la fen�tre
 	m_hWnd = CreateWindow(
 		m_windowName, m_name,
@@ -55,6 +55,10 @@ void Window::Start()
 		m_x, m_y, winRect.right - winRect.left, winRect.bottom - winRect.top,
 		nullptr, nullptr, m_hInstance, m_pWinManager
 	);
+	//Error
+	if (m_hWnd == nullptr) {
+		throw EHWND_LAST_EXCEPT();
+	}
 
 	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
 
@@ -62,7 +66,7 @@ void Window::Start()
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
 
-int Window::Run()
+std::optional<int> Window::Run()
 {
 	// Main sample loop.
 	MSG msg = {};
@@ -134,6 +138,70 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
 }
+LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+{
+	if (msg == WM_NCCREATE) {
+		//extrait ptr à Window
+		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+		//set winapi managed user data to store ptr to win class
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+		//set msg proc to normal hangler now that setup is finished
+		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
+		//envoie du msg
+		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+	}
+	//si on recoie un msg avant WM NCCREATE on utilise le default
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
+{
+	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+}
+
+LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
+{
+	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	switch (msg)
+	{
+	case WM_CREATE:
+	{
+		// Sauvegarde le WindowManager* passé dans CreateWindow
+		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+	}
+	return 0;
+
+	case WM_KEYDOWN:
+		if (pWinManager)
+			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
+
+		return 0;
+
+	case WM_KEYUP:
+		if (pWinManager)
+			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
+
+		return 0;
+
+	case WM_PAINT:
+		if (pWinManager)
+		{
+			pWinManager->OnUpdate();
+			pWinManager->OnRender();
+		}
+		return 0;
+
+	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
+		PostQuitMessage(0);// (voir readme Windows.h)
+		return 0;
+	}
+
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
 
 
 //Exception Stuff
@@ -168,6 +236,9 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 	);
 	if (nMsgLen == 0) {
 		return "Unidentified error code";
+	}
+	if (pMsgBuf == 0) {
+		return "pMsgBuf = 0 in Window::Eception";
 	}
 	std::string errorString = pMsgBuf;
 	LocalFree(pMsgBuf);
