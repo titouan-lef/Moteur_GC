@@ -243,7 +243,7 @@ void WindowManager::LoadAssets()
 
         HRESULT hr;
 
-        GFX_THROW_INFO(D3DCompileFromFile(L"Sourc/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
         GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
         // Define the vertex input layout.
@@ -543,12 +543,12 @@ const char* WindowManager::HrException::what() const noexcept
 {
     std::ostringstream oss;
     oss << GetType() << std::endl
+        << "[LINE] " << m_line << std::endl
 
         << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
         << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
         << "[Error String] " << GetErrorString() << std::endl
-        << "[Description] " << GetErrorDescription() << std::endl
-        << "[LINE] " << m_line << std::endl;
+        << "[Description] " << GetErrorDescription() << std::endl;
 
     if (!info.empty())
     {
