@@ -19,3 +19,11 @@
 #include <string>
 #include <wrl.h>
 #include <shellapi.h>
+
+using namespace DirectX;
+
+struct Vertex
+{
+    XMFLOAT3 m_position;
+    XMFLOAT4 m_color;
+};

@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "GameObject.h"
-#include "WindowManager.h"
+#include "../header/framwork.h"
+#include "../header/GameObject.h"
+#include "../header/WindowManager.h"
 
 GameObject::GameObject(float x, float y, float z, float width, float height, float depth) :
 	m_x(x),

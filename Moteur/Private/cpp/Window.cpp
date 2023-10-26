@@ -1,5 +1,5 @@
-﻿#include "stdafx.h"
-#include "Window.h"
+﻿#include "../header/framwork.h"
+#include "../header/Window.h"
 
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre

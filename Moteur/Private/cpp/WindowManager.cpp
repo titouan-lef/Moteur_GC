@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "WindowManager.h"
+#include "../header/framwork.h"
+#include "../header/WindowManager.h"
 
 std::vector<GameObject*> WindowManager::m_gameObjects;
 

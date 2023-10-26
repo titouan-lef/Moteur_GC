@@ -17,7 +17,7 @@ struct TRANSFORM
 
 	XMFLOAT3 Position;         // Position de l'entité
 
-	XMMATRIX Matrix;           // Matrice de transformation
+	XMFLOAT4X4 Matrix;           // Matrice de transformation
 
 	TRANSFORM();
 

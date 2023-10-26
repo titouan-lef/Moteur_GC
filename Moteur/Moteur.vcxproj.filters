@@ -1,83 +1,88 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Fichiers de ressources">
+    <Filter Include="Ressources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Fichiers de ressources\Shaders">
+    <Filter Include="Ressources\Shaders">
       <UniqueIdentifier>{ea73b7e9-ae3c-45cb-beb0-1eb3a04b992a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{d97b63b6-a6d7-4811-9f2c-17586111d81a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header">
+      <UniqueIdentifier>{3d798e22-5df4-42dc-b202-7c43a10fde42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\cpp">
+      <UniqueIdentifier>{4c3bf858-25ea-41ff-ae3d-131b792cc7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\header">
+      <UniqueIdentifier>{3f52ae57-9c10-4517-b274-ab2c167e220b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\cpp">
+      <UniqueIdentifier>{da02c0a0-6229-49cf-93f8-3cfb484f866c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowManager.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTransform.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Window.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowManagerHelper.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framwork.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTransform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shaders.hlsl">
-      <Filter>Fichiers de ressources\Shaders</Filter>
+    <FxCompile Include="Resources\Shader\shaders.hlsl">
+      <Filter>Ressources\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Private\header\Component.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\d3dx12.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\Entity.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\framwork.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\GameObject.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\TestTransform.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\Window.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\WindowManager.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Private\header\WindowManagerHelper.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\cpp\Component.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\cpp\Entity.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\cpp\GameObject.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\cpp\TestTransform.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\cpp\Window.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\cpp\WindowManager.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Main.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

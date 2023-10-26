@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Window.h"
+#include "header/framwork.h"
+#include "header/Window.h"
 
 class GameObject;
 

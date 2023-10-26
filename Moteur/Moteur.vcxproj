@@ -18,6 +18,29 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shader\shaders.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Private\header\Component.h" />
+    <ClInclude Include="Private\header\d3dx12.h" />
+    <ClInclude Include="Private\header\Entity.h" />
+    <ClInclude Include="Private\header\framwork.h" />
+    <ClInclude Include="Private\header\GameObject.h" />
+    <ClInclude Include="Private\header\TestTransform.h" />
+    <ClInclude Include="Private\header\Window.h" />
+    <ClInclude Include="Private\header\WindowManager.h" />
+    <ClInclude Include="Private\header\WindowManagerHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\cpp\Component.cpp" />
+    <ClCompile Include="Private\cpp\Entity.cpp" />
+    <ClCompile Include="Private\cpp\GameObject.cpp" />
+    <ClCompile Include="Private\cpp\TestTransform.cpp" />
+    <ClCompile Include="Private\cpp\Window.cpp" />
+    <ClCompile Include="Private\cpp\WindowManager.cpp" />
+    <ClCompile Include="Private\Main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -198,58 +221,6 @@
       <TreatOutputAsContent>true</TreatOutputAsContent>
     </CustomBuild>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="WindowManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="WindowManager.h" />
-    <ClInclude Include="WindowManagerHelper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shaders.hlsl">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </DeploymentContent>
-      <FileType>Document</FileType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </DeploymentContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </Outputs>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatOutputAsContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </Outputs>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatOutputAsContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</TreatOutputAsContent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Outputs>
-      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatOutputAsContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
