@@ -8,10 +8,6 @@
     <Filter Include="Ressources\Shaders">
       <UniqueIdentifier>{ea73b7e9-ae3c-45cb-beb0-1eb3a04b992a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Private">
       <UniqueIdentifier>{d97b63b6-a6d7-4811-9f2c-17586111d81a}</UniqueIdentifier>
     </Filter>
@@ -19,70 +15,73 @@
       <UniqueIdentifier>{3d798e22-5df4-42dc-b202-7c43a10fde42}</UniqueIdentifier>
     </Filter>
     <Filter Include="Private\cpp">
-      <UniqueIdentifier>{4c3bf858-25ea-41ff-ae3d-131b792cc7b5}</UniqueIdentifier>
+      <UniqueIdentifier>{2be0e938-ea2f-4984-91b2-db38235e1a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{220c69e5-24a6-4533-9d1a-4ad2ff80887b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\header">
-      <UniqueIdentifier>{3f52ae57-9c10-4517-b274-ab2c167e220b}</UniqueIdentifier>
+      <UniqueIdentifier>{53cda7db-b1bb-44ec-8a3e-79c964866d7f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\cpp">
-      <UniqueIdentifier>{da02c0a0-6229-49cf-93f8-3cfb484f866c}</UniqueIdentifier>
+      <UniqueIdentifier>{8b480108-5bd0-4849-9265-c22bed3e1005}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shader\shaders.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Private\header\Component.h">
+    <ClInclude Include="Source\Component.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\d3dx12.h">
+    <ClInclude Include="Source\d3dx12.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\Entity.h">
+    <ClInclude Include="Source\Entity.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\framwork.h">
+    <ClInclude Include="Source\framwork.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\GameObject.h">
+    <ClInclude Include="Source\GameObject.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\TestTransform.h">
+    <ClInclude Include="Source\TestTransform.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\Window.h">
+    <ClInclude Include="Source\Window.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\WindowManager.h">
+    <ClInclude Include="Source\WindowManager.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Private\header\WindowManagerHelper.h">
+    <ClInclude Include="Source\WindowManagerHelper.h">
       <Filter>Private\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Private\cpp\Component.cpp">
+    <ClCompile Include="Source\Component.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\cpp\Entity.cpp">
+    <ClCompile Include="Source\Entity.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\cpp\GameObject.cpp">
+    <ClCompile Include="Source\GameObject.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\cpp\TestTransform.cpp">
+    <ClCompile Include="Source\TestTransform.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\cpp\Window.cpp">
+    <ClCompile Include="Source\Window.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\cpp\WindowManager.cpp">
+    <ClCompile Include="Source\WindowManager.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Main.cpp">
+    <ClCompile Include="Source\Main.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\PixelShaders.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

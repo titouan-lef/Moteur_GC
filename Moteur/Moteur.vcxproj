@@ -19,27 +19,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shader\shaders.hlsl" />
+    <ClInclude Include="Source\Component.h" />
+    <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\Entity.h" />
+    <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\TestTransform.h" />
+    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\WindowManager.h" />
+    <ClInclude Include="Source\WindowManagerHelper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Private\header\Component.h" />
-    <ClInclude Include="Private\header\d3dx12.h" />
-    <ClInclude Include="Private\header\Entity.h" />
-    <ClInclude Include="Private\header\framwork.h" />
-    <ClInclude Include="Private\header\GameObject.h" />
-    <ClInclude Include="Private\header\TestTransform.h" />
-    <ClInclude Include="Private\header\Window.h" />
-    <ClInclude Include="Private\header\WindowManager.h" />
-    <ClInclude Include="Private\header\WindowManagerHelper.h" />
+    <ClCompile Include="Source\Component.cpp" />
+    <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\TestTransform.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Private\cpp\Component.cpp" />
-    <ClCompile Include="Private\cpp\Entity.cpp" />
-    <ClCompile Include="Private\cpp\GameObject.cpp" />
-    <ClCompile Include="Private\cpp\TestTransform.cpp" />
-    <ClCompile Include="Private\cpp\Window.cpp" />
-    <ClCompile Include="Private\cpp\WindowManager.cpp" />
-    <ClCompile Include="Private\Main.cpp" />
+    <FxCompile Include="Source\PixelShaders.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
