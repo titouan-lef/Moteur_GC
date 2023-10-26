@@ -19,6 +19,8 @@ public:
         std::string GetErrorString() const noexcept;
         std::string GetErrorDescription() const noexcept;
         std::string GetErrorInfo() const noexcept;
+        std::string func;
+        int m_line;
     private:
         HRESULT hr;
         std::string info;

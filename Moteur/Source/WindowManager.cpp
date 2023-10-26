@@ -241,8 +241,10 @@ void WindowManager::LoadAssets()
         UINT compileFlags = 0;
 #endif
 
-        GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-        GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
+        HRESULT hr;
+
+        GFX_THROW_INFO(D3DCompileFromFile(L"Sourc/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
         // Define the vertex input layout.
         D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
@@ -523,6 +525,7 @@ void WindowManager::AddGameObject(GameObject* go)
 
 WindowManager::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept : Exception(line, file), hr(hr)
 {
+    m_line = line;
     // join all info messages with newlines into single string
     for (const auto& m : infoMsgs)
     {
@@ -540,10 +543,13 @@ const char* WindowManager::HrException::what() const noexcept
 {
     std::ostringstream oss;
     oss << GetType() << std::endl
+
         << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
         << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
         << "[Error String] " << GetErrorString() << std::endl
-        << "[Description] " << GetErrorDescription() << std::endl;
+        << "[Description] " << GetErrorDescription() << std::endl
+        << "[LINE] " << m_line << std::endl;
+
     if (!info.empty())
     {
         oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
@@ -597,6 +603,7 @@ WindowManager::InfoException::InfoException(int line, const char* file, std::vec
     :
     Exception(line, file)
 {
+    
     // join all info messages with newlines into single string
     for (const auto& m : infoMsgs)
     {
