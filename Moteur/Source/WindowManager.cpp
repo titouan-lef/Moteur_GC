@@ -197,8 +197,22 @@ void WindowManager::LoadAssets()
 
     // Create the vertex buffer.
     {
+        m_vertices = {
+            // Carré
+            { { -0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin supérieur gauche
+            { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin supérieur droit
+            { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inférieur gauche
+
+            { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inférieur gauche
+            { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin supérieur droit
+            { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inférieur droit
+        };
+
+        const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+
+
         auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex));
+        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(vertexBufferSize));
 
         ThrowIfFailed(m_device->CreateCommittedResource(
             &tmp1,
@@ -207,6 +221,18 @@ void WindowManager::LoadAssets()
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
             IID_PPV_ARGS(&m_vertexBuffer)));
+
+        // Copy the triangle data to the vertex buffer.
+        UINT8* pVertexDataBegin;
+        CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
+        ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+        memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
+        m_vertexBuffer->Unmap(0, nullptr);
+
+        // Initialize the vertex buffer view.
+        m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+        m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+        m_vertexBufferView.SizeInBytes = vertexBufferSize;
     }
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
@@ -231,7 +257,7 @@ void WindowManager::LoadAssets()
 // Update frame-based values.
 void WindowManager::OnUpdate()
 {
-    m_vertices.clear();
+    /*m_vertices.clear();
 
     for (GameObject* go : m_gameObjects)
     {
@@ -242,21 +268,7 @@ void WindowManager::OnUpdate()
             vertex.m_position.y *= m_aspectRatio;
             m_vertices.push_back(vertex);
         }
-    }
-
-    const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
-
-    // Copy the triangle data to the vertex buffer.
-    UINT8* pVertexDataBegin;
-    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
-    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
-    m_vertexBuffer->Unmap(0, nullptr);
-
-    // Initialize the vertex buffer view.
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+    }*/
 }
 
 // Render the scene.
