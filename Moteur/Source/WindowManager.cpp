@@ -287,6 +287,9 @@ void WindowManager::LoadAssets()
         };
 
         ConstantBufferData constBufferData;
+        e.m_Transform.UpdateMatrix();
+        e.m_Transform.Rotate(0.5f, 0, 0);
+        e.m_Transform.UpdateMatrix();
         constBufferData.World = e.m_Transform.GetMat();
 
         const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
@@ -309,19 +312,35 @@ void WindowManager::LoadAssets()
         memcpy(mappedConstData, &constBufferData, constBufferSize);
         m_constBuffer->Unmap(0, nullptr);
 
-        D3D12_GPU_VIRTUAL_ADDRESS cbAddress = m_constBuffer->GetGPUVirtualAddress();
+        // Créez un tas de descripteurs de type CBV_SRV_UAV
+        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+        cbvSrvUavHeapDesc.NumDescriptors = 1; // Un descripteur de Constant Buffer View (CBV)
+        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+
+        m_constBufferView.BufferLocation = m_constBuffer->GetGPUVirtualAddress();
+        m_constBufferView.SizeInBytes = constBufferSize;
+
+        m_device->CreateConstantBufferView(
+            &m_constBufferView,
+            cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
+        );
+
+        /*D3D12_GPU_VIRTUAL_ADDRESS cbAddress = m_constBuffer->GetGPUVirtualAddress();
         // Offset to the ith object constant buffer in the buffer.
         int boxCBufIndex = 0;
         cbAddress += boxCBufIndex * constBufferSize;
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
         cbvDesc.BufferLocation = cbAddress;
 
-        cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255;
+        cbvDesc.SizeInBytes = constBufferSize;
 
         m_device->CreateConstantBufferView(
             &cbvDesc,
             m_rtvHeap->GetCPUDescriptorHandleForHeapStart()
-        );
+        );*/
     }
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
@@ -346,18 +365,7 @@ void WindowManager::LoadAssets()
 // Update frame-based values.
 void WindowManager::OnUpdate()
 {
-    /*m_vertices.clear();
-
-    for (GameObject* go : m_gameObjects)
-    {
-        const std::vector<Vertex> vertices = go->GetVertices();
-
-        for (Vertex vertex : vertices)
-        {
-            vertex.m_position.y *= m_aspectRatio;
-            m_vertices.push_back(vertex);
-        }
-    }*/
+    
 }
 
 // Render the scene.
@@ -409,6 +417,8 @@ void WindowManager::PopulateCommandList()
     //CD3DX12_GPU_DESCRIPTOR_HANDLE cbv(m_rtvHeap->GetGPUDescriptorHandleForHeapStart());
     //cbv.Offset(0, 1);
     //m_commandList->SetGraphicsRootDescriptorTable(0, rtvHandle);
+    m_commandList->SetGraphicsRootDescriptorTable(0, cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
+
     /*****************/
 
 

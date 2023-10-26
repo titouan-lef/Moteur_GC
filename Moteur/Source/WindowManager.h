@@ -51,6 +51,8 @@ private:
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
 
     ID3D12Resource* m_constBuffer = nullptr;
+    ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC m_constBufferView = {};
 
     // Synchronization objects.
     UINT m_frameIndex = -1;
