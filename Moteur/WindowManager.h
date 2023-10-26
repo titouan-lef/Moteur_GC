@@ -1,9 +1,46 @@
 #pragma once
 #include "WindowManagerHelper.h"
+#include "EngineException.h"
 #include "GameObject.h"
-
+#include "DxgiInfoManager.h"
 class WindowManager
 {
+public:
+#pragma region EXCEPTION
+   class Exception : public EngineException {
+        using EngineException::EngineException;
+    };
+    class HrException : public Exception {
+    public:
+        HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
+        const char* what() const noexcept override;
+        const char* GetType() const noexcept override;
+        HRESULT GetErrorCode() const noexcept;
+        std::string GetErrorString() const noexcept;
+        std::string GetErrorDescription() const noexcept;
+        std::string GetErrorInfo() const noexcept;
+    private:
+        HRESULT hr;
+        std::string info;
+    };
+    class InfoException : public Exception
+    {
+    public:
+        InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
+        const char* what() const noexcept override;
+        const char* GetType() const noexcept override;
+        std::string GetErrorInfo() const noexcept;
+    private:
+        std::string info;
+    };
+    class DeviceRemovedException : public HrException {
+        using HrException::HrException;
+    public:
+        const char* GetType()const noexcept override;
+    private:
+        std::string reason;
+    };
+#pragma endregion EXCEPTION
 public:
     WindowManager(UINT width, UINT height);
     virtual ~WindowManager();
@@ -18,8 +55,17 @@ public:
     virtual void OnKeyUp(UINT8 /*key*/) {}
 
     static void AddGameObject(GameObject* go);
+    static wchar_t* convertCharArrayToLPCWSTR(const char* charArray)
+    {
+        wchar_t* wString = new wchar_t[4096];
+        MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
+        return wString;
+    }
 
 private:
+#ifndef  NDEBUG
+    DxgiInfoManager infoManager;
+#endif // ! NDEBUG
     static const UINT FrameCount = 2;
 
     // Viewport dimensions.
@@ -41,6 +87,7 @@ private:
     ID3D12CommandQueue* m_commandQueue = nullptr;
     ID3D12RootSignature* m_rootSignature = nullptr;
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;
+   
     ID3D12DescriptorHeap* m_cbvHeap = nullptr;
 
 
@@ -49,6 +96,7 @@ private:
     UINT m_rtvDescriptorSize;
     UINT m_cbvDescriptorSize;
     // App resources.
+
     ID3D12Resource* m_vertexBuffer = nullptr;
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
 
@@ -87,6 +135,8 @@ private:
     void CreateFrameResources();
 
     void CreateCommandAllocator();
+    //juste un convertisseur
+
 
 };
 

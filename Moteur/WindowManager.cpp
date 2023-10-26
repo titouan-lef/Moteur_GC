@@ -1,5 +1,24 @@
 #include "stdafx.h"
 #include "WindowManager.h"
+#include <sstream>
+#include <string>
+#include "dxerr.h"
+
+
+#define GFX_EXCEPT_NOINFO(hr) WindowManager::HrException( __LINE__,__FILE__,(hr) )
+#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw WindowManager::HrException( __LINE__,__FILE__,hr )
+
+#ifndef NDEBUG
+#define GFX_EXCEPT(hr) WindowManager::HrException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
+#define GFX_THROW_INFO(hrcall) infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr)
+#define GFX_DEVICE_REMOVED_EXCEPT(hr) WindowManager::DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
+#define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw WindowManager::InfoException( __LINE__,__FILE__,v);}}
+#else
+#define GFX_EXCEPT(hr) WindowManager::HrException( __LINE__,__FILE__,(hr) )
+#define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
+#define GFX_DEVICE_REMOVED_EXCEPT(hr) WindowManager::DeviceRemovedException( __LINE__,__FILE__,(hr) )
+#define GFX_THROW_INFO_ONLY(call) (call)
+#endif
 
 std::vector<GameObject*> WindowManager::m_gameObjects;
 
@@ -71,13 +90,17 @@ void WindowManager::SetupDebugLayer()
 // Create a DXGI factory.
 IDXGIFactory4* WindowManager::CreateDXGIFactory()
 {
+
+    //for checking result
+    HRESULT hr;
+
     UINT dxgiFactoryFlags = 0;
 #if defined(_DEBUG)
     dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
     IDXGIFactory4* factory;
-    ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
+    GFX_THROW_INFO(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
 
     return factory;
 }
@@ -85,34 +108,41 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 // Create the Direct3D device.
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
+
+    //for checking result
+    HRESULT hr;
     if (m_useWarpDevice)
     {
         // Use the WARP (Software) adapter.
         IDXGIAdapter* warpAdapter;
-        ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
-        ThrowIfFailed(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+        GFX_THROW_INFO(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
+        GFX_THROW_INFO(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
     else
     {
         // Use a hardware (GPU) adapter.
         IDXGIAdapter1* hardwareAdapter;
         GetHardwareAdapter(factory, &hardwareAdapter);
-        ThrowIfFailed(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+        GFX_THROW_INFO(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
 }
 
 // Create the command queue.
 void WindowManager::CreateCommandQueue()
 {
+    //for checking result
+    HRESULT hr;
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    ThrowIfFailed(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+    GFX_THROW_INFO(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 
 // Create and configure the swap chain.
 void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
 {
+    //for checking result
+    HRESULT hr;
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = FrameCount;
     swapChainDesc.Width = width;
@@ -123,11 +153,11 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
     swapChainDesc.SampleDesc.Count = 1;
 
     IDXGISwapChain1* swapChain;
-    ThrowIfFailed(factory->CreateSwapChainForHwnd(
+    GFX_THROW_INFO(factory->CreateSwapChainForHwnd(
         m_commandQueue, hWnd, &swapChainDesc, nullptr, nullptr, &swapChain
     ));
 
-    ThrowIfFailed(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
+    GFX_THROW_INFO(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
@@ -136,11 +166,14 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
 // Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
 {
+    //for checking result
+    HRESULT hr;
+
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+    GFX_THROW_INFO(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -149,7 +182,7 @@ void WindowManager::CreateDescriptorHeaps()
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; // Pour que le tas soit visible depuis les shaders.
 
   
-    ThrowIfFailed( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+    GFX_THROW_INFO( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
     m_cbvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 }
@@ -157,11 +190,14 @@ void WindowManager::CreateDescriptorHeaps()
 // Create frame resources (render targets).
 void WindowManager::CreateFrameResources()
 {
+    //for checking result
+    HRESULT hr;
+
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-        ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+        GFX_THROW_INFO(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
         m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);
         rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
@@ -170,7 +206,10 @@ void WindowManager::CreateFrameResources()
 // Create a command allocator.
 void WindowManager::CreateCommandAllocator()
 {
-    ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
+    //for checking result
+    HRESULT hr;
+
+    GFX_THROW_INFO(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
 
 #pragma endregion SOUS_FONCTIONS_LOAD_PIPELINE
@@ -178,6 +217,9 @@ void WindowManager::CreateCommandAllocator()
 // Load the sample assets.
 void WindowManager::LoadAssets()
 {
+    //for checking result
+    HRESULT hr;
+
     // Create an empty root signature.
     {
         CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
@@ -185,8 +227,8 @@ void WindowManager::LoadAssets()
 
         ID3DBlob* signature;
         ID3DBlob* error;
-        ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+        GFX_THROW_INFO(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
+        GFX_THROW_INFO(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
     }
 
     // Create the pipeline state, which includes compiling and loading shaders.
@@ -201,8 +243,8 @@ void WindowManager::LoadAssets()
         UINT compileFlags = 0;
 #endif
 
-        ThrowIfFailed(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-        ThrowIfFailed(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
         // Define the vertex input layout.
         D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
@@ -226,7 +268,7 @@ void WindowManager::LoadAssets()
         psoDesc.NumRenderTargets = 1;
         psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
         psoDesc.SampleDesc.Count = 1;
-        ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+        GFX_THROW_INFO(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
     }
 
     // Create the command list.
@@ -234,14 +276,14 @@ void WindowManager::LoadAssets()
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.
-    ThrowIfFailed(m_commandList->Close());
+    GFX_THROW_INFO(m_commandList->Close());
 
     // Create the vertex buffer.
     {
         auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
         auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(Vertex));
 
-        ThrowIfFailed(m_device->CreateCommittedResource(
+        GFX_THROW_INFO(m_device->CreateCommittedResource(
             &tmp1,
             D3D12_HEAP_FLAG_NONE,
             &tmp2,
@@ -261,14 +303,14 @@ void WindowManager::LoadAssets()
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
-        ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+        GFX_THROW_INFO(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
         m_fenceValue = 1;
 
         // Create an event handle to use for frame synchronization.
         m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
         if (m_fenceEvent == nullptr)
         {
-            ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+            GFX_THROW_INFO(HRESULT_FROM_WIN32(GetLastError()));
         }
 
         // Wait for the command list to execute; we are reusing the same command 
@@ -281,6 +323,10 @@ void WindowManager::LoadAssets()
 // Update frame-based values.
 void WindowManager::OnUpdate()
 {
+    //for checking result
+    HRESULT hr;
+
+
     m_vertices.clear();
 
     for (GameObject* go : m_gameObjects)
@@ -301,7 +347,7 @@ void WindowManager::OnUpdate()
     // Copy the triangle data to the vertex buffer.
     UINT8* pVertexDataBegin;
     CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    GFX_THROW_INFO(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
     memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
     m_vertexBuffer->Unmap(0, nullptr);
 
@@ -317,6 +363,11 @@ void WindowManager::OnUpdate()
 // Render the scene.
 void WindowManager::OnRender()
 {
+
+    //for checking result
+    HRESULT hr;
+
+
     // Record all the commands we need to render the scene into the command list.
     PopulateCommandList();
 
@@ -325,7 +376,7 @@ void WindowManager::OnRender()
     m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
     // Present the frame.
-    ThrowIfFailed(m_swapChain->Present(1, 0));
+    GFX_THROW_INFO(m_swapChain->Present(1, 0));
 
     WaitForPreviousFrame();
 }
@@ -341,15 +392,19 @@ void WindowManager::OnDestroy()
 
 void WindowManager::PopulateCommandList()
 {
+    //for checking result
+    HRESULT hr;
+
+
     // Command list allocators can only be reset when the associated 
     // command lists have finished execution on the GPU; apps should use 
     // fences to determine GPU execution progress.
-    ThrowIfFailed(m_commandAllocator->Reset());
+    GFX_THROW_INFO(m_commandAllocator->Reset());
 
     // However, when ExecuteCommandList() is called on a particular command 
     // list, that command list can then be reset at any time and must be before 
     // re-recording.
-    ThrowIfFailed(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+    GFX_THROW_INFO(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
@@ -374,11 +429,14 @@ void WindowManager::PopulateCommandList()
     auto tmp2 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     m_commandList->ResourceBarrier(1, &tmp2);
 
-    ThrowIfFailed(m_commandList->Close());
+    GFX_THROW_INFO(m_commandList->Close());
 }
 
 void WindowManager::WaitForPreviousFrame()
-{
+{  //for checking result
+    HRESULT hr;
+
+
     // WAITING FOR THE FRAME TO COMPLETE BEFORE CONTINUING IS NOT BEST PRACTICE.
     // This is code implemented as such for simplicity. The D3D12HelloFrameBuffering
     // sample illustrates how to use fences for efficient resource usage and to
@@ -386,13 +444,13 @@ void WindowManager::WaitForPreviousFrame()
 
     // Signal and increment the fence value.
     const UINT64 fence = m_fenceValue;
-    ThrowIfFailed(m_commandQueue->Signal(m_fence, fence));
+    GFX_THROW_INFO(m_commandQueue->Signal(m_fence, fence));
     m_fenceValue++;
 
     // Wait until the previous frame is finished.
     if (m_fence->GetCompletedValue() < fence)
     {
-        ThrowIfFailed(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
+        GFX_THROW_INFO(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
         WaitForSingleObject(m_fenceEvent, INFINITE);
     }
 
@@ -478,4 +536,117 @@ void WindowManager::GetHardwareAdapter(
 void WindowManager::AddGameObject(GameObject* go)
 {
     m_gameObjects.push_back(go);
+}
+
+
+
+
+
+WindowManager::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept : Exception(line, file), hr(hr)
+{
+    // join all info messages with newlines into single string
+    for (const auto& m : infoMsgs)
+    {
+        info += m;
+        info.push_back('\n');
+    }
+    // remove final newline if exists
+    if (!info.empty())
+    {
+        info.pop_back();
+    }
+}
+
+const char* WindowManager::HrException::what() const noexcept
+{
+    std::ostringstream oss;
+    oss << GetType() << std::endl
+        << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+        << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+        << "[Error String] " << GetErrorString() << std::endl
+        << "[Description] " << GetErrorDescription() << std::endl;
+    if (!info.empty())
+    {
+        oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+    }
+    oss << GetOriginString();
+    whatBuffer = oss.str();
+    return whatBuffer.c_str();
+}
+
+const char* WindowManager::HrException::GetType() const noexcept
+{
+    return "Graphics Exception";
+}
+
+
+HRESULT WindowManager::HrException::GetErrorCode() const noexcept
+{
+    return hr;
+}
+
+std::string WindowManager::HrException::GetErrorString() const noexcept
+{
+    std::wstring wStr = DXGetErrorString(hr);
+
+    int length = WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string result(length, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wStr.c_str(), -1, &result[0], length, nullptr, nullptr);
+
+    return result;
+}
+
+
+std::string WindowManager::HrException::GetErrorDescription() const noexcept
+{
+    char buf[512];
+    DXGetErrorDescription(hr, convertCharArrayToLPCWSTR(buf), sizeof(buf));
+    return buf;
+}
+
+std::string WindowManager::HrException::GetErrorInfo() const noexcept
+{
+    return info;
+}
+
+const char* WindowManager::DeviceRemovedException::GetType() const noexcept
+{
+    return "Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
+}
+
+WindowManager::InfoException::InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept
+    :
+    Exception(line, file)
+{
+    // join all info messages with newlines into single string
+    for (const auto& m : infoMsgs)
+    {
+        info += m;
+        info.push_back('\n');
+    }
+    // remove final newline if exists
+    if (!info.empty())
+    {
+        info.pop_back();
+    }
+}
+
+const char* WindowManager::InfoException::what() const noexcept
+{
+    std::ostringstream oss;
+    oss << GetType() << std::endl
+        << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+    oss << GetOriginString();
+    whatBuffer = oss.str();
+    return whatBuffer.c_str();
+}
+
+const char* WindowManager::InfoException::GetType() const noexcept
+{
+    return "Graphics Info Exception";
+}
+
+std::string WindowManager::InfoException::GetErrorInfo() const noexcept
+{
+    return info;
 }

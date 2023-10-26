@@ -16,6 +16,9 @@
     <Filter Include="Fichiers de ressources\Shaders">
       <UniqueIdentifier>{ea73b7e9-ae3c-45cb-beb0-1eb3a04b992a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dxerr">
+      <UniqueIdentifier>{c5068b3c-b098-4d67-a2a0-afcaea543c29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -31,6 +34,15 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineException.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="dxerr.cpp">
+      <Filter>Dxerr</Filter>
+    </ClCompile>
+    <ClCompile Include="DxgiInfoManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +65,30 @@
     <ClInclude Include="GameObject.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="EngineException.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="dxerr.h">
+      <Filter>Dxerr</Filter>
+    </ClInclude>
+    <ClInclude Include="DxgiInfoManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders.hlsl">
       <Filter>Fichiers de ressources\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DXGetErrorDescription.inl">
+      <Filter>Dxerr</Filter>
+    </None>
+    <None Include="DXGetErrorString.inl">
+      <Filter>Dxerr</Filter>
+    </None>
+    <None Include="DXTrace.inl">
+      <Filter>Dxerr</Filter>
+    </None>
   </ItemGroup>
 </Project>

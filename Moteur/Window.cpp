@@ -1,5 +1,8 @@
 ﻿#include "stdafx.h"
 #include "Window.h"
+#include <sstream>
+
+
 
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
@@ -41,7 +44,9 @@ void Window::Start()
 	winRect.right = m_x + m_width;
 	winRect.top = m_y;
 	winRect.bottom = m_y + m_height;
-	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
+	if (AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)) {
+		throw EHWND_LAST_EXCEPT();
+	};// (voir readme Windows.h)
 
 	// Cr�ation de la fen�tre
 	m_hWnd = CreateWindow(
@@ -128,4 +133,59 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
+}
+
+
+//Exception Stuff
+Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept : Exception(line, file), hr(hr)
+{
+}
+const char* Window::HrException::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+		<< "[Description] " << GetErrorDescription() << std::endl
+		<< GetOriginString();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+const char* Window::HrException::GetType() const noexcept
+{
+	return "Engine Window Exception";
+}
+
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+{
+	char* pMsgBuf = nullptr;
+	DWORD nMsgLen = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		WindowManager::convertCharArrayToLPCWSTR(pMsgBuf), 0, nullptr
+	);
+	if (nMsgLen == 0) {
+		return "Unidentified error code";
+	}
+	std::string errorString = pMsgBuf;
+	LocalFree(pMsgBuf);
+	return errorString;
+}
+
+HRESULT Window::HrException::GetErrorCode() const noexcept
+{
+	return hr;
+}
+
+const char* Window::NoGfxException::GetType() const noexcept
+{
+	return "Window Exception [No Graphics]";
+}
+
+
+std::string Window::HrException::GetErrorDescription() const noexcept
+{
+	return Exception::TranslateErrorCode(hr);
 }
