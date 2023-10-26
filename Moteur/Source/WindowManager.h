@@ -60,8 +60,6 @@ private:
     static std::vector<GameObject*> m_gameObjects;
     std::vector<Vertex> m_vertices = { {  } };
 
-    std::wstring GetAssetFullPath(LPCWSTR assetName);
-
     void GetHardwareAdapter(
         _In_ IDXGIFactory1* pFactory,
         _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,

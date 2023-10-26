@@ -344,13 +344,6 @@ void WindowManager::WaitForPreviousFrame()
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
-
-// Helper function for resolving the full path of assets.
-std::wstring WindowManager::GetAssetFullPath(LPCWSTR assetName)
-{
-    return m_assetsPath + assetName;
-}
-
 // Helper function for acquiring the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
 _Use_decl_annotations_
