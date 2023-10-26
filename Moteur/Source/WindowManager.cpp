@@ -212,7 +212,7 @@ void WindowManager::LoadAssets()
 
 
         auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(vertexBufferSize));
+        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
 
         ThrowIfFailed(m_device->CreateCommittedResource(
             &tmp1,
@@ -234,6 +234,40 @@ void WindowManager::LoadAssets()
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
         m_vertexBufferView.SizeInBytes = vertexBufferSize;
     }
+
+    // Création constant buffer
+    //{
+    //    struct ConstantBufferData
+    //    {
+    //        DirectX::XMFLOAT4X4 WorldViewProj;
+    //    };
+
+    //    const UINT constBufferSize = sizeof(ConstantBufferData);
+
+
+    //    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    //    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(constBufferSize));
+
+    //    ThrowIfFailed(m_device->CreateCommittedResource(
+    //        &tmp1,
+    //        D3D12_HEAP_FLAG_NONE,
+    //        &tmp2,
+    //        D3D12_RESOURCE_STATE_GENERIC_READ,
+    //        nullptr,
+    //        IID_PPV_ARGS(&m_vertexBuffer)));
+
+    //    // Copy the triangle data to the vertex buffer.
+    //    UINT8* pVertexDataBegin;
+    //    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
+    //    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    //    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
+    //    m_vertexBuffer->Unmap(0, nullptr);
+
+    //    // Initialize the vertex buffer view.
+    //    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    //    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+    //    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+    //}
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
