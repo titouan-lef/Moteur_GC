@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include "framwork.h"
 #include "Window.h"
 #include <sstream>
 

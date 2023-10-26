@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WindowManager.h"
 #include <sstream>
 #include <string>
@@ -94,8 +93,20 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 
 
     UINT dxgiFactoryFlags = 0;
+
 #if defined(_DEBUG)
-    dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+    // Enable the debug layer (requires the Graphics Tools "optional feature").
+    // NOTE: Enabling the debug layer after device creation will invalidate the active device.
+    {
+        ID3D12Debug* debugController;
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+        {
+            debugController->EnableDebugLayer();
+
+            // Enable additional debug layers.
+            dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+        }
+    }
 #endif
 
     IDXGIFactory4* factory;
@@ -111,14 +122,12 @@ void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
     
     if (m_useWarpDevice)
     {
-        // Use the WARP (Software) adapter.
         IDXGIAdapter* warpAdapter;
         GFX_THROW_INFO_ONLY(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
         GFX_THROW_INFO_ONLY(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
     else
     {
-        // Use a hardware (GPU) adapter.
         IDXGIAdapter1* hardwareAdapter;
         GetHardwareAdapter(factory, &hardwareAdapter);
         GFX_THROW_INFO_ONLY(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
@@ -157,7 +166,6 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
-}
 
 // Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
@@ -172,7 +180,7 @@ void WindowManager::CreateDescriptorHeaps()
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
-    cbvHeapDesc.NumDescriptors = 1; // Le nombre de vues de ressource constante que vous prévoyez d'utiliser.
+    cbvHeapDesc.NumDescriptors = 1; // Le nombre de vues de ressource constante que vous prï¿½voyez d'utiliser.
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; // Pour que le tas soit visible depuis les shaders.
 
@@ -203,8 +211,6 @@ void WindowManager::CreateCommandAllocator()
 
     GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
-
-#pragma endregion SOUS_FONCTIONS_LOAD_PIPELINE
 
 // Load the sample assets.
 void WindowManager::LoadAssets()
@@ -263,7 +269,7 @@ void WindowManager::LoadAssets()
     }
 
     // Create the command list.
-    (m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.
@@ -282,15 +288,6 @@ void WindowManager::LoadAssets()
             nullptr,
             IID_PPV_ARGS(&m_vertexBuffer)));
     }
-
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-    cbvDesc.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress(); // Emplacement mémoire du tampon
-    cbvDesc.SizeInBytes = 256; // Taille du tampon de constante
-
-    // Créez un descripteur CPU pour la vue de ressource constante
-    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_cbvHeap->GetCPUDescriptorHandleForHeapStart());
-    m_device->CreateConstantBufferView(&cbvDesc, cbvHandle);
-
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
@@ -322,7 +319,6 @@ void WindowManager::OnUpdate()
 
     for (GameObject* go : m_gameObjects)
     {
-        
         const std::vector<Vertex> vertices = go->GetVertices();
 
         for (Vertex vertex : vertices)
@@ -333,7 +329,6 @@ void WindowManager::OnUpdate()
     }
 
     const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
-
 
     // Copy the triangle data to the vertex buffer.
     UINT8* pVertexDataBegin;
@@ -346,9 +341,6 @@ void WindowManager::OnUpdate()
     m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
     m_vertexBufferView.StrideInBytes = sizeof(Vertex);
     m_vertexBufferView.SizeInBytes = vertexBufferSize;
-
-
-
 }
 
 // Render the scene.

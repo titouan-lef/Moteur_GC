@@ -18,6 +18,31 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Component.h" />
+    <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\Entity.h" />
+    <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\TestTransform.h" />
+    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\WindowManager.h" />
+    <ClInclude Include="Source\WindowManagerHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Component.cpp" />
+    <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\TestTransform.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\WindowManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shaders.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -143,6 +168,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>framwork.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
