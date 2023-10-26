@@ -20,6 +20,7 @@ public:
 	void inline SetScale(float mod) { Scale = XMFLOAT3(Scale.x * mod, Scale.y * mod, Scale.z * mod); }
 	// Retourne la matrice de transformation
 	XMMATRIX inline GetMatrix() { return XMLoadFloat4x4(&Matrix); }
+	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
 #pragma endregion
 
 	// Déplace la position en fonction d'un vecteur

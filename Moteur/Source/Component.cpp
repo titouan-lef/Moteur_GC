@@ -4,10 +4,10 @@ Component::Component()
 {
 	m_isDirty = false;
 	m_isActive = true;
-	m_entity = nullptr;
+	m_owner = nullptr;
 }
 
 Component::~Component()
 {
-	delete m_entity;
+	delete m_owner;
 }

@@ -13,7 +13,7 @@ Transform::Transform()
 
 void Transform::Update()
 {
-	if (IsDirty)
+	if (m_isDirty)
 	{
 		UpdateMatrix();
 		m_isDirty = false;
@@ -25,6 +25,7 @@ void Transform::MoveByVector(XMFLOAT3 vec)
 	Position.x += vec.x;
 	Position.y += vec.y;
 	Position.z += vec.z;
+	m_isDirty = true;
 }
 
 void Transform::Identity()
@@ -47,22 +48,26 @@ void Transform::Rotate(float pitch, float yaw, float roll)
 {
 	// Effectue une rotation à partir des angles yaw, pitch et roll
 	XMStoreFloat4(&RotationQuat, XMQuaternionRotationRollPitchYaw(pitch, yaw, roll));
+	m_isDirty = true;
 }
 
 void Transform::RotateYaw(float angle)
 {
 	// Effectue une rotation autour de l'axe Z
 	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Dir), angle));
+	m_isDirty = true;
 }
 
 void Transform::RotatePitch(float angle)
 {
 	// Effectue une rotation autour de l'axe Y
 	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Right), angle));
+	m_isDirty = true;
 }
 
 void Transform::RotateRoll(float angle)
 {
 	// Effectue une rotation autour de l'axe X
 	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Up), angle));
+	m_isDirty = true;
 }
