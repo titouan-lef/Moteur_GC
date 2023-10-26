@@ -41,10 +41,13 @@ private:
     ID3D12CommandQueue* m_commandQueue = nullptr;
     ID3D12RootSignature* m_rootSignature = nullptr;
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;
+    ID3D12DescriptorHeap* m_cbvHeap = nullptr;
+
+
     ID3D12PipelineState* m_pipelineState = nullptr;
     ID3D12GraphicsCommandList* m_commandList = nullptr;
     UINT m_rtvDescriptorSize;
-
+    UINT m_cbvDescriptorSize;
     // App resources.
     ID3D12Resource* m_vertexBuffer = nullptr;
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
@@ -70,6 +73,20 @@ private:
     void LoadAssets();
     void PopulateCommandList();
     void WaitForPreviousFrame();
+
+    void SetupDebugLayer();
+
+
+    void CreateD3DDevice(IDXGIFactory4* factory);
+    IDXGIFactory4* CreateDXGIFactory();
+    void CreateCommandQueue();
+
+    void CreateSwapChain(HWND hWnd,UINT width, UINT height, IDXGIFactory4* factory);
+
+    void CreateDescriptorHeaps();
+    void CreateFrameResources();
+
+    void CreateCommandAllocator();
 
 };
 
