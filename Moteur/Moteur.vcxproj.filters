@@ -21,10 +21,10 @@
       <UniqueIdentifier>{220c69e5-24a6-4533-9d1a-4ad2ff80887b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\header">
-      <UniqueIdentifier>{53cda7db-b1bb-44ec-8a3e-79c964866d7f}</UniqueIdentifier>
+      <UniqueIdentifier>{fa6e2033-2e9a-4745-b469-34b5aa16611d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\cpp">
-      <UniqueIdentifier>{8b480108-5bd0-4849-9265-c22bed3e1005}</UniqueIdentifier>
+      <UniqueIdentifier>{6257e815-027b-45a9-8487-f48263ac60ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +55,12 @@
     <ClInclude Include="Source\WindowManagerHelper.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Transform.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MeshRenderer.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -77,6 +83,12 @@
     </ClCompile>
     <ClCompile Include="Source\Main.cpp">
       <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Transform.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshRenderer.cpp">
+      <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
