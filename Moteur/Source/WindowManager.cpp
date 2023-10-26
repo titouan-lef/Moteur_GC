@@ -1,4 +1,5 @@
 #include "WindowManager.h"
+#include "Entity.h"
 
 std::vector<GameObject*> WindowManager::m_gameObjects;
 
@@ -138,7 +139,7 @@ void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 void WindowManager::LoadAssets()
 {
     // Create an empty root signature.
-    {
+    /*{
         CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
         rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -146,7 +147,48 @@ void WindowManager::LoadAssets()
         ID3DBlob* error;
         ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
         ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+    }*/
+
+
+    {
+        // Root parameter can be a table, root descriptor or root constants.
+        CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+
+        // Create a single descriptor table of CBVs.
+        CD3DX12_DESCRIPTOR_RANGE cbvTable;
+        cbvTable.Init(
+            D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+            1, // Number of descriptors in table
+            0);// base shader register arguments are bound to for this root parameter
+
+        slotRootParameter[0].InitAsDescriptorTable(
+            1, // Number of ranges
+            &cbvTable); // Pointer to array of ranges
+
+        // A root signature is an array of root parameters.
+        CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0,
+            nullptr,
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+        // create a root signature with a single slot which points to a 
+        // descriptor range consisting of a single constant buffer.
+        ID3DBlob* serializedRootSig = nullptr;
+        ID3DBlob* errorBlob = nullptr;
+        HRESULT hr = D3D12SerializeRootSignature(
+            &rootSigDesc,
+            D3D_ROOT_SIGNATURE_VERSION_1,
+            &serializedRootSig,
+            &errorBlob
+        );
+
+        ThrowIfFailed(m_device->CreateRootSignature(
+            0,
+            serializedRootSig->GetBufferPointer(),
+            serializedRootSig->GetBufferSize(),
+            IID_PPV_ARGS(&m_rootSignature))
+        );
     }
+    
 
     // Create the pipeline state, which includes compiling and loading shaders.
     {
@@ -236,38 +278,51 @@ void WindowManager::LoadAssets()
     }
 
     // Création constant buffer
-    //{
-    //    struct ConstantBufferData
-    //    {
-    //        DirectX::XMFLOAT4X4 WorldViewProj;
-    //    };
+    {
+        Entity e = Entity();
 
-    //    const UINT constBufferSize = sizeof(ConstantBufferData);
+        struct ConstantBufferData
+        {
+            DirectX::XMFLOAT4X4 World;
+        };
+
+        ConstantBufferData constBufferData;
+        constBufferData.World = e.m_Transform.GetMat();
+
+        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
 
 
-    //    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    //    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(sizeof(constBufferSize));
+        auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
 
-    //    ThrowIfFailed(m_device->CreateCommittedResource(
-    //        &tmp1,
-    //        D3D12_HEAP_FLAG_NONE,
-    //        &tmp2,
-    //        D3D12_RESOURCE_STATE_GENERIC_READ,
-    //        nullptr,
-    //        IID_PPV_ARGS(&m_vertexBuffer)));
+        ThrowIfFailed(m_device->CreateCommittedResource(
+            &tmp1,
+            D3D12_HEAP_FLAG_NONE,
+            &tmp2,
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(&m_constBuffer)));
 
-    //    // Copy the triangle data to the vertex buffer.
-    //    UINT8* pVertexDataBegin;
-    //    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    //    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
-    //    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
-    //    m_vertexBuffer->Unmap(0, nullptr);
+        // Copy the triangle data to the vertex buffer.
+        BYTE* mappedConstData = nullptr;
+        ThrowIfFailed(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
+        memcpy(mappedConstData, &constBufferData, constBufferSize);
+        m_constBuffer->Unmap(0, nullptr);
 
-    //    // Initialize the vertex buffer view.
-    //    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    //    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    //    m_vertexBufferView.SizeInBytes = vertexBufferSize;
-    //}
+        D3D12_GPU_VIRTUAL_ADDRESS cbAddress = m_constBuffer->GetGPUVirtualAddress();
+        // Offset to the ith object constant buffer in the buffer.
+        int boxCBufIndex = 0;
+        cbAddress += boxCBufIndex * constBufferSize;
+        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+        cbvDesc.BufferLocation = cbAddress;
+
+        cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255;
+
+        m_device->CreateConstantBufferView(
+            &cbvDesc,
+            m_rtvHeap->GetCPUDescriptorHandleForHeapStart()
+        );
+    }
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
     {
@@ -344,6 +399,20 @@ void WindowManager::PopulateCommandList()
 
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
+
+    /************/
+    //ID3D12DescriptorHeap* descriptorHeaps[] = { m_rtvHeap };
+
+    //m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+    // Offset the CBV we want to use for this draw call.
+    //CD3DX12_GPU_DESCRIPTOR_HANDLE cbv(m_rtvHeap->GetGPUDescriptorHandleForHeapStart());
+    //cbv.Offset(0, 1);
+    //m_commandList->SetGraphicsRootDescriptorTable(0, rtvHandle);
+    /*****************/
+
+
+
     m_commandList->RSSetViewports(1, &m_viewport);
     m_commandList->RSSetScissorRects(1, &m_scissorRect);
 

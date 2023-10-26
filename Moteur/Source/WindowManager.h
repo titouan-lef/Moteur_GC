@@ -50,6 +50,8 @@ private:
     ID3D12Resource* m_vertexBuffer = nullptr;
     D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
 
+    ID3D12Resource* m_constBuffer = nullptr;
+
     // Synchronization objects.
     UINT m_frameIndex = -1;
     HANDLE m_fenceEvent = {};

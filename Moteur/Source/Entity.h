@@ -33,6 +33,7 @@ struct TRANSFORM
 	void SetScale(float mul) { Scale = XMFLOAT3(Scale.x*mul, Scale.y*mul, Scale.z*mul); }
 	// Retourne la matrice de transformation
 	XMMATRIX GetMatrix() { return XMLoadFloat4x4(&Matrix); }
+	XMFLOAT4X4 GetMat() { return Matrix;  }// TO DO A supprimer
 	// Retourne la matrice de rotation
 	XMMATRIX* GetRotationMatrix() { return &RotationMatrix; }
 #pragma endregion
