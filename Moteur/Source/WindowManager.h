@@ -94,9 +94,6 @@ private:
     // Adapter info.
     bool m_useWarpDevice;
 
-    // Root assets path.
-    std::wstring m_assetsPath;
-
     // Pipeline objects.
     CD3DX12_VIEWPORT m_viewport = {};
     CD3DX12_RECT m_scissorRect = {};

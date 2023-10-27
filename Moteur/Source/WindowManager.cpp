@@ -28,10 +28,6 @@ WindowManager::WindowManager(UINT width, UINT height) :
     m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)),
     m_rtvDescriptorSize(0)
 {
-    WCHAR assetsPath[512];
-    GetAssetsPath(assetsPath, _countof(assetsPath));
-    m_assetsPath = assetsPath;
-
     m_aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
