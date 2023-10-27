@@ -26,6 +26,9 @@
     <Filter Include="Public\cpp">
       <UniqueIdentifier>{8b480108-5bd0-4849-9265-c22bed3e1005}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\header\dxerr">
+      <UniqueIdentifier>{1d0c965c-4254-49fc-adeb-d5ea5ad16052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Component.h">
@@ -55,6 +58,18 @@
     <ClInclude Include="Source\WindowManagerHelper.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DxgiInfoManager.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EngineException.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\App.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dxerr.h">
+      <Filter>Private\header\dxerr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -78,10 +93,33 @@
     <ClCompile Include="Source\Main.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+    <ClCompile Include="Source\App.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DxgiInfoManager.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EngineException.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dxerr.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\shaders.hlsl">
       <Filter>Ressources\Shaders</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\DXGetErrorDescription.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
+    <None Include="Source\DXGetErrorString.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
+    <None Include="Source\DXTrace.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
   </ItemGroup>
 </Project>
