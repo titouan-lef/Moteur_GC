@@ -1,6 +1,7 @@
 ﻿#include "framwork.h"
 #include "Window.h"
 #include <sstream>
+#include "MyException.h"
 
 
 WindowManager* Window::m_pWinManager = nullptr;
@@ -232,7 +233,7 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		WindowManager::convertCharArrayToLPCWSTR(pMsgBuf), 0, nullptr
+		MyException::convertCharArrayToLPCWSTR(pMsgBuf), 0, nullptr
 	);
 	if (nMsgLen == 0) {
 		return "Unidentified error code";

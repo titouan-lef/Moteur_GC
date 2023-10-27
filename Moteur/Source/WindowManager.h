@@ -1,47 +1,9 @@
 #pragma once
 #include "framwork.h"
-#include "EngineException.h"
 #include "DxgiInfoManager.h"
+
 class WindowManager
 {
-public:
-#pragma region EXCEPTION
-   class Exception : public EngineException {
-        using EngineException::EngineException;
-    };
-    class HrException : public Exception {
-    public:
-        HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
-        const char* what() const noexcept override;
-        const char* GetType() const noexcept override;
-        HRESULT GetErrorCode() const noexcept;
-        std::string GetErrorString() const noexcept;
-        std::string GetErrorDescription() const noexcept;
-        std::string GetErrorInfo() const noexcept;
-        std::string func;
-        int m_line;
-    private:
-        HRESULT hr;
-        std::string info;
-    };
-    class InfoException : public Exception
-    {
-    public:
-        InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
-        const char* what() const noexcept override;
-        const char* GetType() const noexcept override;
-        std::string GetErrorInfo() const noexcept;
-    private:
-        std::string info;
-    };
-    class DeviceRemovedException : public HrException {
-        using HrException::HrException;
-    public:
-        const char* GetType()const noexcept override;
-    private:
-        std::string reason;
-    };
-#pragma endregion EXCEPTION
 public:
     WindowManager(UINT width, UINT height);
     virtual ~WindowManager();
@@ -55,21 +17,6 @@ public:
     virtual void OnKeyDown(UINT8 /*key*/) {}
     virtual void OnKeyUp(UINT8 /*key*/) {}
 
-    static wchar_t* convertCharArrayToLPCWSTR(const char* charArray)
-    {
-        wchar_t* wString = new wchar_t[4096];
-        MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
-        return wString;
-    };
-    static std::string ConvertWStringToString(const wchar_t* wString)
-    {
-        int numChars = WideCharToMultiByte(CP_UTF8, 0, wString, -1, NULL, 0, NULL, NULL);
-        char* buf = new char[numChars];
-        WideCharToMultiByte(CP_UTF8, 0, wString, -1, buf, numChars, NULL, NULL);
-        std::string strResult(buf);
-        delete[] buf;
-        return strResult;
-    }
     static std::string ConvertWCharTToString(const wchar_t* wcharArray)
     {
         // Obtenir la taille nécessaire pour la chaîne de destination
@@ -86,6 +33,7 @@ private:
 #ifndef  NDEBUG
     DxgiInfoManager infoManager;
 #endif // ! NDEBUG
+
     static const UINT FrameCount = 2;
 
     // Viewport dimensions.

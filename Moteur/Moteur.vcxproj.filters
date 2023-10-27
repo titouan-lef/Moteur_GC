@@ -70,6 +70,9 @@
     <ClInclude Include="Source\dxerr.h">
       <Filter>Private\header\dxerr</Filter>
     </ClInclude>
+    <ClInclude Include="Source\MyException.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -103,6 +106,9 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\dxerr.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MyException.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
