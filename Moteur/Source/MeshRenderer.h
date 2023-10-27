@@ -1,4 +1,4 @@
-#include "Component.h"
+#pragma once
 
 class MeshRenderer : public Component
 {

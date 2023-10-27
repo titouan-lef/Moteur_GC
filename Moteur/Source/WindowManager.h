@@ -1,7 +1,4 @@
 #pragma once
-#include "framwork.h"
-#include "WindowManagerHelper.h"
-#include "GameObject.h"
 
 class WindowManager
 {
@@ -17,8 +14,6 @@ public:
     // Samples override the event handlers to handle specific messages.
     virtual void OnKeyDown(UINT8 /*key*/) {}
     virtual void OnKeyUp(UINT8 /*key*/) {}
-
-    static void AddGameObject(GameObject* go);
 
 private:
     static const UINT FrameCount = 2;
@@ -55,10 +50,6 @@ private:
     HANDLE m_fenceEvent = {};
     ID3D12Fence* m_fence = {};
     UINT64 m_fenceValue = -1;
-
-    // Gestion des vertices
-    static std::vector<GameObject*> m_gameObjects;
-    std::vector<Vertex> m_vertices = { {  } };
 
     std::wstring GetAssetFullPath(LPCWSTR assetName);
 

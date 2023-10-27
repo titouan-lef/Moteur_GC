@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\d3dx12.h" />
     <ClInclude Include="Source\Entity.h" />
@@ -32,6 +33,7 @@
     <ClInclude Include="Source\WindowManagerHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />

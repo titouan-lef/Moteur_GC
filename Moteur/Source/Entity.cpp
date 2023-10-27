@@ -1,5 +1,6 @@
+#include "framwork.h"
+#include "Component.h"
 #include "Entity.h"
-#include <EventSys.h>
 
 Entity::Entity()
 {

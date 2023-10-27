@@ -9,6 +9,7 @@ Transform::Transform()
 	RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	Matrix = XMFLOAT4X4();
+	m_isDirty = true;
 }
 
 void Transform::Update()

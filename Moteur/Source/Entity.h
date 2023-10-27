@@ -1,9 +1,8 @@
 #pragma once
 
 #include "framwork.h"
-#include "Component.h"
 
-using namespace DirectX;
+class Component;
 
 class Entity
 {
@@ -16,11 +15,11 @@ public:
 	std::vector<Entity*> m_Children;
 	std::vector<Component*> m_Components;
 
-	virtual void Init() = 0;
-	virtual void Update() = 0;
-	virtual void PostUpdate() = 0;
-	virtual void Render() = 0;
-	virtual void OnDestroy() = 0;
+	virtual void Init();
+	virtual void Update();
+	virtual void PostUpdate();
+	virtual void Render();
+	virtual void OnDestroy();
 
 	void AddChild(Entity* child);
 	void AddComponent(Component* component);

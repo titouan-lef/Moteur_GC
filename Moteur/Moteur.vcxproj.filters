@@ -61,6 +61,9 @@
     <ClInclude Include="Source\MeshRenderer.h">
       <Filter>Public\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -88,6 +91,9 @@
       <Filter>Public\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\MeshRenderer.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>

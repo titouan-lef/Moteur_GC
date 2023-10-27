@@ -1,4 +1,5 @@
 ﻿#include "framwork.h"
+#include "WindowManager.h"
 #include "Window.h"
 
 /*

@@ -1,6 +1,6 @@
+#include "framwork.h"
+#include "WindowManagerHelper.h"
 #include "WindowManager.h"
-
-std::vector<GameObject*> WindowManager::m_gameObjects;
 
 WindowManager::WindowManager(UINT width, UINT height) :
     m_useWarpDevice(false),
@@ -18,7 +18,6 @@ WindowManager::WindowManager(UINT width, UINT height) :
 
 WindowManager::~WindowManager()
 {
-    m_vertices.clear();
 }
 
 void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
@@ -231,32 +230,32 @@ void WindowManager::LoadAssets()
 // Update frame-based values.
 void WindowManager::OnUpdate()
 {
-    m_vertices.clear();
+    //m_vertices.clear();
 
-    for (GameObject* go : m_gameObjects)
-    {
-        const std::vector<Vertex> vertices = go->GetVertices();
+    //for (GameObject* go : m_gameObjects)
+    //{
+    //    const std::vector<Vertex> vertices = go->GetVertices();
 
-        for (Vertex vertex : vertices)
-        {
-            vertex.m_position.y *= m_aspectRatio;
-            m_vertices.push_back(vertex);
-        }
-    }
+    //    for (Vertex vertex : vertices)
+    //    {
+    //        vertex.m_position.y *= m_aspectRatio;
+    //        m_vertices.push_back(vertex);
+    //    }
+    //}
 
-    const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+    //const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
 
-    // Copy the triangle data to the vertex buffer.
-    UINT8* pVertexDataBegin;
-    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
-    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
-    m_vertexBuffer->Unmap(0, nullptr);
+    //// Copy the triangle data to the vertex buffer.
+    //UINT8* pVertexDataBegin;
+    //CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
+    //ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    //memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
+    //m_vertexBuffer->Unmap(0, nullptr);
 
-    // Initialize the vertex buffer view.
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+    //// Initialize the vertex buffer view.
+    //m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    //m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+    //m_vertexBufferView.SizeInBytes = vertexBufferSize;
 }
 
 // Render the scene.
@@ -313,7 +312,7 @@ void WindowManager::PopulateCommandList()
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    m_commandList->DrawInstanced(m_vertices.size(), 1, 0, 0);
+    //m_commandList->DrawInstanced(m_vertices.size(), 1, 0, 0);
 
     // Indicate that the back buffer will now be used to present.
     auto tmp2 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
@@ -417,10 +416,4 @@ void WindowManager::GetHardwareAdapter(
     }
 
     *ppAdapter = adapter;
-}
-
-
-void WindowManager::AddGameObject(GameObject* go)
-{
-    m_gameObjects.push_back(go);
 }

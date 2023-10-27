@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "WindowManager.h"
 
 class Window
 {

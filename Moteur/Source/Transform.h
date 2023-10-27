@@ -1,6 +1,8 @@
+#pragma once
+
 #include "Component.h"
 
-class Transform : Component
+class Transform : public Component
 {
 public:
 	Transform();
@@ -13,6 +15,8 @@ public:
 	XMFLOAT3 inline GetPosition() { return Position; }
 	// Retourne l'echelle
 	XMFLOAT3 inline GetScale() { return Scale; }
+	// Retourne si l'entite est en mouvement
+	bool inline IsDirty() { return m_isDirty; }
 	// Change la position
 	void inline SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }
 	// Change l'echelle
