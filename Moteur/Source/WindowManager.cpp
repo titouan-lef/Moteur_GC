@@ -23,60 +23,39 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 // Load the rendering pipeline dependencies.
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
-    // Enable the debug layer if in debug mode.
+    #if defined(_DEBUG)
     SetupDebugLayer();
+    #endif
 
-    // Create a DXGI factory.
     IDXGIFactory4* factory = CreateDXGIFactory();
-
-    // Create the Direct3D device.
     CreateD3DDevice(factory);
-
-    // Create the command queue.
     CreateCommandQueue();
-
-    // Create and configure the swap chain.
     CreateSwapChain(hWnd, width, height, factory);
-
-    // Create descriptor heaps.
     CreateDescriptorHeaps();
-
-    // Create frame resources (render targets).
     CreateFrameResources();
-
-    // Create a command allocator.
     CreateCommandAllocator();
 }
 
 #pragma region LoadPipelineFunction
-
-// Enable the Direct3D debug layer (only in debug mode).
 void WindowManager::SetupDebugLayer()
 {
-    #if defined(_DEBUG)
     ID3D12Debug* debugController;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
     {
         debugController->EnableDebugLayer();
     }
-    #endif
 }
 
-// Create a DXGI factory.
 IDXGIFactory4* WindowManager::CreateDXGIFactory()
 {
     UINT dxgiFactoryFlags = 0;
 
     #if defined(_DEBUG)
-    // Enable the debug layer (requires the Graphics Tools "optional feature").
-    // NOTE: Enabling the debug layer after device creation will invalidate the active device.
     {
         ID3D12Debug* debugController;
         if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
         {
             debugController->EnableDebugLayer();
-
-            // Enable additional debug layers.
             dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
         }
     }
@@ -88,14 +67,11 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
     return factory;
 }
 
-// Create the Direct3D device.
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-    IDXGIAdapter1* hardwareAdapter = GetHardwareAdapter(factory);
-    GFX_THROW_INFO_ONLY(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
 }
 
-// Create the command queue.
 void WindowManager::CreateCommandQueue()
 {
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
@@ -104,7 +80,6 @@ void WindowManager::CreateCommandQueue()
     GFX_THROW_INFO_ONLY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 
-// Create and configure the swap chain.
 void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
 {
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -117,9 +92,7 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
     swapChainDesc.SampleDesc.Count = 1;
 
     IDXGISwapChain1* swapChain;
-    GFX_THROW_INFO_ONLY(factory->CreateSwapChainForHwnd(
-        m_commandQueue, hWnd, &swapChainDesc, nullptr, nullptr, &swapChain
-    ));
+    GFX_THROW_INFO_ONLY(factory->CreateSwapChainForHwnd(m_commandQueue, hWnd, &swapChainDesc, nullptr, nullptr, &swapChain));
 
     GFX_THROW_INFO_ONLY(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
@@ -127,7 +100,6 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
-// Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
 {
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
@@ -138,25 +110,22 @@ void WindowManager::CreateDescriptorHeaps()
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 }
 
-// Create frame resources (render targets).
 void WindowManager::CreateFrameResources()
 {
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-        GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
-        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);
+        GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));// Récupération de la "surface de dessin" (= render target) n
+        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);// Dessin sur la surface de dessin
         rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
 }
 
-// Create a command allocator.
 void WindowManager::CreateCommandAllocator()
 {
     GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
-
 #pragma endregion
 
 // Load the sample assets.
@@ -491,9 +460,6 @@ bool WindowManager::AdapterFind(IDXGIFactory6* factory6, UINT adapterIndex, bool
         IID_PPV_ARGS(pAdapter)));
 }
 
-// Helper function for acquiring the first available hardware adapter that supports Direct3D 12.
-// If no such adapter can be found, *ppAdapter will be set to nullptr.
-_Use_decl_annotations_
 IDXGIAdapter1* WindowManager::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter)
 {
     IDXGIAdapter1* adapter = nullptr;

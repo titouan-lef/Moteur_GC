@@ -22,7 +22,7 @@ private:
     DxgiInfoManager infoManager = {};
 #endif // ! NDEBUG
 
-    static const UINT FrameCount = 2;
+    static const UINT FrameCount = 2;// Nombre de "surface de dessin" (= render target) que la Swap Chain gère pour l'application
 
     // Pipeline objects.
     ID3D12Device* m_device = nullptr;
@@ -53,12 +53,13 @@ private:
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);
 
-    void SetupDebugLayer();
-    void CreateD3DDevice(IDXGIFactory4* factory);
-    IDXGIFactory4* CreateDXGIFactory();
-    void CreateCommandQueue();
-    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);
-    void CreateDescriptorHeaps();
+    void SetupDebugLayer();// Activation du debuggage de Direct3D
+
+    IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU
+    void CreateD3DDevice(IDXGIFactory4* factory);// Création du périphérique de rendu
+    void CreateCommandQueue();// Création de la file d'attente de commandes
+    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);// Création de la Swap chain
+    void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
     void CreateFrameResources();
     void CreateCommandAllocator();
 
@@ -78,8 +79,9 @@ private:
     void PopulateCommandList();
     void WaitForPreviousFrame();
 
+    // Cherche un adaptateur (ou une carte graphique) compatible avec DirectX 12
     bool IsValidAdapter(IDXGIAdapter1* adapter);
     bool AdapterFind(IDXGIFactory6* factory6, UINT adapterIndex, bool requestHighPerformanceAdapter, IDXGIAdapter1** pAdapter);
-    IDXGIAdapter1* GetHardwareAdapter(_In_ IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter = false);
+    IDXGIAdapter1* GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter = false);
 };
 
