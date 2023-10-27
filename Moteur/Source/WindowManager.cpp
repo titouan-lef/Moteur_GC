@@ -244,7 +244,7 @@ void WindowManager::LoadAssets()
 
         HRESULT hr;
 
-        GFX_THROW_INFO(D3DCompileFromFile(L"Sourc/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
         GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
         // Define the vertex input layout.
