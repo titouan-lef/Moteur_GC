@@ -272,14 +272,15 @@ void WindowManager::LoadAssets()
 
         struct ConstantBufferData
         {
-            DirectX::XMFLOAT4X4 World;
+            DirectX::XMMATRIX World;
         };
 
         ConstantBufferData constBufferData;
         e.m_Transform.UpdateMatrix();
-        e.m_Transform.Rotate(0.5f, 0, 0);
+        e.m_Transform.MoveByVector({ 0, 0, 0.5f });
+        e.m_Transform.Rotate(0.5f, -0.25f, 0);
         e.m_Transform.UpdateMatrix();
-        constBufferData.World = e.m_Transform.GetMat();
+        constBufferData.World = e.m_Transform.GetMatrixTranspose();
 
         const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
 
@@ -383,8 +384,14 @@ void WindowManager::PopulateCommandList()
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
+    /************/
+    ID3D12DescriptorHeap* descriptorHeaps[] = { cbvSrvUavHeap };
+    m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
     m_commandList->SetGraphicsRootDescriptorTable(0, cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
+
+    /*****************/
+
 
 
     m_commandList->RSSetViewports(1, &m_viewport);

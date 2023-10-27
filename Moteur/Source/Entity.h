@@ -34,6 +34,7 @@ struct TRANSFORM
 	// Retourne la matrice de transformation
 	XMMATRIX GetMatrix() { return XMLoadFloat4x4(&Matrix); }
 	XMFLOAT4X4 GetMat() { return Matrix;  }// TO DO A supprimer
+	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
 	// Retourne la matrice de rotation
 	XMMATRIX* GetRotationMatrix() { return &RotationMatrix; }
 #pragma endregion
