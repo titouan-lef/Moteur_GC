@@ -1,7 +1,6 @@
 #pragma once
 #include "framwork.h"
 #include "EngineException.h"
-#include "GameObject.h"
 #include "DxgiInfoManager.h"
 class WindowManager
 {
@@ -56,7 +55,6 @@ public:
     virtual void OnKeyDown(UINT8 /*key*/) {}
     virtual void OnKeyUp(UINT8 /*key*/) {}
 
-    static void AddGameObject(GameObject* go);
     static wchar_t* convertCharArrayToLPCWSTR(const char* charArray)
     {
         wchar_t* wString = new wchar_t[4096];
@@ -133,7 +131,6 @@ private:
     UINT64 m_fenceValue = -1;
 
     // Gestion des vertices
-    static std::vector<GameObject*> m_gameObjects;
     std::vector<Vertex> m_vertices = { {  } };
 
     void GetHardwareAdapter(
@@ -142,23 +139,30 @@ private:
         bool requestHighPerformanceAdapter = false);
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);
-    void LoadAssets();
-    void PopulateCommandList();
-    void WaitForPreviousFrame();
 
     void SetupDebugLayer();
-
-
     void CreateD3DDevice(IDXGIFactory4* factory);
     IDXGIFactory4* CreateDXGIFactory();
     void CreateCommandQueue();
-
-    void CreateSwapChain(HWND hWnd,UINT width, UINT height, IDXGIFactory4* factory);
-
+    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);
     void CreateDescriptorHeaps();
     void CreateFrameResources();
-
     void CreateCommandAllocator();
+
+
+
+
+    void LoadAssets();
+
+    void CreateRootSignature();
+    void CreateVertexBuffer();
+    void CreateConstantBuffer();
+    void CreateSyncObj();
+
+
+
+    void PopulateCommandList();
+    void WaitForPreviousFrame();
 
 
     void GetAssetsPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize)
@@ -181,7 +185,5 @@ private:
             *(lastSlash + 1) = L'\0';
         }
     }
-
-
 };
 

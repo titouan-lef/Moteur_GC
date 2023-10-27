@@ -21,8 +21,6 @@
 #define GFX_THROW_INFO_ONLY(call) (call)
 #endif
 
-std::vector<GameObject*> WindowManager::m_gameObjects;
-
 WindowManager::WindowManager(UINT width, UINT height) :
     m_useWarpDevice(false),
     m_frameIndex(0),
@@ -91,9 +89,6 @@ void WindowManager::SetupDebugLayer()
 // Create a DXGI factory.
 IDXGIFactory4* WindowManager::CreateDXGIFactory()
 {
-
-
-
     UINT dxgiFactoryFlags = 0;
 
 #if defined(_DEBUG)
@@ -120,8 +115,6 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 // Create the Direct3D device.
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-
-    
     if (m_useWarpDevice)
     {
         IDXGIAdapter* warpAdapter;
@@ -139,7 +132,6 @@ void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 // Create the command queue.
 void WindowManager::CreateCommandQueue()
 {
-
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -149,7 +141,6 @@ void WindowManager::CreateCommandQueue()
 // Create and configure the swap chain.
 void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
 {
-
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = FrameCount;
     swapChainDesc.Width = width;
@@ -173,8 +164,6 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
 // Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
 {
-
-
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -189,14 +178,11 @@ void WindowManager::CreateDescriptorHeaps()
 
     GFX_THROW_INFO_ONLY( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
     m_cbvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 }
 
 // Create frame resources (render targets).
 void WindowManager::CreateFrameResources()
 {
-
-
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
     for (UINT n = 0; n < FrameCount; n++)
@@ -210,8 +196,6 @@ void WindowManager::CreateFrameResources()
 // Create a command allocator.
 void WindowManager::CreateCommandAllocator()
 {
-
-
     GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
 
@@ -219,48 +203,7 @@ void WindowManager::CreateCommandAllocator()
 void WindowManager::LoadAssets()
 {
     // Create an root signature.
-    {
-        // Root parameter can be a table, root descriptor or root constants.
-        CD3DX12_ROOT_PARAMETER slotRootParameter[1];
-
-        // Create a single descriptor table of CBVs.
-        CD3DX12_DESCRIPTOR_RANGE cbvTable;
-        cbvTable.Init(
-            D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-            1, // Number of descriptors in table
-            0);// base shader register arguments are bound to for this root parameter
-
-        slotRootParameter[0].InitAsDescriptorTable(
-            1, // Number of ranges
-            &cbvTable); // Pointer to array of ranges
-
-        // A root signature is an array of root parameters.
-        CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0,
-            nullptr,
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-        // create a root signature with a single slot which points to a 
-        // descriptor range consisting of a single constant buffer.
-        ID3DBlob* serializedRootSig = nullptr;
-        ID3DBlob* errorBlob = nullptr;
-        HRESULT hr = D3D12SerializeRootSignature(
-            &rootSigDesc,
-            D3D_ROOT_SIGNATURE_VERSION_1,
-            &serializedRootSig,
-            &errorBlob
-        );
-
-        ThrowIfFailed(m_device->CreateRootSignature(
-            0,
-            serializedRootSig->GetBufferPointer(),
-            serializedRootSig->GetBufferSize(),
-            IID_PPV_ARGS(&m_rootSignature))
-        );
-        ID3DBlob* signature;
-        ID3DBlob* error;
-        GFX_THROW_INFO_ONLY(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
-    }
+    CreateRootSignature();
     
 
     // Create the pipeline state, which includes compiling and loading shaders.
@@ -313,114 +256,166 @@ void WindowManager::LoadAssets()
     GFX_THROW_INFO_ONLY(m_commandList->Close());
 
     // Create the vertex buffer.
-    {
-        m_vertices = {
-            // Carr�
-            { { -0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur gauche
-            { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
-            { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
-
-            { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
-            { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
-            { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur droit
-        };
-
-        const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
-
-
-        auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-
-        GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
-            &tmp1,
-            D3D12_HEAP_FLAG_NONE,
-            &tmp2,
-            D3D12_RESOURCE_STATE_GENERIC_READ,
-            nullptr,
-            IID_PPV_ARGS(&m_vertexBuffer)));
-
-        // Copy the triangle data to the vertex buffer.
-        UINT8* pVertexDataBegin;
-        CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-        ThrowIfFailed(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
-        memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
-        m_vertexBuffer->Unmap(0, nullptr);
-
-        // Initialize the vertex buffer view.
-        m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-        m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-        m_vertexBufferView.SizeInBytes = vertexBufferSize;
-    }
+    CreateVertexBuffer();
 
     // Cr�ation constant buffer
+    CreateConstantBuffer();
+
+    // Create synchronization objects 
+    CreateSyncObj();
+
+    // Wait until assets have been uploaded to the GPU.
+    // Wait for the command list to execute; we are reusing the same command 
+    // list in our main loop but for now, we just want to wait for setup to 
+    // complete before continuing.
+    WaitForPreviousFrame();
+}
+
+void WindowManager::CreateRootSignature()
+{
+    // Root parameter can be a table, root descriptor or root constants.
+    CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+
+    // Create a single descriptor table of CBVs.
+    CD3DX12_DESCRIPTOR_RANGE cbvTable;
+    cbvTable.Init(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1, // Number of descriptors in table
+        0);// base shader register arguments are bound to for this root parameter
+
+    slotRootParameter[0].InitAsDescriptorTable(
+        1, // Number of ranges
+        &cbvTable); // Pointer to array of ranges
+
+    // A root signature is an array of root parameters.
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0,
+        nullptr,
+        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+    // create a root signature with a single slot which points to a 
+    // descriptor range consisting of a single constant buffer.
+    ID3DBlob* serializedRootSig = nullptr;
+    ID3DBlob* errorBlob = nullptr;
+    HRESULT hr = D3D12SerializeRootSignature(
+        &rootSigDesc,
+        D3D_ROOT_SIGNATURE_VERSION_1,
+        &serializedRootSig,
+        &errorBlob
+    );
+
+    GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(
+        0,
+        serializedRootSig->GetBufferPointer(),
+        serializedRootSig->GetBufferSize(),
+        IID_PPV_ARGS(&m_rootSignature))
+    );
+    ID3DBlob* signature;
+    ID3DBlob* error;
+}
+
+void WindowManager::CreateVertexBuffer()
+{
+    m_vertices = {
+        // Carr�
+        { { -0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur gauche
+        { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
+        { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
+
+        { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
+        { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
+        { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur droit
+    };
+
+    const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+
+
+    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
+
+    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+        &tmp1,
+        D3D12_HEAP_FLAG_NONE,
+        &tmp2,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_vertexBuffer)));
+
+    // Copy the triangle data to the vertex buffer.
+    UINT8* pVertexDataBegin;
+    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
+    GFX_THROW_INFO_ONLY(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
+    m_vertexBuffer->Unmap(0, nullptr);
+
+    // Initialize the vertex buffer view.
+    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+}
+
+void WindowManager::CreateConstantBuffer()
+{
+    Entity e = Entity();
+
+    struct ConstantBufferData
     {
-        Entity e = Entity();
+        DirectX::XMMATRIX World;
+    };
 
-        struct ConstantBufferData
-        {
-            DirectX::XMMATRIX World;
-        };
+    ConstantBufferData constBufferData;
+    e.m_Transform.UpdateMatrix();
+    e.m_Transform.MoveByVector({ 0, 0, 0.5f });
+    e.m_Transform.Rotate(0.5f, -0.25f, 0);
+    e.m_Transform.UpdateMatrix();
+    constBufferData.World = e.m_Transform.GetMatrixTranspose();
 
-        ConstantBufferData constBufferData;
-        e.m_Transform.UpdateMatrix();
-        e.m_Transform.MoveByVector({ 0, 0, 0.5f });
-        e.m_Transform.Rotate(0.5f, -0.25f, 0);
-        e.m_Transform.UpdateMatrix();
-        constBufferData.World = e.m_Transform.GetMatrixTranspose();
-
-        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+    const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
 
 
-        auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
+    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
 
-        ThrowIfFailed(m_device->CreateCommittedResource(
-            &tmp1,
-            D3D12_HEAP_FLAG_NONE,
-            &tmp2,
-            D3D12_RESOURCE_STATE_GENERIC_READ,
-            nullptr,
-            IID_PPV_ARGS(&m_constBuffer)));
+    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+        &tmp1,
+        D3D12_HEAP_FLAG_NONE,
+        &tmp2,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_constBuffer)));
 
-        // Copy the triangle data to the vertex buffer.
-        BYTE* mappedConstData = nullptr;
-        ThrowIfFailed(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
-        memcpy(mappedConstData, &constBufferData, constBufferSize);
-        m_constBuffer->Unmap(0, nullptr);
+    // Copy the triangle data to the vertex buffer.
+    BYTE* mappedConstData = nullptr;
+    GFX_THROW_INFO_ONLY(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
+    memcpy(mappedConstData, &constBufferData, constBufferSize);
+    m_constBuffer->Unmap(0, nullptr);
 
-        // Cr�ez un tas de descripteurs de type CBV_SRV_UAV
-        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-        cbvSrvUavHeapDesc.NumDescriptors = 1; // Un descripteur de Constant Buffer View (CBV)
-        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    // Cr�ez un tas de descripteurs de type CBV_SRV_UAV
+    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+    cbvSrvUavHeapDesc.NumDescriptors = 1; // Un descripteur de Constant Buffer View (CBV)
+    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
 
-        m_constBufferView.BufferLocation = m_constBuffer->GetGPUVirtualAddress();
-        m_constBufferView.SizeInBytes = constBufferSize;
+    m_constBufferView.BufferLocation = m_constBuffer->GetGPUVirtualAddress();
+    m_constBufferView.SizeInBytes = constBufferSize;
 
-        m_device->CreateConstantBufferView(
-            &m_constBufferView,
-            cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
-        );
-    }
+    m_device->CreateConstantBufferView(
+        &m_constBufferView,
+        cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
+    );
+}
 
-    // Create synchronization objects and wait until assets have been uploaded to the GPU.
+void WindowManager::CreateSyncObj()
+{
+    GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+    m_fenceValue = 1;
+
+    // Create an event handle to use for frame synchronization.
+    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_fenceEvent == nullptr)
     {
-        GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
-        m_fenceValue = 1;
-
-        // Create an event handle to use for frame synchronization.
-        m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-        if (m_fenceEvent == nullptr)
-        {
-            GFX_THROW_INFO_ONLY(HRESULT_FROM_WIN32(GetLastError()));
-        }
-
-        // Wait for the command list to execute; we are reusing the same command 
-        // list in our main loop but for now, we just want to wait for setup to 
-        // complete before continuing.
-        WaitForPreviousFrame();
+        GFX_THROW_INFO_ONLY(HRESULT_FROM_WIN32(GetLastError()));
     }
 }
 
@@ -433,9 +428,6 @@ void WindowManager::OnUpdate()
 // Render the scene.
 void WindowManager::OnRender()
 {
-
-
-
     // Record all the commands we need to render the scene into the command list.
     PopulateCommandList();
 
@@ -475,13 +467,10 @@ void WindowManager::PopulateCommandList()
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
-    /************/
+    // Gestion Constant Buffer
     ID3D12DescriptorHeap* descriptorHeaps[] = { cbvSrvUavHeap };
     m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
     m_commandList->SetGraphicsRootDescriptorTable(0, cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
-
-    /*****************/
 
 
 
@@ -510,9 +499,7 @@ void WindowManager::PopulateCommandList()
 }
 
 void WindowManager::WaitForPreviousFrame()
-{ 
-
-
+{
     // WAITING FOR THE FRAME TO COMPLETE BEFORE CONTINUING IS NOT BEST PRACTICE.
     // This is code implemented as such for simplicity. The D3D12HelloFrameBuffering
     // sample illustrates how to use fences for efficient resource usage and to
@@ -600,16 +587,6 @@ void WindowManager::GetHardwareAdapter(
 
     *ppAdapter = adapter;
 }
-
-
-void WindowManager::AddGameObject(GameObject* go)
-{
-    m_gameObjects.push_back(go);
-}
-
-
-
-
 
 WindowManager::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept : Exception(line, file), hr(hr)
 {
