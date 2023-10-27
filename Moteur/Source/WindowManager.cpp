@@ -3,13 +3,9 @@
 #include "MyException.h"
 
 WindowManager::WindowManager(UINT width, UINT height) :
-    m_useWarpDevice(false),
-    m_frameIndex(0),
     m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
-    m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)),
-    m_rtvDescriptorSize(0)
+    m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height))
 {
-    m_aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
 WindowManager::~WindowManager()
@@ -21,6 +17,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 {
     LoadPipeline(width, height, hWnd);
     LoadAssets();
+    WaitForPreviousFrame();
 }
 
 // Load the rendering pipeline dependencies.
@@ -50,17 +47,19 @@ void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
     // Create a command allocator.
     CreateCommandAllocator();
 }
-#pragma region  SOUS_FONCTIONS_LOAD_PIPELINE
+
+#pragma region LoadPipelineFunction
+
 // Enable the Direct3D debug layer (only in debug mode).
 void WindowManager::SetupDebugLayer()
 {
-#if defined(_DEBUG)
+    #if defined(_DEBUG)
     ID3D12Debug* debugController;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
     {
         debugController->EnableDebugLayer();
     }
-#endif
+    #endif
 }
 
 // Create a DXGI factory.
@@ -68,7 +67,7 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 {
     UINT dxgiFactoryFlags = 0;
 
-#if defined(_DEBUG)
+    #if defined(_DEBUG)
     // Enable the debug layer (requires the Graphics Tools "optional feature").
     // NOTE: Enabling the debug layer after device creation will invalidate the active device.
     {
@@ -81,7 +80,7 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
             dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
         }
     }
-#endif
+    #endif
 
     IDXGIFactory4* factory;
     GFX_THROW_INFO_ONLY(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
@@ -92,18 +91,8 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 // Create the Direct3D device.
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-    if (m_useWarpDevice)
-    {
-        IDXGIAdapter* warpAdapter;
-        GFX_THROW_INFO_ONLY(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
-        GFX_THROW_INFO_ONLY(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
-    }
-    else
-    {
-        IDXGIAdapter1* hardwareAdapter;
-        GetHardwareAdapter(factory, &hardwareAdapter);
-        GFX_THROW_INFO_ONLY(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
-    }
+    IDXGIAdapter1* hardwareAdapter = GetHardwareAdapter(factory);
+    GFX_THROW_INFO_ONLY(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
 }
 
 // Create the command queue.
@@ -147,14 +136,6 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-    D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
-    cbvHeapDesc.NumDescriptors = 1; // Le nombre de vues de ressource constante que vous pr�voyez d'utiliser.
-    cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; // Pour que le tas soit visible depuis les shaders.
-
-    GFX_THROW_INFO_ONLY( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
-    m_cbvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 // Create frame resources (render targets).
@@ -176,6 +157,8 @@ void WindowManager::CreateCommandAllocator()
     GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
 
+#pragma endregion
+
 // Load the sample assets.
 void WindowManager::LoadAssets()
 {
@@ -184,46 +167,7 @@ void WindowManager::LoadAssets()
     
 
     // Create the pipeline state, which includes compiling and loading shaders.
-    {
-        ID3DBlob* vertexShader;
-        ID3DBlob* pixelShader;
-
-#if defined(_DEBUG)
-        // Enable better shader debugging with the graphics debugging tools.
-        UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-        UINT compileFlags = 0;
-#endif
-
-        HRESULT hr;
-
-        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-        GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
-
-        // Define the vertex input layout.
-        D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
-        {
-            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-            { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-        };
-
-        // Describe and create the graphics pipeline state object (PSO).
-        D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-        psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
-        psoDesc.pRootSignature = m_rootSignature;
-        psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader);
-        psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader);
-        psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-        psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-        psoDesc.DepthStencilState.DepthEnable = FALSE;
-        psoDesc.DepthStencilState.StencilEnable = FALSE;
-        psoDesc.SampleMask = UINT_MAX;
-        psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-        psoDesc.NumRenderTargets = 1;
-        psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-        psoDesc.SampleDesc.Count = 1;
-        GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
-    }
+    CreatePipelineState();
 
     // Create the command list.
     GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
@@ -240,14 +184,9 @@ void WindowManager::LoadAssets()
 
     // Create synchronization objects 
     CreateSyncObj();
-
-    // Wait until assets have been uploaded to the GPU.
-    // Wait for the command list to execute; we are reusing the same command 
-    // list in our main loop but for now, we just want to wait for setup to 
-    // complete before continuing.
-    WaitForPreviousFrame();
 }
 
+#pragma region LoadAssetsFunction
 void WindowManager::CreateRootSignature()
 {
     // Root parameter can be a table, root descriptor or root constants.
@@ -286,8 +225,50 @@ void WindowManager::CreateRootSignature()
         serializedRootSig->GetBufferSize(),
         IID_PPV_ARGS(&m_rootSignature))
     );
-    ID3DBlob* signature;
-    ID3DBlob* error;
+    //ID3DBlob* signature;
+    //ID3DBlob* error;
+}
+
+void WindowManager::CreatePipelineState()
+{
+    ID3DBlob* vertexShader;
+    ID3DBlob* pixelShader;
+
+#if defined(_DEBUG)
+    // Enable better shader debugging with the graphics debugging tools.
+    UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+    UINT compileFlags = 0;
+#endif
+
+    HRESULT hr;
+
+    GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+    GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
+
+    // Define the vertex input layout.
+    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+    };
+
+    // Describe and create the graphics pipeline state object (PSO).
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+    psoDesc.pRootSignature = m_rootSignature;
+    psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader);
+    psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader);
+    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    psoDesc.DepthStencilState.DepthEnable = FALSE;
+    psoDesc.DepthStencilState.StencilEnable = FALSE;
+    psoDesc.SampleMask = UINT_MAX;
+    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    psoDesc.NumRenderTargets = 1;
+    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    psoDesc.SampleDesc.Count = 1;
+    GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
 }
 
 void WindowManager::CreateVertexBuffer()
@@ -308,6 +289,8 @@ void WindowManager::CreateVertexBuffer()
 
     auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
+
+    ID3D12Resource* m_vertexBuffer = nullptr;
 
     GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
         &tmp1,
@@ -352,6 +335,8 @@ void WindowManager::CreateConstantBuffer()
     auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
 
+    ID3D12Resource* m_constBuffer = nullptr;
+
     GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
         &tmp1,
         D3D12_HEAP_FLAG_NONE,
@@ -386,7 +371,6 @@ void WindowManager::CreateConstantBuffer()
 void WindowManager::CreateSyncObj()
 {
     GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
-    m_fenceValue = 1;
 
     // Create an event handle to use for frame synchronization.
     m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -395,6 +379,7 @@ void WindowManager::CreateSyncObj()
         GFX_THROW_INFO_ONLY(HRESULT_FROM_WIN32(GetLastError()));
     }
 }
+#pragma endregion
 
 // Update frame-based values.
 void WindowManager::OnUpdate()
@@ -429,8 +414,6 @@ void WindowManager::OnDestroy()
 
 void WindowManager::PopulateCommandList()
 {
- 
-
     // Command list allocators can only be reset when the associated 
     // command lists have finished execution on the GPU; apps should use 
     // fences to determine GPU execution progress.
@@ -477,11 +460,6 @@ void WindowManager::PopulateCommandList()
 
 void WindowManager::WaitForPreviousFrame()
 {
-    // WAITING FOR THE FRAME TO COMPLETE BEFORE CONTINUING IS NOT BEST PRACTICE.
-    // This is code implemented as such for simplicity. The D3D12HelloFrameBuffering
-    // sample illustrates how to use fences for efficient resource usage and to
-    // maximize GPU utilization.
-
     // Signal and increment the fence value.
     const UINT64 fence = m_fenceValue;
     GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, fence));
@@ -497,45 +475,36 @@ void WindowManager::WaitForPreviousFrame()
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
+#pragma region HardwareAdapter
+bool WindowManager::IsValidAdapter(IDXGIAdapter1* adapter)
+{
+    DXGI_ADAPTER_DESC1 desc;
+    adapter->GetDesc1(&desc);
+    return !(desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) && SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr));
+}
+
+bool WindowManager::AdapterFind(IDXGIFactory6* factory6, UINT adapterIndex, bool requestHighPerformanceAdapter, IDXGIAdapter1** pAdapter)
+{
+    return SUCCEEDED(factory6->EnumAdapterByGpuPreference(
+        adapterIndex,
+        requestHighPerformanceAdapter == true ? DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE : DXGI_GPU_PREFERENCE_UNSPECIFIED,
+        IID_PPV_ARGS(pAdapter)));
+}
+
 // Helper function for acquiring the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
 _Use_decl_annotations_
-void WindowManager::GetHardwareAdapter(
-    IDXGIFactory1* pFactory,
-    IDXGIAdapter1** ppAdapter,
-    bool requestHighPerformanceAdapter)
+IDXGIAdapter1* WindowManager::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter)
 {
-    *ppAdapter = nullptr;
-
     IDXGIAdapter1* adapter = nullptr;
-
     IDXGIFactory6* factory6 = nullptr;
+
     if (SUCCEEDED(pFactory->QueryInterface(IID_PPV_ARGS(&factory6))))
     {
-        for (
-            UINT adapterIndex = 0;
-            SUCCEEDED(factory6->EnumAdapterByGpuPreference(
-                adapterIndex,
-                requestHighPerformanceAdapter == true ? DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE : DXGI_GPU_PREFERENCE_UNSPECIFIED,
-                IID_PPV_ARGS(&adapter)));
-            ++adapterIndex)
+        for (UINT adapterIndex = 0; AdapterFind(factory6, adapterIndex, requestHighPerformanceAdapter, &adapter); ++adapterIndex)
         {
-            DXGI_ADAPTER_DESC1 desc;
-            adapter->GetDesc1(&desc);
-
-            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-            {
-                // Don't select the Basic Render Driver adapter.
-                // If you want a software adapter, pass in "/warp" on the command line.
-                continue;
-            }
-
-            // Check to see whether the adapter supports Direct3D 12, but don't create the
-            // actual device yet.
-            if (SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
-            {
+            if (IsValidAdapter(adapter))
                 break;
-            }
         }
     }
 
@@ -543,24 +512,11 @@ void WindowManager::GetHardwareAdapter(
     {
         for (UINT adapterIndex = 0; SUCCEEDED(pFactory->EnumAdapters1(adapterIndex, &adapter)); ++adapterIndex)
         {
-            DXGI_ADAPTER_DESC1 desc;
-            adapter->GetDesc1(&desc);
-
-            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-            {
-                // Don't select the Basic Render Driver adapter.
-                // If you want a software adapter, pass in "/warp" on the command line.
-                continue;
-            }
-
-            // Check to see whether the adapter supports Direct3D 12, but don't create the
-            // actual device yet.
-            if (SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
-            {
+            if (IsValidAdapter(adapter))
                 break;
-            }
         }
     }
 
-    *ppAdapter = adapter;
+    return adapter;
 }
+#pragma endregion

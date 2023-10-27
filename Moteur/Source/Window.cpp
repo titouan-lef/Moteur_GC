@@ -3,8 +3,8 @@
 #include <sstream>
 #include "MyException.h"
 
-
 WindowManager* Window::m_pWinManager = nullptr;
+
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
 */
