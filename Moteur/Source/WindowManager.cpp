@@ -213,7 +213,7 @@ void WindowManager::CreateCommandAllocator()
 
     GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
-
+#pragma endregion  SOUS_FONCTIONS_LOAD_PIPELINE
 // Load the sample assets.
 void WindowManager::LoadAssets()
 {

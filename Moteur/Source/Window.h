@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "EngineException.h"
 #include "WindowManager.h"
-
+#include "Keyboard.h"
+#include "Mouse.h"
 #include <optional>
-
+#include <memory>
 class Window
 {
 public:
@@ -40,7 +41,9 @@ public:
     static std::optional<int> Run();
     static WindowManager* m_pWinManager;
     static int Finish(WPARAM wParam);
-
+public:
+    Keyboard m_kbd;
+    Mouse m_mouse;
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
     static LRESULT CALLBACK HandleMsgThunk(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept;

@@ -174,17 +174,6 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 	}
 	return 0;
 
-	case WM_KEYDOWN:
-		if (pWinManager)
-			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_KEYUP:
-		if (pWinManager)
-			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
-
-		return 0;
 
 	case WM_PAINT:
 		if (pWinManager)
@@ -194,11 +183,93 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 		}
 		return 0;
 
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
+	case WM_CLOSE:// L'utilisateur appuie sur la croix de la fen�tre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
-	}
+#pragma region KEYBOARD
+		//clear keystates
+	case WM_KILLFOCUS:
+		m_kbd.ClearState();
+		break;
+		/***********************Keyboard**********************/
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		if (!(lParam & 0x40000000) || m_kbd.AutoRepeatIsEnable()) {
 
+			m_kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		m_kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		m_kbd.OnChar(static_cast<unsigned char>(wParam));
+		break;
+
+		/***********************END Keyboard**********************/
+#pragma endregion KEYBOARD
+#pragma region MOUSE
+	//	/***********************Mouse**********************/
+	//case WM_MOUSEMOVE:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	//Cas dans la région de la window
+	//	if (pt.x >= 0 && pt.x < m_width && pt.y >= 0 && pt.y < m_height) {
+	//
+	//		m_mouse.OnMouseMove(pt.x, pt.y);
+	//		if (!m_mouse.IsInWindow()) {
+	//			SetCapture(m_hWnd);
+	//			m_mouse.OnMouseEnter();
+	//		}
+	//	}
+	//	//Cas contraire
+	//	else {
+	//		if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
+	//			m_mouse.OnMouseMove(pt.x, pt.y);
+	//		}
+	//		else {
+	//			ReleaseCapture();
+	//			m_mouse.OnMouseLeave();
+	//		}
+	//	}
+	//	break;
+	//}
+	//case WM_LBUTTONDOWN:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	m_mouse.OnLeftPressed(pt.x, pt.y);
+	//	break;
+	//}
+	//case WM_RBUTTONDOWN:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	m_mouse.OnLeftPressed(pt.x, pt.y);
+	//	break;
+	//}
+	//case WM_LBUTTONUP:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	m_mouse.OnLeftReleased(pt.x, pt.y);
+	//	break;
+	//}
+	//case WM_RBUTTONUP:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	m_mouse.OnRightReleased(pt.x, pt.y);
+	//	break;
+	//}
+	//case WM_MOUSEWHEEL:
+	//{
+	//	const POINTS pt = MAKEPOINTS(lParam);
+	//	const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+	//	m_mouse.OnWheelDelta(pt.x, pt.y, delta);
+	//	break;
+	//}
+	///***********************END MOUSE**********************/
+
+#pragma endregion MOUSE
+	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
