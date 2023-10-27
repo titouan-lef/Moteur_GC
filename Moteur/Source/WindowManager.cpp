@@ -138,18 +138,7 @@ void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 // Load the sample assets.
 void WindowManager::LoadAssets()
 {
-    // Create an empty root signature.
-    /*{
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-        rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-        ID3DBlob* signature;
-        ID3DBlob* error;
-        ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
-    }*/
-
-
+    // Create an root signature.
     {
         // Root parameter can be a table, root descriptor or root constants.
         CD3DX12_ROOT_PARAMETER slotRootParameter[1];
@@ -327,20 +316,6 @@ void WindowManager::LoadAssets()
             &m_constBufferView,
             cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
         );
-
-        /*D3D12_GPU_VIRTUAL_ADDRESS cbAddress = m_constBuffer->GetGPUVirtualAddress();
-        // Offset to the ith object constant buffer in the buffer.
-        int boxCBufIndex = 0;
-        cbAddress += boxCBufIndex * constBufferSize;
-        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-        cbvDesc.BufferLocation = cbAddress;
-
-        cbvDesc.SizeInBytes = constBufferSize;
-
-        m_device->CreateConstantBufferView(
-            &cbvDesc,
-            m_rtvHeap->GetCPUDescriptorHandleForHeapStart()
-        );*/
     }
 
     // Create synchronization objects and wait until assets have been uploaded to the GPU.
@@ -408,19 +383,8 @@ void WindowManager::PopulateCommandList()
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
-    /************/
-    //ID3D12DescriptorHeap* descriptorHeaps[] = { m_rtvHeap };
 
-    //m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-    // Offset the CBV we want to use for this draw call.
-    //CD3DX12_GPU_DESCRIPTOR_HANDLE cbv(m_rtvHeap->GetGPUDescriptorHandleForHeapStart());
-    //cbv.Offset(0, 1);
-    //m_commandList->SetGraphicsRootDescriptorTable(0, rtvHandle);
     m_commandList->SetGraphicsRootDescriptorTable(0, cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
-
-    /*****************/
-
 
 
     m_commandList->RSSetViewports(1, &m_viewport);
