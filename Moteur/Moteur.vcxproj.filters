@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Ressources\Shaders">
+      <UniqueIdentifier>{ea73b7e9-ae3c-45cb-beb0-1eb3a04b992a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{d97b63b6-a6d7-4811-9f2c-17586111d81a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header">
+      <UniqueIdentifier>{3d798e22-5df4-42dc-b202-7c43a10fde42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\cpp">
+      <UniqueIdentifier>{2be0e938-ea2f-4984-91b2-db38235e1a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public">
+      <UniqueIdentifier>{220c69e5-24a6-4533-9d1a-4ad2ff80887b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\header">
+      <UniqueIdentifier>{53cda7db-b1bb-44ec-8a3e-79c964866d7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\cpp">
+      <UniqueIdentifier>{8b480108-5bd0-4849-9265-c22bed3e1005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header\dxerr">
+      <UniqueIdentifier>{1d0c965c-4254-49fc-adeb-d5ea5ad16052}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Component.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\d3dx12.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Entity.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\framwork.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameObject.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TestTransform.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Window.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WindowManager.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WindowManagerHelper.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DxgiInfoManager.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EngineException.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\App.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\dxerr.h">
+      <Filter>Private\header\dxerr</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MyException.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Entity.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameObject.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TestTransform.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WindowManager.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\App.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DxgiInfoManager.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EngineException.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dxerr.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MyException.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shaders.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\DXGetErrorDescription.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
+    <None Include="Source\DXGetErrorString.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
+    <None Include="Source\DXTrace.inl">
+      <Filter>Private\header\dxerr</Filter>
+    </None>
+  </ItemGroup>
+</Project>

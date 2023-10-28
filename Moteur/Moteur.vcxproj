@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\App.h" />
+    <ClInclude Include="Source\Component.h" />
+    <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\dxerr.h" />
+    <ClInclude Include="Source\DxgiInfoManager.h" />
+    <ClInclude Include="Source\EngineException.h" />
+    <ClInclude Include="Source\Entity.h" />
+    <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\MyException.h" />
+    <ClInclude Include="Source\TestTransform.h" />
+    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\WindowManager.h" />
+    <ClInclude Include="Source\WindowManagerHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\App.cpp" />
+    <ClCompile Include="Source\Component.cpp" />
+    <ClCompile Include="Source\dxerr.cpp" />
+    <ClCompile Include="Source\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\EngineException.cpp" />
+    <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\MyException.cpp" />
+    <ClCompile Include="Source\TestTransform.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\WindowManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shaders.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\DXGetErrorDescription.inl" />
+    <None Include="Source\DXGetErrorString.inl" />
+    <None Include="Source\DXTrace.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{2512772c-c8a5-4236-b275-121512820629}</ProjectGuid>
+    <RootNamespace>Moteur</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
+    </Link>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
+    </Link>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>framwork.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
+    </Link>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
+    </Link>
+    <FxCompile>
+      <ShaderType>
+      </ShaderType>
+    </FxCompile>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
+    <CustomBuild>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
