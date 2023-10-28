@@ -5,6 +5,12 @@
 
 
 WindowManager* Window::m_pWinManager = nullptr;
+
+//SEULEMENT POUR TEST
+Keyboard Window::m_kbd;
+//HWND Window::m_hWnd;
+
+
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
 */
@@ -71,15 +77,22 @@ std::optional<int> Window::Run()
 {
 	// Main sample loop.
 	MSG msg = {};
-	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fen�tre
-	{
-		// Process any messages in the queue.
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fen�tre est disponible (voir readme Windows.h)
+
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			TranslateMessage(&msg);// (voir readme Windows.h)
-			DispatchMessage(&msg);// (voir readme Windows.h)
+			if (msg.message == WM_QUIT) {
+				return msg.wParam;
+			}
+
+			//SEULEMENT POUR TEST
+			//if (m_kbd.KeyIsPressed(VK_SPACE)) {
+			//	SetWindowText(m_hWnd, convertCharArrayToLPCWSTR("Salut"));
+			//}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
-	}
+	
 
 	return Finish(msg.wParam);
 }
@@ -165,8 +178,11 @@ LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
 {
 	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Window* pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	switch (msg)
 	{
+		
+
 	case WM_CREATE:
 	{
 		// Sauvegarde le WindowManager* passé dans CreateWindow
@@ -175,17 +191,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 	}
 	return 0;
 
-	case WM_KEYDOWN:
-		if (pWinManager)
-			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_KEYUP:
-		if (pWinManager)
-			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
-
-		return 0;
+	
 
 	case WM_PAINT:
 		if (pWinManager)
@@ -198,12 +204,36 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
+
+		//clear keystates
+	case WM_KILLFOCUS:
+		m_kbd.ClearState();
+		break;
+		/***********************Keyboard**********************/
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		if (!(lParam & 0x40000000) || m_kbd.AutoRepeatIsEnable()) {
+
+			m_kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		m_kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		m_kbd.OnChar(static_cast<unsigned char>(wParam));
+		break;
+
+		/***********************END Keyboard**********************/
+
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 
+#pragma region EXCEPTION
 
 //Exception Stuff
 Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept : Exception(line, file), hr(hr)
@@ -261,3 +291,4 @@ std::string Window::HrException::GetErrorDescription() const noexcept
 {
 	return Exception::TranslateErrorCode(hr);
 }
+#pragma endregion EXCEPTION

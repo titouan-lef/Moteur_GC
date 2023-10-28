@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "EngineException.h"
 #include "WindowManager.h"
-
+#include "Keyboard.h"
 #include <optional>
+#include <memory>
 
 class Window
 {
@@ -40,6 +41,16 @@ public:
     static std::optional<int> Run();
     static WindowManager* m_pWinManager;
     static int Finish(WPARAM wParam);
+public:
+    static wchar_t* convertCharArrayToLPCWSTR(const char* charArray)
+    {
+        wchar_t* wString = new wchar_t[4096];
+        MultiByteToWideChar(CP_ACP, 0, charArray, -1, wString, 4096);
+        return wString;
+    }
+    //SEULEMENT POUR TEST
+    static Keyboard m_kbd;
+    //Keyboard m_kbd;
 
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -51,8 +62,10 @@ private:
 	UINT m_width, m_height, m_x, m_y;
 	const wchar_t* m_name;// Nom affich� sur la fenêtre
 	const wchar_t* m_windowName = L"DirectX 12";// Nom de la fen�tre
-	HWND m_hWnd;// Handle de la fen�tre
-	HINSTANCE m_hInstance;// Handle de l'instance de la fenêtre
+	//SEULEMENT POUR TEST
+    //static HWND m_hWnd;// Handle de la fen�tre
+    HWND m_hWnd;
+    HINSTANCE m_hInstance;// Handle de l'instance de la fenêtre
 
 	void Start();
 };
