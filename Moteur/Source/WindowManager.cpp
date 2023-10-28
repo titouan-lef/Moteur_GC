@@ -378,16 +378,16 @@ void WindowManager::OnDestroy()
 void WindowManager::PopulateCommandList()
 {
  
-
+    HRESULT hr;
     // Command list allocators can only be reset when the associated 
     // command lists have finished execution on the GPU; apps should use 
     // fences to determine GPU execution progress.
-    GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
+    GFX_THROW_INFO(m_commandAllocator->Reset());
 
     // However, when ExecuteCommandList() is called on a particular command 
     // list, that command list can then be reset at any time and must be before 
     // re-recording.
-    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+    GFX_THROW_INFO(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
@@ -405,14 +405,14 @@ void WindowManager::PopulateCommandList()
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
     m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+    GFX_THROW_INFO_ONLY(m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView));
     m_commandList->DrawInstanced(m_vertices.size(), 1, 0, 0);
 
     // Indicate that the back buffer will now be used to present.
     auto tmp2 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     m_commandList->ResourceBarrier(1, &tmp2);
 
-    GFX_THROW_INFO_ONLY(m_commandList->Close());
+    GFX_THROW_INFO(m_commandList->Close());
 }
 
 void WindowManager::WaitForPreviousFrame()
@@ -522,7 +522,7 @@ void WindowManager::AddGameObject(GameObject* go)
 
 
 
-
+#pragma region EXCEPTION
 
 WindowManager::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept : Exception(line, file), hr(hr)
 {
@@ -638,3 +638,4 @@ std::string WindowManager::InfoException::GetErrorInfo() const noexcept
 {
     return info;
 }
+#pragma endregion EXCEPTION

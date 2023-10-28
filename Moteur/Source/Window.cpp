@@ -77,6 +77,7 @@ std::optional<int> Window::Run()
 		{
 			TranslateMessage(&msg);// (voir readme Windows.h)
 			DispatchMessage(&msg);// (voir readme Windows.h)
+			
 		}
 	}
 
@@ -187,26 +188,26 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
 #pragma region KEYBOARD
-		//clear keystates
-	case WM_KILLFOCUS:
-		m_kbd.ClearState();
-		break;
-		/***********************Keyboard**********************/
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-		if (!(lParam & 0x40000000) || m_kbd.AutoRepeatIsEnable()) {
-
-			m_kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
-		}
-		break;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		m_kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
-		break;
-	case WM_CHAR:
-		m_kbd.OnChar(static_cast<unsigned char>(wParam));
-		break;
-
+//		//clear keystates
+//	case WM_KILLFOCUS:
+//		m_kbd.ClearState();
+//		break;
+//		/***********************Keyboard**********************/
+//	case WM_KEYDOWN:
+//	case WM_SYSKEYDOWN:
+//		if (!(lParam & 0x40000000) || m_kbd.AutoRepeatIsEnable()) {
+//
+//			m_kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+//		}
+//		break;
+//	case WM_KEYUP:
+//	case WM_SYSKEYUP:
+//		m_kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+//		break;
+//	case WM_CHAR:
+//		m_kbd.OnChar(static_cast<unsigned char>(wParam));
+//		break;
+//
 		/***********************END Keyboard**********************/
 #pragma endregion KEYBOARD
 #pragma region MOUSE

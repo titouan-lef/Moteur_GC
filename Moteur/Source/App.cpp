@@ -14,6 +14,9 @@ int App::Go()
 
         // Processus de tous les messages Windows (y compris la fermeture de la fenêtre).
         if (const auto ecode = Window::Run()) {
+            if (wnd.m_kbd.KeyIsPressed(VK_SPACE)) {
+                MessageBox(nullptr, WindowManager::convertCharArrayToLPCWSTR("Space"), WindowManager::convertCharArrayToLPCWSTR("Space"), MB_OK | MB_ICONEXCLAMATION);
+            }
             return *ecode;
         }
 

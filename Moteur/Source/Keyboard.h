@@ -3,7 +3,7 @@
 #include <bitset>
 class Keyboard
 {
-	friend class MyWindow;
+	friend class Window;
 public:
 	class Event {
 	public:
@@ -53,11 +53,11 @@ public:
 	void DisableAutoRepeat() noexcept;
 	bool AutoRepeatIsEnable() const noexcept;
 
+private:
 	void OnKeyPressed(unsigned char keycode) noexcept;
 	void OnKeyReleased(unsigned char keycode) noexcept;
 	void OnChar(char character) noexcept;
 	void ClearState() noexcept;
-private:
 	template<typename T>
 	static void TrimBuffer(std::queue<T>& buffer) noexcept;
 private:
