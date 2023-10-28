@@ -107,18 +107,18 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
-    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
 }
 
 void WindowManager::CreateFrameResources()
 {
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-        GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));// Récupération de la "surface de dessin" (= render target) n
-        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);// Dessin sur la surface de dessin
-        rtvHandle.Offset(1, m_rtvDescriptorSize);
+        GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));// Récupération de la "surface de dessin" n
+        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);// Création de la "surface de dessin" n dans l'emplacement prévu
+        rtvHandle.Offset(1, m_rtvDescriptorSize);// Récupération de l'emplacement prévu pour la "surface de dessin" n+1
     }
 }
 
@@ -158,71 +158,62 @@ void WindowManager::LoadAssets()
 #pragma region LoadAssetsFunction
 void WindowManager::CreateRootSignature()
 {
-    // Root parameter can be a table, root descriptor or root constants.
-    CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+    /*
+    * Tableau des paramètres de la signature racine
+    * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
+    */ 
+    const UINT nbSlot = 1;
+    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
 
-    // Create a single descriptor table of CBVs.
+    /*
+    * Création d'un descriptor table
+    * cbvTable.Init(a, b, c) :
+    * * b : nombre de constant buffer
+    * * c : regsitre du shader
+    */
     CD3DX12_DESCRIPTOR_RANGE cbvTable;
-    cbvTable.Init(
-        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        1, // Number of descriptors in table
-        0);// base shader register arguments are bound to for this root parameter
+    cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
-    slotRootParameter[0].InitAsDescriptorTable(
-        1, // Number of ranges
-        &cbvTable); // Pointer to array of ranges
+    // Liste des différent Descriptor Range
+    const UINT nbDescriptorRange = 1;
+    CD3DX12_DESCRIPTOR_RANGE descriptorRange[nbDescriptorRange];
+    descriptorRange[0] = cbvTable;
 
-    // A root signature is an array of root parameters.
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0,
-        nullptr,
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    // Initialisation des paramètres de la signature racine
+    slotRootParameter[0].InitAsDescriptorTable(nbDescriptorRange, descriptorRange);
 
-    // create a root signature with a single slot which points to a 
-    // descriptor range consisting of a single constant buffer.
+    // Description de la disposition de la signature racine
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(nbSlot, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+    // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
     ID3DBlob* serializedRootSig = nullptr;
-    ID3DBlob* errorBlob = nullptr;
-    HRESULT hr = D3D12SerializeRootSignature(
-        &rootSigDesc,
-        D3D_ROOT_SIGNATURE_VERSION_1,
-        &serializedRootSig,
-        &errorBlob
-    );
+    D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
 
-    GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(
-        0,
-        serializedRootSig->GetBufferPointer(),
-        serializedRootSig->GetBufferSize(),
-        IID_PPV_ARGS(&m_rootSignature))
-    );
-    //ID3DBlob* signature;
-    //ID3DBlob* error;
+    // Création de la signature racine
+    GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 }
 
 void WindowManager::CreatePipelineState()
 {
-    ID3DBlob* vertexShader;
-    ID3DBlob* pixelShader;
-
-#if defined(_DEBUG)
-    // Enable better shader debugging with the graphics debugging tools.
+    #if defined(_DEBUG) 
     UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
+    #else
     UINT compileFlags = 0;
-#endif
+    #endif
 
-    HRESULT hr;
+    ID3DBlob* vertexShader = nullptr;
+    ID3DBlob* pixelShader = nullptr;
+    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
+    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
-    GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-    GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
-
-    // Define the vertex input layout.
+    // Définition du vertex input layout
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
-    // Describe and create the graphics pipeline state object (PSO).
+    // Paramétrage de la pipeline state object (PSO).
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
     psoDesc.pRootSignature = m_rootSignature;
@@ -237,7 +228,31 @@ void WindowManager::CreatePipelineState()
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
+
+    // Création de la PSO
     GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+}
+
+ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
+{
+    ID3D12Resource* buffer = nullptr;
+    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+        &tmp1,
+        D3D12_HEAP_FLAG_NONE,
+        &tmp2,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&buffer)));
+
+    // Copie des données dans le buffer
+    BYTE* mappedData = nullptr;
+    GFX_THROW_INFO_ONLY(buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
+    memcpy(mappedData, src, bufferSize);
+    buffer->Unmap(0, nullptr);
+
+    return buffer;
 }
 
 void WindowManager::CreateVertexBuffer()
@@ -253,37 +268,19 @@ void WindowManager::CreateVertexBuffer()
         { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur droit
     };
 
+    // Création du vertex buffer
     const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+    ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, m_vertices.data());
 
-
-    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-
-    ID3D12Resource* m_vertexBuffer = nullptr;
-
-    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
-        &tmp1,
-        D3D12_HEAP_FLAG_NONE,
-        &tmp2,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_vertexBuffer)));
-
-    // Copy the triangle data to the vertex buffer.
-    UINT8* pVertexDataBegin;
-    CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    GFX_THROW_INFO_ONLY(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
-    memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
-    m_vertexBuffer->Unmap(0, nullptr);
-
-    // Initialize the vertex buffer view.
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    // Initialisation du vertex buffer view qui indique au GPU comment interpréter les données du vertex buffer
+    m_vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
     m_vertexBufferView.StrideInBytes = sizeof(Vertex);
     m_vertexBufferView.SizeInBytes = vertexBufferSize;
 }
 
 void WindowManager::CreateConstantBuffer()
 {
+    // Création de la matrice monde
     Entity e = Entity();
 
     struct ConstantBufferData
@@ -291,50 +288,31 @@ void WindowManager::CreateConstantBuffer()
         DirectX::XMMATRIX World;
     };
 
-    ConstantBufferData constBufferData;
+    ConstantBufferData* constBufferData = new ConstantBufferData();
     e.m_Transform.UpdateMatrix();
     e.m_Transform.MoveByVector({ 0, 0, 0.5f });
     e.m_Transform.Rotate(0.5f, -0.25f, 0);
     e.m_Transform.UpdateMatrix();
-    constBufferData.World = e.m_Transform.GetMatrixTranspose();
-
+    constBufferData->World = e.m_Transform.GetMatrixTranspose();
+    /**************************************/
+    
+    // Création du constant buffer
     const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+    ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
 
-
-    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
-
-    ID3D12Resource* m_constBuffer = nullptr;
-
-    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
-        &tmp1,
-        D3D12_HEAP_FLAG_NONE,
-        &tmp2,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_constBuffer)));
-
-    // Copy the triangle data to the vertex buffer.
-    BYTE* mappedConstData = nullptr;
-    GFX_THROW_INFO_ONLY(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
-    memcpy(mappedConstData, &constBufferData, constBufferSize);
-    m_constBuffer->Unmap(0, nullptr);
-
-    // Cr�ez un tas de descripteurs de type CBV_SRV_UAV
+    // Propriétés du tas de descripteurs
     D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
     cbvSrvUavHeapDesc.NumDescriptors = 1; // Un descripteur de Constant Buffer View (CBV)
     cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+    // Création d'un tas de descripteurs de type CBV_SRV_UAV
+    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap));
 
-    m_constBufferView.BufferLocation = m_constBuffer->GetGPUVirtualAddress();
+    // Création du constant buffer
+    m_constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();
     m_constBufferView.SizeInBytes = constBufferSize;
-
-    m_device->CreateConstantBufferView(
-        &m_constBufferView,
-        cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart()
-    );
+    m_device->CreateConstantBufferView(&m_constBufferView, m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void WindowManager::CreateSyncObj()
@@ -397,9 +375,9 @@ void WindowManager::PopulateCommandList()
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
     // Gestion Constant Buffer
-    ID3D12DescriptorHeap* descriptorHeaps[] = { cbvSrvUavHeap };
+    ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvSrvUavHeap };
     m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-    m_commandList->SetGraphicsRootDescriptorTable(0, cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
+    m_commandList->SetGraphicsRootDescriptorTable(0, m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
 
 
 
