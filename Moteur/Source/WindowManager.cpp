@@ -82,9 +82,10 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
         }
     }
 #endif
+    HRESULT hr;
 
     IDXGIFactory4* factory;
-    GFX_THROW_INFO_ONLY(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
+    GFX_THROW_INFO(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
 
     return factory;
 }
@@ -92,32 +93,35 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 // Create the Direct3D device.
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
+    HRESULT hr;
     if (m_useWarpDevice)
     {
         IDXGIAdapter* warpAdapter;
-        GFX_THROW_INFO_ONLY(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
-        GFX_THROW_INFO_ONLY(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+        GFX_THROW_INFO(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
+        GFX_THROW_INFO(D3D12CreateDevice(warpAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
     else
     {
         IDXGIAdapter1* hardwareAdapter;
         GetHardwareAdapter(factory, &hardwareAdapter);
-        GFX_THROW_INFO_ONLY(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+        GFX_THROW_INFO(D3D12CreateDevice(hardwareAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
     }
 }
 
 // Create the command queue.
 void WindowManager::CreateCommandQueue()
 {
+    HRESULT hr;
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+    GFX_THROW_INFO(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 
 // Create and configure the swap chain.
 void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
 {
+    HRESULT hr;
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = FrameCount;
     swapChainDesc.Width = width;
@@ -128,11 +132,11 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
     swapChainDesc.SampleDesc.Count = 1;
 
     IDXGISwapChain1* swapChain;
-    GFX_THROW_INFO_ONLY(factory->CreateSwapChainForHwnd(
+    GFX_THROW_INFO(factory->CreateSwapChainForHwnd(
         m_commandQueue, hWnd, &swapChainDesc, nullptr, nullptr, &swapChain
     ));
 
-    GFX_THROW_INFO_ONLY(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
+    GFX_THROW_INFO(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
@@ -141,11 +145,12 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
 // Create descriptor heaps.
 void WindowManager::CreateDescriptorHeaps()
 {
+    HRESULT hr;
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    GFX_THROW_INFO_ONLY(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+    GFX_THROW_INFO(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -153,18 +158,19 @@ void WindowManager::CreateDescriptorHeaps()
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE; // Pour que le tas soit visible depuis les shaders.
 
-    GFX_THROW_INFO_ONLY( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
+    GFX_THROW_INFO( m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
     m_cbvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 // Create frame resources (render targets).
 void WindowManager::CreateFrameResources()
 {
+    HRESULT hr;
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 
     for (UINT n = 0; n < FrameCount; n++)
     {
-        GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
+        GFX_THROW_INFO(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));
         m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);
         rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
@@ -173,12 +179,14 @@ void WindowManager::CreateFrameResources()
 // Create a command allocator.
 void WindowManager::CreateCommandAllocator()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
+    HRESULT hr;
+    GFX_THROW_INFO(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
 
 // Load the sample assets.
 void WindowManager::LoadAssets()
 {
+        HRESULT hr;
     // Create an root signature.
     CreateRootSignature();
     
@@ -195,7 +203,6 @@ void WindowManager::LoadAssets()
         UINT compileFlags = 0;
 #endif
 
-        HRESULT hr;
 
         GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
         GFX_THROW_INFO(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
@@ -222,15 +229,15 @@ void WindowManager::LoadAssets()
         psoDesc.NumRenderTargets = 1;
         psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
         psoDesc.SampleDesc.Count = 1;
-        GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+        GFX_THROW_INFO(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
     }
 
     // Create the command list.
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.
-    GFX_THROW_INFO_ONLY(m_commandList->Close());
+    GFX_THROW_INFO(m_commandList->Close());
 
     // Create the vertex buffer.
     CreateVertexBuffer();
@@ -280,7 +287,7 @@ void WindowManager::CreateRootSignature()
         &errorBlob
     );
 
-    GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(
+    GFX_THROW_INFO(m_device->CreateRootSignature(
         0,
         serializedRootSig->GetBufferPointer(),
         serializedRootSig->GetBufferSize(),
@@ -304,12 +311,12 @@ void WindowManager::CreateVertexBuffer()
     };
 
     const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
-
+    HRESULT hr;
 
     auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
 
-    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+    GFX_THROW_INFO(m_device->CreateCommittedResource(
         &tmp1,
         D3D12_HEAP_FLAG_NONE,
         &tmp2,
@@ -320,7 +327,7 @@ void WindowManager::CreateVertexBuffer()
     // Copy the triangle data to the vertex buffer.
     UINT8* pVertexDataBegin;
     CD3DX12_RANGE readRange(0, 0);        // We do not intend to read from this resource on the CPU.
-    GFX_THROW_INFO_ONLY(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+    GFX_THROW_INFO(m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
     memcpy(pVertexDataBegin, m_vertices.data(), vertexBufferSize);
     m_vertexBuffer->Unmap(0, nullptr);
 
@@ -348,11 +355,11 @@ void WindowManager::CreateConstantBuffer()
 
     const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
 
-
+    HRESULT hr;
     auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
 
-    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+    GFX_THROW_INFO(m_device->CreateCommittedResource(
         &tmp1,
         D3D12_HEAP_FLAG_NONE,
         &tmp2,
@@ -362,7 +369,7 @@ void WindowManager::CreateConstantBuffer()
 
     // Copy the triangle data to the vertex buffer.
     BYTE* mappedConstData = nullptr;
-    GFX_THROW_INFO_ONLY(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
+    GFX_THROW_INFO(m_constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedConstData)));
     memcpy(mappedConstData, &constBufferData, constBufferSize);
     m_constBuffer->Unmap(0, nullptr);
 
@@ -385,14 +392,15 @@ void WindowManager::CreateConstantBuffer()
 
 void WindowManager::CreateSyncObj()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
+    HRESULT hr;
+    GFX_THROW_INFO(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
     m_fenceValue = 1;
 
     // Create an event handle to use for frame synchronization.
     m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
     if (m_fenceEvent == nullptr)
     {
-        GFX_THROW_INFO_ONLY(HRESULT_FROM_WIN32(GetLastError()));
+        GFX_THROW_INFO(HRESULT_FROM_WIN32(GetLastError()));
     }
 }
 
@@ -405,6 +413,7 @@ void WindowManager::OnUpdate()
 // Render the scene.
 void WindowManager::OnRender()
 {
+    HRESULT hr;
     // Record all the commands we need to render the scene into the command list.
     PopulateCommandList();
 
@@ -413,7 +422,7 @@ void WindowManager::OnRender()
     m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
     // Present the frame.
-    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
+    GFX_THROW_INFO(m_swapChain->Present(1, 0));
 
     WaitForPreviousFrame();
 }
@@ -430,16 +439,16 @@ void WindowManager::OnDestroy()
 void WindowManager::PopulateCommandList()
 {
  
-
+    HRESULT hr;
     // Command list allocators can only be reset when the associated 
     // command lists have finished execution on the GPU; apps should use 
     // fences to determine GPU execution progress.
-    GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
+    GFX_THROW_INFO(m_commandAllocator->Reset());
 
     // However, when ExecuteCommandList() is called on a particular command 
     // list, that command list can then be reset at any time and must be before 
     // re-recording.
-    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+    GFX_THROW_INFO(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
     // Set necessary state.
     m_commandList->SetGraphicsRootSignature(m_rootSignature);
@@ -472,11 +481,12 @@ void WindowManager::PopulateCommandList()
     auto tmp2 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     m_commandList->ResourceBarrier(1, &tmp2);
 
-    GFX_THROW_INFO_ONLY(m_commandList->Close());
+    GFX_THROW_INFO(m_commandList->Close());
 }
 
 void WindowManager::WaitForPreviousFrame()
 {
+    HRESULT hr;
     // WAITING FOR THE FRAME TO COMPLETE BEFORE CONTINUING IS NOT BEST PRACTICE.
     // This is code implemented as such for simplicity. The D3D12HelloFrameBuffering
     // sample illustrates how to use fences for efficient resource usage and to
@@ -484,13 +494,13 @@ void WindowManager::WaitForPreviousFrame()
 
     // Signal and increment the fence value.
     const UINT64 fence = m_fenceValue;
-    GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, fence));
+    GFX_THROW_INFO(m_commandQueue->Signal(m_fence, fence));
     m_fenceValue++;
 
     // Wait until the previous frame is finished.
     if (m_fence->GetCompletedValue() < fence)
     {
-        GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
+        GFX_THROW_INFO(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
         WaitForSingleObject(m_fenceEvent, INFINITE);
     }
 

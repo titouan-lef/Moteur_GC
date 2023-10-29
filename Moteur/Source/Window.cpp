@@ -8,7 +8,8 @@ WindowManager* Window::m_pWinManager = nullptr;
 
 //SEULEMENT POUR TEST
 Keyboard Window::m_kbd;
-//HWND Window::m_hWnd;
+Mouse Window::m_mouse;
+HWND Window::m_hWnd;
 
 
 /*
@@ -77,7 +78,8 @@ std::optional<int> Window::Run()
 {
 	// Main sample loop.
 	MSG msg = {};
-
+	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fen�tre
+	{
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) {
@@ -85,13 +87,39 @@ std::optional<int> Window::Run()
 			}
 
 			//SEULEMENT POUR TEST
-			//if (m_kbd.KeyIsPressed(VK_SPACE)) {
-			//	SetWindowText(m_hWnd, convertCharArrayToLPCWSTR("Salut"));
-			//}
+			if (m_kbd.KeyIsPressed(VK_UP)) {
+				SetWindowText(m_hWnd, convertCharArrayToLPCWSTR("Salut"));
+			}
 
+			while (!m_mouse.IsEmpty()) {
+				const auto e = m_mouse.Read();
+				switch (e.GetType()) {
+
+				case Mouse::Event::Type::Move:
+				{
+					std::ostringstream oss;
+					oss << "Mouse moved to (" << e.GetPosX() << ", " << e.GetPosY() << ")";
+					LPCWSTR lpcwstr = StringToLPCWSTR(oss.str());
+					SetWindowText(m_hWnd, lpcwstr);
+					delete[] lpcwstr;
+				}
+				break;
+				case Mouse::Event::Type::Leave:
+				{
+					std::ostringstream oss;
+					oss << "Mouse moved to (" << e.GetPosX() << ", " << e.GetPosY() << ")";
+					LPCWSTR lpcwstr = StringToLPCWSTR("Gone");
+					SetWindowText(m_hWnd, lpcwstr);
+					delete[] lpcwstr;
+				}
+				break;
+				}
+
+			}
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+	}
 	
 
 	return Finish(msg.wParam);
@@ -178,7 +206,7 @@ LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
 {
 	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	Window* pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Window* pwin = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	switch (msg)
 	{
 		
@@ -204,11 +232,12 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
-
+#pragma region KEYBOARD
 		//clear keystates
 	case WM_KILLFOCUS:
 		m_kbd.ClearState();
 		break;
+
 		/***********************Keyboard**********************/
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
@@ -226,6 +255,79 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 		break;
 
 		/***********************END Keyboard**********************/
+#pragma endregion KEYBOARD
+#pragma region MOUSE
+/***********************Mouse**********************/
+
+// Gestion du message WM_MOUSEMOVE (mouvement de la souris)
+	case WM_MOUSEMOVE:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		// Si la souris est à l'intérieur de la région de la fenêtre
+		if (pt.x >= 0 && pt.x < m_width && pt.y >= 0 && pt.y < m_height) {
+
+			pwin->m_mouse.OnMouseMove(pt.x, pt.y);
+			if (!pwin->m_mouse.IsInWindow()) {
+				SetCapture(m_hWnd);
+				pwin->m_mouse.OnMouseEnter();
+			}
+		}
+		// Si la souris est à l'extérieur de la région de la fenêtre
+		else {
+			if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
+				pwin->m_mouse.OnMouseMove(pt.x, pt.y);
+			}
+			else {
+				ReleaseCapture();
+				pwin->m_mouse.OnMouseLeave();
+			}
+		}
+		break;
+	}
+
+	// Gestion du message WM_LBUTTONDOWN (clic gauche de la souris)
+	case WM_LBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		pwin->m_mouse.OnLeftPressed(pt.x, pt.y);
+		break;
+	}
+
+	// Gestion du message WM_RBUTTONDOWN (clic droit de la souris)
+	case WM_RBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		pwin->m_mouse.OnLeftPressed(pt.x, pt.y);
+		break;
+	}
+
+	// Gestion du message WM_LBUTTONUP (relâchement du clic gauche de la souris)
+	case WM_LBUTTONUP:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		pwin->m_mouse.OnLeftReleased(pt.x, pt.y);
+		break;
+	}
+
+	// Gestion du message WM_RBUTTONUP (relâchement du clic droit de la souris)
+	case WM_RBUTTONUP:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		pwin->m_mouse.OnRightReleased(pt.x, pt.y);
+		break;
+	}
+
+	// Gestion du message WM_MOUSEWHEEL (défilement de la souris)
+	case WM_MOUSEWHEEL:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		pwin->m_mouse.OnWheelDelta(pt.x, pt.y, delta);
+		break;
+	}
+
+	/***********************END MOUSE**********************/
+#pragma endregion MOUSE
 
 	}
 

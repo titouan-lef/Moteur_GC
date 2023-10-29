@@ -29,6 +29,7 @@
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Keyboard.h" />
+    <ClInclude Include="Source\Mouse.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\TestTransform.h" />
     <ClInclude Include="Source\Window.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Keyboard.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Mouse.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\TestTransform.cpp" />
     <ClCompile Include="Source\Window.cpp" />

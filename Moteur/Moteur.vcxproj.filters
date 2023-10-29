@@ -76,6 +76,9 @@
     <ClInclude Include="Source\Keyboard.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mouse.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -115,6 +118,9 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Keyboard.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mouse.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
