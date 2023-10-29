@@ -447,8 +447,15 @@ void WindowManager::PopulateCommandList()
     m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, m_scissorRect.size(), m_scissorRect.data());
 
     // Ajout de l'affichage
-    const UINT nbForme = 1;// Nombre d'instance (= forme dans le constant buffer) à dessiner
-    for (int i = 0; i < 2; ++i)
+    const UINT nbForme = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
+    /*
+    * TO DO :
+    * créer un vertex buffer par forme
+    * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
+    * mettre en place un systeme d'update des matrice World pour chaque objet
+    * cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView()) --> besoin d'un IndexBuffer
+    */
+    for (int i = 0; i < descriptorHeaps.size(); ++i)
     {
         m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
         m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
