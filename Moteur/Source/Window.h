@@ -39,7 +39,6 @@ public:
 	virtual ~Window();
     static std::optional<int> Run();
     static WindowManager* m_pWinManager;
-    static int Finish(WPARAM wParam);
 
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;

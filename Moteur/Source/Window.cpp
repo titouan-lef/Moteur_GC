@@ -81,15 +81,7 @@ std::optional<int> Window::Run()
 		}
 	}
 
-	return Finish(msg.wParam);
-}
-
-int Window::Finish(WPARAM wParam)
-{
-	m_pWinManager->OnDestroy();
-
-	// Return this part of the WM_QUIT message to Windows.
-	return static_cast<char>(wParam);
+	return static_cast<char>(msg.wParam);
 }
 
 /*

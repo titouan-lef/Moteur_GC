@@ -1,11 +1,10 @@
 #include "WindowManager.h"
-#include "Entity.h"
 #include "MyException.h"
 
-WindowManager::WindowManager(UINT width, UINT height) :
-    m_viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)),
-    m_scissorRect(0, 0, static_cast<LONG>(width), static_cast<LONG>(height))
+WindowManager::WindowManager(UINT width, UINT height)
 {
+    m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
+    m_scissorRect.push_back(CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)));
 }
 
 WindowManager::~WindowManager()
@@ -17,10 +16,8 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 {
     LoadPipeline(width, height, hWnd);
     LoadAssets();
-    WaitForPreviousFrame();
 }
 
-// Load the rendering pipeline dependencies.
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
     #if defined(_DEBUG)
@@ -97,7 +94,7 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFac
     GFX_THROW_INFO_ONLY(factory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
     m_swapChain = (IDXGISwapChain3*)swapChain;
-    m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique sur quel back buffer on va pouvoir travailler (ici on en a un seul donc m_backBufferIndex sera toujours égal à 0)
 }
 
 void WindowManager::CreateDescriptorHeaps()
@@ -128,30 +125,13 @@ void WindowManager::CreateCommandAllocator()
 }
 #pragma endregion
 
-// Load the sample assets.
 void WindowManager::LoadAssets()
 {
-    // Create an root signature.
     CreateRootSignature();
-    
-
-    // Create the pipeline state, which includes compiling and loading shaders.
-    CreatePipelineState();
-
-    // Create the command list.
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
-
-    // Command lists are created in the recording state, but there is nothing
-    // to record yet. The main loop expects it to be closed, so close it now.
-    GFX_THROW_INFO_ONLY(m_commandList->Close());
-
-    // Create the vertex buffer.
+    CreatePipelineStateObject();
+    CreateCommandList();
     CreateVertexBuffer();
-
-    // Cr�ation constant buffer
     CreateConstantBuffer();
-
-    // Create synchronization objects 
     CreateSyncObj();
 }
 
@@ -159,16 +139,9 @@ void WindowManager::LoadAssets()
 void WindowManager::CreateRootSignature()
 {
     /*
-    * Tableau des paramètres de la signature racine
-    * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
-    */ 
-    const UINT nbSlot = 1;
-    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
-
-    /*
     * Création d'un descriptor table
     * cbvTable.Init(a, b, c) :
-    * * b : nombre de constant buffer
+    * * b : nombre de constant buffer par objet
     * * c : regsitre du shader
     */
     CD3DX12_DESCRIPTOR_RANGE cbvTable;
@@ -178,6 +151,13 @@ void WindowManager::CreateRootSignature()
     const UINT nbDescriptorRange = 1;
     CD3DX12_DESCRIPTOR_RANGE descriptorRange[nbDescriptorRange];
     descriptorRange[0] = cbvTable;
+
+    /*
+    * Tableau des paramètres de la signature racine
+    * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
+    */
+    const UINT nbSlot = 1;
+    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
 
     // Initialisation des paramètres de la signature racine
     slotRootParameter[0].InitAsDescriptorTable(nbDescriptorRange, descriptorRange);
@@ -193,7 +173,7 @@ void WindowManager::CreateRootSignature()
     GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 }
 
-void WindowManager::CreatePipelineState()
+void WindowManager::CreatePipelineStateObject()
 {
     #if defined(_DEBUG) 
     UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -201,6 +181,7 @@ void WindowManager::CreatePipelineState()
     UINT compileFlags = 0;
     #endif
 
+    // Récupération des shaders compilés
     ID3DBlob* vertexShader = nullptr;
     ID3DBlob* pixelShader = nullptr;
     GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
@@ -231,6 +212,12 @@ void WindowManager::CreatePipelineState()
 
     // Création de la PSO
     GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+}
+
+void WindowManager::CreateCommandList()
+{
+    GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
 ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
@@ -273,153 +260,231 @@ void WindowManager::CreateVertexBuffer()
     ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, m_vertices.data());
 
     // Initialisation du vertex buffer view qui indique au GPU comment interpréter les données du vertex buffer
-    m_vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+    m_vertexBufferView.push_back(D3D12_VERTEX_BUFFER_VIEW(vertexBuffer->GetGPUVirtualAddress(), vertexBufferSize, sizeof(Vertex)));
 }
 
 void WindowManager::CreateConstantBuffer()
 {
-    // Création de la matrice monde
-    Entity e = Entity();
 
     struct ConstantBufferData
     {
         DirectX::XMMATRIX World;
     };
 
-    ConstantBufferData* constBufferData = new ConstantBufferData();
-    e.m_Transform.UpdateMatrix();
-    e.m_Transform.MoveByVector({ 0, 0, 0.5f });
-    e.m_Transform.Rotate(0.5f, -0.25f, 0);
-    e.m_Transform.UpdateMatrix();
-    constBufferData->World = e.m_Transform.GetMatrixTranspose();
-    /**************************************/
+    {
+        // Création de la matrice monde
+        e1 = Entity();
+
+        ConstantBufferData* constBufferData = new ConstantBufferData();
+        e1.m_Transform.SetScale(0.5f, 0.5f, 0.5f);
+        e1.m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
+        //e.m_Transform.Rotate(0.5f, -0.25f, 0);
+        e1.m_Transform.UpdateMatrix();
+        constBufferData->World = e1.m_Transform.GetMatrixTranspose();
+        /**************************************/
+
+        // Création du constant buffer
+        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
+
+        // Défini l'emplacement et la taille des données du constant buffer
+        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
+        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
+        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
+
+        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
+        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+        cbvSrvUavHeapDesc.NumDescriptors = 1;
+        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+        // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
+        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+
+        // Stockage du constant buffer view dans le tas
+        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+
+        descriptorHeaps.push_back(cbvSrvUavHeap);
+    }
+    {
+        // Création de la matrice monde
+        e2 = Entity();
+
+        ConstantBufferData* constBufferData = new ConstantBufferData();
+        e2.m_Transform.MoveByVector({ -0.5f, 0, 0.5f });
+        e2.m_Transform.SetScale(0.5f, 1, 0.5f);
+        e2.m_Transform.UpdateMatrix();
+        constBufferData->World = e2.m_Transform.GetMatrixTranspose();
+        /**************************************/
+
+        // Création du constant buffer
+        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
+
+        // Défini l'emplacement et la taille des données du constant buffer
+        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
+        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
+        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
+
+        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
+        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+        cbvSrvUavHeapDesc.NumDescriptors = 1;
+        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+        // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
+        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+
+        // Stockage du constant buffer view dans le tas
+        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+
+        descriptorHeaps.push_back(cbvSrvUavHeap);
+    }
     
-    // Création du constant buffer
-    const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-    ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-
-    // Propriétés du tas de descripteurs
-    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-    cbvSrvUavHeapDesc.NumDescriptors = 1; // Un descripteur de Constant Buffer View (CBV)
-    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-    // Création d'un tas de descripteurs de type CBV_SRV_UAV
-    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap));
-
-    // Création du constant buffer
-    m_constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();
-    m_constBufferView.SizeInBytes = constBufferSize;
-    m_device->CreateConstantBufferView(&m_constBufferView, m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 void WindowManager::CreateSyncObj()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
-
-    // Create an event handle to use for frame synchronization.
-    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    if (m_fenceEvent == nullptr)
-    {
-        GFX_THROW_INFO_ONLY(HRESULT_FROM_WIN32(GetLastError()));
-    }
+    GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
 }
 #pragma endregion
 
-// Update frame-based values.
 void WindowManager::OnUpdate()
 {
-    
+    struct ConstantBufferData
+    {
+        DirectX::XMMATRIX World;
+    };
+
+
+    e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y + 0.01f, e1.m_Transform.GetPosition().z);
+    e1.m_Transform.UpdateMatrix();
+
+    ConstantBufferData* constBufferData = new ConstantBufferData();
+    constBufferData->World = e1.m_Transform.GetMatrixTranspose();
+    /**************************************/
+
+    // Création du constant buffer
+    const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+    ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
+
+    // Défini l'emplacement et la taille des données du constant buffer
+    D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
+    constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
+    constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
+
+    // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
+    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+    cbvSrvUavHeapDesc.NumDescriptors = 1;
+    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+    // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
+    ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+
+    // Stockage du constant buffer view dans le tas
+    m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+
+    descriptorHeaps[0] = cbvSrvUavHeap;
 }
 
-// Render the scene.
 void WindowManager::OnRender()
 {
-    // Record all the commands we need to render the scene into the command list.
     PopulateCommandList();
 
-    // Execute the command list.
+    // Exécution des commandes (ici nous n'utilisons qu'une seul liste de comande)
     ID3D12CommandList* ppCommandLists[] = { m_commandList };
     m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-    // Present the frame.
+    // Affichage de la frame.
     GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     WaitForPreviousFrame();
 }
 
-void WindowManager::OnDestroy()
-{
-    // Ensure that the GPU is no longer referencing resources that are about to be
-    // cleaned up by the destructor.
-    WaitForPreviousFrame();
-
-    CloseHandle(m_fenceEvent);
-}
-
 void WindowManager::PopulateCommandList()
 {
-    // Command list allocators can only be reset when the associated 
-    // command lists have finished execution on the GPU; apps should use 
-    // fences to determine GPU execution progress.
+    // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
     GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
-
-    // However, when ExecuteCommandList() is called on a particular command 
-    // list, that command list can then be reset at any time and must be before 
-    // re-recording.
     GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
-    // Set necessary state.
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
-    // Gestion Constant Buffer
-    ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvSrvUavHeap };
-    m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-    m_commandList->SetGraphicsRootDescriptorTable(0, m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());
+    /* GESTION DES BUFFER */
+
+    // Gestion Vertex Buffer
+    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Paramètre l'affichage pour fonctionner avec une liste de triangle
 
 
+    /* AJOUT DES COMMANDES */
 
-    m_commandList->RSSetViewports(1, &m_viewport);
-    m_commandList->RSSetScissorRects(1, &m_scissorRect);
+    // Ajout de la Root Signature
+    m_commandList->SetGraphicsRootSignature(m_rootSignature);// Ajout de la root signature
 
-    // Indicate that the back buffer will be used as a render target.
-    auto tmp1 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    m_commandList->ResourceBarrier(1, &tmp1);
+    // Ajout de la pipeline de rendu
+    m_commandList->SetPipelineState(m_pipelineState);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
-    m_commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+    // Ajout des différentes fenêtres et de leur zone de rendu
+    m_commandList->RSSetViewports(m_viewport.size(), m_viewport.data());// Ajout des fenêtres
+    m_commandList->RSSetScissorRects(m_scissorRect.size(), m_scissorRect.data());// Ajout des zones de rendu
 
-    // Record commands.
+    // Ajout des "surfaces de dessin" à utiliser
+    CD3DX12_RESOURCE_BARRIER transition[] = {
+        CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET)// Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
+    };
+    m_commandList->ResourceBarrier(_countof(transition), transition);// Ajout des "surfaces de dessin" prêtes à être utilisées
+
+    // Ajout des "surfaces de dessin" au back buffer
+    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget[] = {
+        CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize)
+    };
+    m_commandList->OMSetRenderTargets(_countof(renderTarget), renderTarget, FALSE, nullptr);
+
+    // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    m_commandList->DrawInstanced(m_vertices.size(), 1, 0, 0);
+    m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, m_scissorRect.size(), m_scissorRect.data());
 
-    // Indicate that the back buffer will now be used to present.
-    auto tmp2 = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-    m_commandList->ResourceBarrier(1, &tmp2);
+    // Ajout de l'affichage
+    const UINT nbForme = 1;// Nombre d'instance (= forme dans le constant buffer) à dessiner
+    for (int i = 0; i < 2; ++i)
+    {
+        m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+        m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+        m_commandList->IASetVertexBuffers(0, m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
+        m_commandList->DrawInstanced(m_vertices.size(), nbForme, 0, 0);// TO DO : m_vertices.size() doit correspondre pour chaque buffer
+    }
 
+
+    // Indique au back buffer les render target à ne plus utiliser
+    transition[0] = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);// Indique que m_renderTargets[m_backBufferIndex] ne doit plus être utilisée comme render target
+    m_commandList->ResourceBarrier(_countof(transition), transition);
+
+    // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(m_commandList->Close());
 }
 
 void WindowManager::WaitForPreviousFrame()
 {
-    // Signal and increment the fence value.
-    const UINT64 fence = m_fenceValue;
+    // Indique que les commandes dans le file doivent être terminées avant de continuer
+    const UINT64 fence = m_fenceId;
     GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, fence));
-    m_fenceValue++;
 
-    // Wait until the previous frame is finished.
-    if (m_fence->GetCompletedValue() < fence)
+    if (m_fence->GetCompletedValue() < fence)// Si la frame précédente n'a pas fini d'être traité
     {
-        GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
-        WaitForSingleObject(m_fenceEvent, INFINITE);
+        HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);// Signale la fin du rendu d'une frame
+
+        if (fenceEvent != nullptr)// Vérifie que la création de l'événement s'est déroulée avec succès
+        {
+            GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(fence, fenceEvent));// Créer un évènement qui indique si la frame précédente est traité
+            WaitForSingleObject(fenceEvent, INFINITE);// Tant que la frame précédente n'est pas traité, le programme est suspendu
+            CloseHandle(fenceEvent);// Supprime l'évènement de fin de rendu d'une frame
+        }
     }
 
-    m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+    m_fenceId++;// On passe à la prochaine frame
 }
 
 #pragma region HardwareAdapter
