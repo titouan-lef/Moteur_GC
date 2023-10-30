@@ -2,7 +2,7 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Entity.h"// TO DO : A SUPPRIMER
-
+#include "Input.h"
 class WindowManager
 {
 public:
@@ -16,6 +16,8 @@ public:
     // Gestion des touches
     virtual void OnKeyDown(UINT8 key) {}// Fonction réaliser lors de l'appui d'une touche
     virtual void OnKeyUp(UINT8 key) {}// Fonction réaliser lors du relachement d'une touche
+    //TEST INPUT
+    Input m_input;
 
 private:
     // Gestion des erreurs

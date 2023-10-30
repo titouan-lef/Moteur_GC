@@ -368,9 +368,21 @@ void WindowManager::OnUpdate()
     {
         DirectX::XMMATRIX World;
     };
+    m_input.Update();
 
+    if (m_input.KeyIsPressedOnce(1) ) {
 
-    e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y + 0.01f, e1.m_Transform.GetPosition().z);
+        if (e1.m_Transform.GetPosition().y + 0.01f > 1) {
+    
+            e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y, e1.m_Transform.GetPosition().z);
+        }
+        else {
+    
+            e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y + 0.01f, e1.m_Transform.GetPosition().z);
+        }
+    
+    }
+
     e1.m_Transform.UpdateMatrix();
 
     ConstantBufferData* constBufferData = new ConstantBufferData();
@@ -400,6 +412,7 @@ void WindowManager::OnUpdate()
     m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 
     descriptorHeaps[0] = cbvSrvUavHeap;
+
 }
 
 void WindowManager::OnRender()

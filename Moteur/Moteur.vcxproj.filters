@@ -73,6 +73,9 @@
     <ClInclude Include="Source\MyException.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Input.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -109,6 +112,9 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\MyException.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
