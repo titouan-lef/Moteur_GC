@@ -20,12 +20,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\App.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\dxerr.h" />
+    <ClInclude Include="Source\DxgiInfoManager.h" />
+    <ClInclude Include="Source\EngineException.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
+    <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\TestTransform.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\Window.h" />
@@ -34,11 +39,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\App.cpp" />
     <ClCompile Include="Source\Component.cpp" />
+    <ClCompile Include="Source\dxerr.cpp" />
+    <ClCompile Include="Source\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
+    <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\TestTransform.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\Window.cpp" />
@@ -48,6 +58,11 @@
     <Text Include="Source\shaders.hlsl">
       <FileType>Document</FileType>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\DXGetErrorDescription.inl" />
+    <None Include="Source\DXGetErrorString.inl" />
+    <None Include="Source\DXTrace.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -32,8 +32,6 @@ GameObject::GameObject(float x, float y, float z, float width, float height, flo
         { { x + halfWidth, y + halfHeight, z + depth }, { 1.0f, 0.0f, 0.0f, 1.0f } },// Coin supérieur droit
         { { x + halfWidth, y + halfHeight, z }, { 0.0f, 1.0f, 0.0f, 1.0f } }// Coin inférieur droit
     };
-
-    WindowManager::AddGameObject(this);
 }
 
 GameObject::~GameObject()
