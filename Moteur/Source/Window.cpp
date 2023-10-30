@@ -6,9 +6,7 @@
 
 WindowManager* Window::m_pWinManager = nullptr;
 
-//SEULEMENT POUR TEST
-Keyboard Window::m_kbd;
-Mouse Window::m_mouse;
+
 HWND Window::m_hWnd;
 
 
@@ -85,40 +83,15 @@ std::optional<int> Window::Run()
 			if (msg.message == WM_QUIT) {
 				return msg.wParam;
 			}
-
-			//SEULEMENT POUR TEST
-			if (m_kbd.KeyIsPressed(VK_UP)) {
-				SetWindowText(m_hWnd, convertCharArrayToLPCWSTR("Salut"));
-			}
-
-			while (!m_mouse.IsEmpty()) {
-				const auto e = m_mouse.Read();
-				switch (e.GetType()) {
-
-				case Mouse::Event::Type::Move:
-				{
-					std::ostringstream oss;
-					oss << "Mouse moved to (" << e.GetPosX() << ", " << e.GetPosY() << ")";
-					LPCWSTR lpcwstr = StringToLPCWSTR(oss.str());
-					SetWindowText(m_hWnd, lpcwstr);
-					delete[] lpcwstr;
-				}
-				break;
-				case Mouse::Event::Type::Leave:
-				{
-					std::ostringstream oss;
-					oss << "Mouse moved to (" << e.GetPosX() << ", " << e.GetPosY() << ")";
-					LPCWSTR lpcwstr = StringToLPCWSTR("Gone");
-					SetWindowText(m_hWnd, lpcwstr);
-					delete[] lpcwstr;
-				}
-				break;
-				}
-
-			}
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+
+
+		WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(m_hWnd, GWLP_USERDATA));
+		pWinManager->OnUpdate();
+		pWinManager->OnRender();
 	}
 	
 
@@ -180,33 +153,37 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
 }
+// Handle the initial setup of the window message handler
 LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
-{
-	if (msg == WM_NCCREATE) {
-		//extrait ptr à Window
-		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
-		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
-		//set winapi managed user data to store ptr to win class
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
-		//set msg proc to normal hangler now that setup is finished
-		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
-		//envoie du msg
+	{
+		if (msg == WM_NCCREATE) {
+			// Extract the pointer to the Window class from lParam
+			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+			Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+			// Set the WinAPI managed user data to store a pointer to the Window class
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+			// Set the message procedure to the normal handler now that setup is finished
+			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
+			// Forward the message to the HandleMsg function of the Window class
+			return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+		}
+		// If a message is received before WM_NCCREATE, use the default message handler
+		return DefWindowProc(hWnd, msg, wParam, lParam);
+	}
+
+// Thunk function to handle window messages and forward them to the actual Window class
+LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+	{
+		// Retrieve a pointer to the Window class from user data
+		Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		// Forward the message to the HandleMsg function of the Window class
 		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 	}
-	//si on recoie un msg avant WM NCCREATE on utilise le default
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
 
-LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
-{
-	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
-}
-
+// Handle window messages for the Window class
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
 {
 	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	Window* pwin = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	switch (msg)
 	{
 		
@@ -216,118 +193,23 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 		// Sauvegarde le WindowManager* passé dans CreateWindow
 		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+		break;
 	}
-	return 0;
+	//return 0;
 
 	
 
-	case WM_PAINT:
-		if (pWinManager)
-		{
-			pWinManager->OnUpdate();
-			pWinManager->OnRender();
-		}
-		return 0;
+	//case WM_PAINT:
+	//	if (pWinManager)
+	//	{
+	//		pWinManager->OnUpdate();
+	//		pWinManager->OnRender();
+	//	}
+	//	return 0;
 
 	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
-#pragma region KEYBOARD
-		//clear keystates
-	case WM_KILLFOCUS:
-		m_kbd.ClearState();
-		break;
-
-		/***********************Keyboard**********************/
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-		if (!(lParam & 0x40000000) || m_kbd.AutoRepeatIsEnable()) {
-
-			m_kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
-		}
-		break;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		m_kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
-		break;
-	case WM_CHAR:
-		m_kbd.OnChar(static_cast<unsigned char>(wParam));
-		break;
-
-		/***********************END Keyboard**********************/
-#pragma endregion KEYBOARD
-#pragma region MOUSE
-/***********************Mouse**********************/
-
-// Gestion du message WM_MOUSEMOVE (mouvement de la souris)
-	case WM_MOUSEMOVE:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		// Si la souris est à l'intérieur de la région de la fenêtre
-		if (pt.x >= 0 && pt.x < m_width && pt.y >= 0 && pt.y < m_height) {
-
-			pwin->m_mouse.OnMouseMove(pt.x, pt.y);
-			if (!pwin->m_mouse.IsInWindow()) {
-				SetCapture(m_hWnd);
-				pwin->m_mouse.OnMouseEnter();
-			}
-		}
-		// Si la souris est à l'extérieur de la région de la fenêtre
-		else {
-			if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
-				pwin->m_mouse.OnMouseMove(pt.x, pt.y);
-			}
-			else {
-				ReleaseCapture();
-				pwin->m_mouse.OnMouseLeave();
-			}
-		}
-		break;
-	}
-
-	// Gestion du message WM_LBUTTONDOWN (clic gauche de la souris)
-	case WM_LBUTTONDOWN:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		pwin->m_mouse.OnLeftPressed(pt.x, pt.y);
-		break;
-	}
-
-	// Gestion du message WM_RBUTTONDOWN (clic droit de la souris)
-	case WM_RBUTTONDOWN:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		pwin->m_mouse.OnLeftPressed(pt.x, pt.y);
-		break;
-	}
-
-	// Gestion du message WM_LBUTTONUP (relâchement du clic gauche de la souris)
-	case WM_LBUTTONUP:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		pwin->m_mouse.OnLeftReleased(pt.x, pt.y);
-		break;
-	}
-
-	// Gestion du message WM_RBUTTONUP (relâchement du clic droit de la souris)
-	case WM_RBUTTONUP:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		pwin->m_mouse.OnRightReleased(pt.x, pt.y);
-		break;
-	}
-
-	// Gestion du message WM_MOUSEWHEEL (défilement de la souris)
-	case WM_MOUSEWHEEL:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-		pwin->m_mouse.OnWheelDelta(pt.x, pt.y, delta);
-		break;
-	}
-
-	/***********************END MOUSE**********************/
-#pragma endregion MOUSE
 
 	}
 

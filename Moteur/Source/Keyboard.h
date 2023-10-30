@@ -1,6 +1,7 @@
 #pragma once
 #include <queue>
 #include <bitset>
+#include "Timer.h"
 class Keyboard
 {
 	friend class Window;
@@ -10,6 +11,7 @@ public:
 		enum class Type {
 			Press,
 			Release,
+			Down,
 			Invalid
 		};
 	private:
@@ -23,6 +25,9 @@ public:
 		}
 		bool IsRelease() const noexcept {
 			return type == Type::Release;
+		}
+		bool IsDown() const noexcept {
+			return type == Type::Down;
 		}
 		bool IsInvalid() const noexcept {
 			return type != Type::Invalid;
@@ -39,23 +44,13 @@ public:
 
 	//key event
 	bool KeyIsPressed(unsigned char code) const noexcept;
+	bool KeyIsDown(unsigned char code) const noexcept;
 	Event ReadKey() noexcept;
 	bool KeyIsEmpty() const noexcept;
 	void FlushKey() noexcept;
-	//char event
-	// bool KeyIsPressed(unsigned char code) const noexcept;
-	char ReadChar() noexcept;
-	bool CharIsEmpty() const noexcept;
-	void FlushChar() noexcept;
-	void Flush() noexcept;
-	//autorepeat control
-	void EnableAutoRepeat() noexcept;
-	void DisableAutoRepeat() noexcept;
-	bool AutoRepeatIsEnable() const noexcept;
 private:
 	void OnKeyPressed(unsigned char keycode) noexcept;
 	void OnKeyReleased(unsigned char keycode) noexcept;
-	void OnChar(char character) noexcept;
 	void ClearState() noexcept;
 	template<typename T>
 	static void TrimBuffer(std::queue<T>& buffer) noexcept;
@@ -66,6 +61,7 @@ private:
 	std::bitset<nKeys> keystates;
 	std::queue<Event> keybuffer;
 	std::queue<char> charbuffer;
+	Timer m_time;
 
 
 };

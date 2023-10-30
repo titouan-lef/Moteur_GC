@@ -73,10 +73,7 @@ public:
 
         return lpcwstr;
     }
-    //SEULEMENT POUR TEST
-    static Keyboard m_kbd;
-    static Mouse m_mouse;
-    //Keyboard m_kbd;
+
 
 private:
     static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
