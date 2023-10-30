@@ -1,5 +1,6 @@
 #include "WindowManager.h"
 #include "MyException.h"
+#include "Transform.h"
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
@@ -221,27 +222,27 @@ void WindowManager::CreateCommandList()
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
-ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
-{
-    ID3D12Resource* buffer = nullptr;
-    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
-    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
-        &tmp1,
-        D3D12_HEAP_FLAG_NONE,
-        &tmp2,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&buffer)));
-
-    // Copie des données dans le buffer
-    BYTE* mappedData = nullptr;
-    GFX_THROW_INFO_ONLY(buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
-    memcpy(mappedData, src, bufferSize);
-    buffer->Unmap(0, nullptr);
-
-    return buffer;
-}
+//ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
+//{
+//    ID3D12Resource* buffer = nullptr;
+//    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+//    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+//    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+//        &tmp1,
+//        D3D12_HEAP_FLAG_NONE,
+//        &tmp2,
+//        D3D12_RESOURCE_STATE_GENERIC_READ,
+//        nullptr,
+//        IID_PPV_ARGS(&buffer)));
+//
+//    // Copie des données dans le buffer
+//    BYTE* mappedData = nullptr;
+//    GFX_THROW_INFO_ONLY(buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
+//    memcpy(mappedData, src, bufferSize);
+//    buffer->Unmap(0, nullptr);
+//
+//    return buffer;
+//}
 
 void WindowManager::CreateVertexBuffer()
 {
@@ -276,57 +277,23 @@ void WindowManager::CreateIndexBuffer()
 
 void WindowManager::CreateConstantBuffer()
 {
-
-    struct ConstantBufferData
     {
-        DirectX::XMMATRIX World;
-    };
 
-    {
-        // Création de la matrice monde
-        e1 = Entity();
+       
+       
 
-        ConstantBufferData* constBufferData = new ConstantBufferData();
-        e1.m_Transform.SetScale(0.5f, 0.5f, 0.5f);
-        e1.m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
-        //e.m_Transform.Rotate(0.5f, -0.25f, 0);
-        e1.m_Transform.UpdateMatrix();
-        constBufferData->World = e1.m_Transform.GetMatrixTranspose();
-        /**************************************/
-
-        // Création du constant buffer
-        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-
-        // Défini l'emplacement et la taille des données du constant buffer
-        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-
-        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-        cbvSrvUavHeapDesc.NumDescriptors = 1;
-        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-        // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-
-        // Stockage du constant buffer view dans le tas
-        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-        descriptorHeaps.push_back(cbvSrvUavHeap);
+        
     }
     {
         // Création de la matrice monde
         e2 = Entity();
+        e2.AddComponent<Transform>();
 
         ConstantBufferData* constBufferData = new ConstantBufferData();
-        e2.m_Transform.MoveByVector({ -0.5f, 0, 0.5f });
-        e2.m_Transform.SetScale(0.5f, 1, 0.5f);
-        e2.m_Transform.UpdateMatrix();
-        constBufferData->World = e2.m_Transform.GetMatrixTranspose();
+        e2.GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
+        e2.GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
+        e2.GetComponent<Transform>()->UpdateMatrix();
+        constBufferData->World = e2.GetComponent<Transform>()->GetMatrixTranspose();
         /**************************************/
 
         // Création du constant buffer
@@ -370,11 +337,11 @@ void WindowManager::OnUpdate()
     };
 
 
-    e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y + 0.01f, e1.m_Transform.GetPosition().z);
-    e1.m_Transform.UpdateMatrix();
+    e1.GetComponent<Transform>()->MoveByVector({ 0, 0.01f, 0 });
+    e1.GetComponent<Transform>()->UpdateMatrix();
 
     ConstantBufferData* constBufferData = new ConstantBufferData();
-    constBufferData->World = e1.m_Transform.GetMatrixTranspose();
+    constBufferData->World = e1.GetComponent<Transform>()->GetMatrixTranspose();
     /**************************************/
 
     // Création du constant buffer

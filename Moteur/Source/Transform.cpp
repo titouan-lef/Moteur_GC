@@ -10,6 +10,15 @@ Transform::Transform()
 	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	Matrix = XMFLOAT4X4();
 	m_isDirty = true;
+	m_isActive = true;
+	m_name = "Transform";
+	m_owner = nullptr;
+	this->UpdateMatrix();
+}
+
+Transform::~Transform()
+{
+	delete m_owner;
 }
 
 void Transform::Update()

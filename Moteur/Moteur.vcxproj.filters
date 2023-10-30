@@ -46,9 +46,6 @@
     <ClInclude Include="Source\GameObject.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TestTransform.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Window.h">
       <Filter>Private\header</Filter>
     </ClInclude>
@@ -64,9 +61,9 @@
     <ClInclude Include="Source\MeshRenderer.h">
       <Filter>Public\header</Filter>
     </ClInclude>
-	<ClInclude Include="Source\Camera.h">
+    <ClInclude Include="Source\Camera.h">
       <Filter>Public\header</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\DxgiInfoManager.h">
       <Filter>Private\header</Filter>
     </ClInclude>
@@ -82,6 +79,9 @@
     <ClInclude Include="Source\MyException.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Rectangle.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -91,9 +91,6 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\GameObject.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TestTransform.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Window.cpp">
@@ -113,7 +110,7 @@
     </ClCompile>
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Public\cpp</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Source\App.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
@@ -128,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="Source\MyException.cpp">
       <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rectangle.cpp">
+      <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,7 @@
 #pragma once
 
+class Entity;
+
 class Camera : public Entity
 {
 public:
