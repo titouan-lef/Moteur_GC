@@ -28,3 +28,10 @@ struct Vertex
     XMFLOAT3 m_position;
     XMFLOAT4 m_color;
 };
+
+struct ConstantBufferData
+{
+	//DirectX::XMMATRIX View;
+	DirectX::XMMATRIX World;
+	//DirectX::XMMATRIX Projection;
+};

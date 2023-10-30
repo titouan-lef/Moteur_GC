@@ -75,10 +75,10 @@ private:
     void CreateRootSignature();// Création de la root signature
     void CreatePipelineStateObject();// Création de la PSO (Pipeline State Object)
     void CreateCommandList();// Création de la liste de commandes
-    ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
-    void CreateVertexBuffer();// Création du vertex buffer
-    void CreateIndexBuffer();// Création de l'index buffer
-    void CreateConstantBuffer();// Création du constant buffer
+    //ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
+    //void CreateVertexBuffer();// Création du vertex buffer
+    //void CreateIndexBuffer();// Création de l'index buffer
+    //void CreateConstantBuffer();// Création du constant buffer
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 

@@ -3,14 +3,6 @@
 #include "Buffer.h"
 
 
-struct ConstantBufferData
-{
-	//DirectX::XMMATRIX View;
-	DirectX::XMMATRIX World;
-	//DirectX::XMMATRIX Projection;
-};
-
-
 class ConstantBuffer : public Buffer
 {
 public:

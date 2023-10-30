@@ -2,19 +2,20 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
+#include "Mesh.h"
 
 class MeshRenderer : public Component
 {
 public:
-	MeshRenderer(ConstantBufferData* constBufferData);
+	MeshRenderer();
 	virtual ~MeshRenderer();
 
+	void Init(Mesh* mesh, ConstantBufferData* constBufferData);
 
 private:
 	std::string m_shaderPath;
 
-//	VertexBuffer* m_vertexBuffer;
-//	IndexBuffer* m_indexBuffer;
-	ConstantBuffer* m_constBuffer;
+	Mesh* m_mesh = nullptr;
+	ConstantBuffer* m_constBuffer = nullptr;
 
 };
