@@ -39,17 +39,19 @@ public:
 	};
 public:
 	Keyboard() = default;
-	Keyboard(const Keyboard&) = delete;
-	Keyboard& operator=(const Keyboard&) = delete;
+	//Keyboard(const Keyboard&) = delete;
+	//Keyboard& operator=(const Keyboard&) = delete;
 
 	//key event
-	bool KeyIsPressed(unsigned char code) const noexcept;
-	bool KeyIsDown(unsigned char code) const noexcept;
+	bool KeyIsPressed(unsigned char code)  noexcept;
 	Event ReadKey() noexcept;
 	bool KeyIsEmpty() const noexcept;
 	void FlushKey() noexcept;
+	Timer m_timer;
+	float m_elaplsedTime;
 private:
 	void OnKeyPressed(unsigned char keycode) noexcept;
+	void OnKeyDown(unsigned char keycode) noexcept;
 	void OnKeyReleased(unsigned char keycode) noexcept;
 	void ClearState() noexcept;
 	template<typename T>
@@ -60,8 +62,8 @@ private:
 	bool autorepeatEnabled = false;
 	std::bitset<nKeys> keystates;
 	std::queue<Event> keybuffer;
-	std::queue<char> charbuffer;
-	Timer m_time;
+
+
 
 
 };

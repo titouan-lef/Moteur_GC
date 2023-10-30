@@ -1,9 +1,12 @@
 #include "Keyboard.h"
 
-bool Keyboard::KeyIsPressed(unsigned char code) const noexcept
+bool Keyboard::KeyIsPressed(unsigned char code)  noexcept
 {
+  
     return keystates[code];
 }
+
+
 
 Keyboard::Event Keyboard::ReadKey() noexcept
 {
@@ -31,9 +34,22 @@ void Keyboard::FlushKey() noexcept
 
 void Keyboard::OnKeyPressed(unsigned char keycode) noexcept
 {
+    m_timer.Mark();
     keystates[keycode] = true;
     keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, keycode));
     TrimBuffer(keybuffer);
+}
+
+void Keyboard::OnKeyDown(unsigned char keycode) noexcept
+{
+    m_elaplsedTime = m_timer.Peek();
+
+    if (m_elaplsedTime <= 0.1) {
+        keystates[keycode] = false;
+        keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Down, keycode));
+        TrimBuffer(keybuffer);
+    }
+    m_timer.Mark();
 }
 
 void Keyboard::OnKeyReleased(unsigned char keycode) noexcept
