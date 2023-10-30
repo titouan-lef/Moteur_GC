@@ -256,7 +256,7 @@ void WindowManager::CreateVertexBuffer()
     };
 
     // Création du vertex buffer
-    const UINT vertexBufferSize = m_vertices.size() * sizeof(Vertex);
+    const UINT vertexBufferSize = (UINT) (m_vertices.size() * sizeof(Vertex));
     ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, m_vertices.data());
 
     // Initialisation du vertex buffer view qui indique au GPU comment interpréter les données du vertex buffer
@@ -427,8 +427,8 @@ void WindowManager::PopulateCommandList()
     m_commandList->SetPipelineState(m_pipelineState);
 
     // Ajout des différentes fenêtres et de leur zone de rendu
-    m_commandList->RSSetViewports(m_viewport.size(), m_viewport.data());// Ajout des fenêtres
-    m_commandList->RSSetScissorRects(m_scissorRect.size(), m_scissorRect.data());// Ajout des zones de rendu
+    m_commandList->RSSetViewports((UINT)m_viewport.size(), m_viewport.data());// Ajout des fenêtres
+    m_commandList->RSSetScissorRects((UINT)m_scissorRect.size(), m_scissorRect.data());// Ajout des zones de rendu
 
     // Ajout des "surfaces de dessin" à utiliser
     CD3DX12_RESOURCE_BARRIER transition[] = {
@@ -444,7 +444,7 @@ void WindowManager::PopulateCommandList()
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, m_scissorRect.size(), m_scissorRect.data());
+    m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, (UINT)m_scissorRect.size(), m_scissorRect.data());
 
     // Ajout de l'affichage
     const UINT nbForme = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
@@ -459,8 +459,8 @@ void WindowManager::PopulateCommandList()
     {
         m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
         m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-        m_commandList->IASetVertexBuffers(0, m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
-        m_commandList->DrawInstanced(m_vertices.size(), nbForme, 0, 0);// TO DO : m_vertices.size() doit correspondre pour chaque buffer
+        m_commandList->IASetVertexBuffers(0, (UINT)m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
+        m_commandList->DrawInstanced((UINT)m_vertices.size(), nbForme, 0, 0);// TO DO : m_vertices.size() doit correspondre pour chaque buffer
     }
 
 
