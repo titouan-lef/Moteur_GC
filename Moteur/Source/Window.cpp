@@ -3,12 +3,7 @@
 #include <sstream>
 #include "MyException.h"
 
-
 WindowManager* Window::m_pWinManager = nullptr;
-
-
-HWND Window::m_hWnd;
-
 
 /*
 * x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
@@ -78,32 +73,15 @@ std::optional<int> Window::Run()
 	MSG msg = {};
 	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fen�tre
 	{
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		// Process any messages in the queue.
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fen�tre est disponible (voir readme Windows.h)
 		{
-			if (msg.message == WM_QUIT) {
-				return msg.wParam;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			TranslateMessage(&msg);// (voir readme Windows.h)
+			DispatchMessage(&msg);// (voir readme Windows.h)
 		}
-
-
-
-		WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(m_hWnd, GWLP_USERDATA));
-		pWinManager->OnUpdate();
-		pWinManager->OnRender();
 	}
-	
 
-	return Finish(msg.wParam);
-}
-
-int Window::Finish(WPARAM wParam)
-{
-	m_pWinManager->OnDestroy();
-
-	// Return this part of the WM_QUIT message to Windows.
-	return static_cast<char>(wParam);
+	return static_cast<char>(msg.wParam);
 }
 
 /*
@@ -153,71 +131,71 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
 }
-// Handle the initial setup of the window message handler
 LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
-	{
-		if (msg == WM_NCCREATE) {
-			// Extract the pointer to the Window class from lParam
-			const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
-			Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
-			// Set the WinAPI managed user data to store a pointer to the Window class
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
-			// Set the message procedure to the normal handler now that setup is finished
-			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
-			// Forward the message to the HandleMsg function of the Window class
-			return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
-		}
-		// If a message is received before WM_NCCREATE, use the default message handler
-		return DefWindowProc(hWnd, msg, wParam, lParam);
-	}
-
-// Thunk function to handle window messages and forward them to the actual Window class
-LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
-	{
-		// Retrieve a pointer to the Window class from user data
-		Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		// Forward the message to the HandleMsg function of the Window class
+{
+	if (msg == WM_NCCREATE) {
+		//extrait ptr à Window
+		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+		//set winapi managed user data to store ptr to win class
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+		//set msg proc to normal hangler now that setup is finished
+		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
+		//envoie du msg
 		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 	}
+	//si on recoie un msg avant WM NCCREATE on utilise le default
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
 
-// Handle window messages for the Window class
+LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
+{
+	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+}
+
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
 {
 	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	switch (msg)
 	{
-		
-
 	case WM_CREATE:
 	{
 		// Sauvegarde le WindowManager* passé dans CreateWindow
 		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-		break;
 	}
-	//return 0;
+	return 0;
 
-	
+	case WM_KEYDOWN:
+		if (pWinManager)
+			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
 
-	//case WM_PAINT:
-	//	if (pWinManager)
-	//	{
-	//		pWinManager->OnUpdate();
-	//		pWinManager->OnRender();
-	//	}
-	//	return 0;
+		return 0;
+
+	case WM_KEYUP:
+		if (pWinManager)
+			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
+
+		return 0;
+
+	case WM_PAINT:
+		if (pWinManager)
+		{
+			pWinManager->OnUpdate();
+			pWinManager->OnRender();
+		}
+		return 0;
 
 	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
-
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 
-#pragma region EXCEPTION
 
 //Exception Stuff
 Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept : Exception(line, file), hr(hr)
@@ -275,4 +253,3 @@ std::string Window::HrException::GetErrorDescription() const noexcept
 {
 	return Exception::TranslateErrorCode(hr);
 }
-#pragma endregion EXCEPTION
