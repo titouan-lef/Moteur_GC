@@ -48,8 +48,9 @@ private:
     std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {};// Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
 
     // Gestion des vertices
-    std::vector<Vertex> m_vertices = { {  } };
+    std::vector<UINT16> m_indices = {};
     std::vector<D3D12_VERTEX_BUFFER_VIEW> m_vertexBufferView = {};// tableau indiquant au GPU comment interpréter les données de chaque vertex buffer
+    std::vector<D3D12_INDEX_BUFFER_VIEW > m_indexBufferView = {};// tableau des indexations des vertex
 
     // Synchronisation du rendu
     UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
@@ -80,6 +81,7 @@ private:
     void CreateCommandList();// Création de la liste de commandes
     ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
     void CreateVertexBuffer();// Création du vertex buffer
+    void CreateIndexBuffer();// Création de l'index buffer
     void CreateConstantBuffer();// Création du constant buffer
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 

@@ -9,7 +9,7 @@ WindowManager::WindowManager(UINT width, UINT height)
 
 WindowManager::~WindowManager()
 {
-    m_vertices.clear();
+    m_indices.clear();
 }
 
 void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
@@ -131,6 +131,7 @@ void WindowManager::LoadAssets()
     CreatePipelineStateObject();
     CreateCommandList();
     CreateVertexBuffer();
+    CreateIndexBuffer();
     CreateConstantBuffer();
     CreateSyncObj();
 }
@@ -244,23 +245,33 @@ ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
 
 void WindowManager::CreateVertexBuffer()
 {
-    m_vertices = {
+    std::vector<Vertex>vertices = {
         // Carr�
         { { -0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur gauche
         { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
         { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
-
-        { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
-        { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
         { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur droit
     };
 
     // Création du vertex buffer
-    const UINT vertexBufferSize = (UINT) (m_vertices.size() * sizeof(Vertex));
-    ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, m_vertices.data());
+    const UINT vertexBufferSize = (UINT) (vertices.size() * sizeof(Vertex));
+    ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, vertices.data());
 
     // Initialisation du vertex buffer view qui indique au GPU comment interpréter les données du vertex buffer
     m_vertexBufferView.push_back(D3D12_VERTEX_BUFFER_VIEW(vertexBuffer->GetGPUVirtualAddress(), vertexBufferSize, sizeof(Vertex)));
+}
+
+void WindowManager::CreateIndexBuffer()
+{
+    // Définition de votre tableau d'indices
+    m_indices = { 0, 1, 2, 2, 1, 3 };
+
+    // Création d'une allocation de mémoire pour l'index buffer
+    const UINT indexBufferSize = (UINT)(m_indices.size() * sizeof(UINT16));
+    ID3D12Resource* indexBuffer = CreateBuffer(indexBufferSize, m_indices.data());
+
+    // Création de la vue de l'index buffer
+    m_indexBufferView.push_back(D3D12_INDEX_BUFFER_VIEW(indexBuffer->GetGPUVirtualAddress(), indexBufferSize, DXGI_FORMAT_R16_UINT));
 }
 
 void WindowManager::CreateConstantBuffer()
@@ -453,14 +464,14 @@ void WindowManager::PopulateCommandList()
     * créer un vertex buffer par forme
     * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
     * mettre en place un systeme d'update des matrice World pour chaque objet
-    * cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView()) --> besoin d'un IndexBuffer
     */
     for (int i = 0; i < descriptorHeaps.size(); ++i)
     {
         m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
         m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
         m_commandList->IASetVertexBuffers(0, (UINT)m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
-        m_commandList->DrawInstanced((UINT)m_vertices.size(), nbForme, 0, 0);// TO DO : m_vertices.size() doit correspondre pour chaque buffer
+        m_commandList->IASetIndexBuffer(&m_indexBufferView[0]);// Ajout des index buffer
+        m_commandList->DrawIndexedInstanced((UINT)m_indices.size(), nbForme, 0, 0, 0);// Affichage
     }
 
 
