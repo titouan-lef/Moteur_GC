@@ -1,13 +1,12 @@
+#include "Engine.h"
 #include "Buffer.h"
-
-
-
+#include "MyException.h"
 
 Buffer::Buffer(UINT bufferSize, void* src) : m_bufferSize(bufferSize)
 {
 	auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(m_bufferSize);
-	GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+	GFX_THROW_INFO_ONLY(Engine::Device->CreateCommittedResource(
 		&tmp1,
 		D3D12_HEAP_FLAG_NONE,
 		&tmp2,

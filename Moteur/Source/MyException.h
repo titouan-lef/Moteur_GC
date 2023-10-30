@@ -1,10 +1,16 @@
 #pragma once
 #include "EngineException.h"
+#include "DxgiInfoManager.h"
 
 #include <sstream>
 #include <iostream>
 #include <string>
 #include "dxerr.h"
+
+// Gestion des erreurs
+#ifndef  NDEBUG
+#define DxgiInfoManager infoManager = {};
+#endif
 
 
 #define GFX_EXCEPT_NOINFO(hr) MyException::HrException( __LINE__,__FILE__,(hr) )

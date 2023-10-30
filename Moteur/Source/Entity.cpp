@@ -5,19 +5,13 @@
 Entity::Entity()
 {
 	m_ID = rand() % 1000000;
-	constBufferData = new ConstantBufferData();
-	constBufferData->World = GetComponent<Transform>()->GetMatrixTranspose();
-	
-	constBuffer = nullptr;
-	CreateBuffer();
-	CreateDescriptorHeap(cbvDesc);
 }
 
 Entity::~Entity()
 {
 	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
 	{
-		delete *it;
+		delete* it;
 	}
 	m_Components.clear();
 }

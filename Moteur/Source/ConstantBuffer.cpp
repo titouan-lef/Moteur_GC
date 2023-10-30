@@ -1,4 +1,5 @@
 #include "ConstantBuffer.h"
+#include "Engine.h"
 
 ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData) : Buffer((sizeof(ConstantBufferData) + 255) & ~255, constBufferData)
 {
@@ -15,10 +16,10 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData) : Buffer((si
 
 	// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
 	ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-	m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+	Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
 
 	// Stockage du constant buffer view dans le tas
-	m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+	Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 
 	m_descriptorHeaps.push_back(cbvSrvUavHeap);
 }
