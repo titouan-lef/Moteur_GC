@@ -7,7 +7,7 @@ Entity::Entity()
 	m_ID = rand() % 1000000;
 	constBufferData = new ConstantBufferData();
 	constBufferData->World = GetComponent<Transform>()->GetMatrixTranspose();
-	constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+	
 	constBuffer = nullptr;
 	CreateBuffer();
 	CreateDescriptorHeap(cbvDesc);
@@ -74,59 +74,4 @@ bool Entity::CheckAddComponent(Component* component)
 		}
 	}
 	return true;
-}
-
-void Entity::CreateBuffer()
-{
-	constBuffer = nullptr;
-	auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(constBufferSize);
-	GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
-		&tmp1,
-		D3D12_HEAP_FLAG_NONE,
-		&tmp2,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constBuffer)));
-
-	UpdateConstBuffer();
-}
-
-void Entity::UpdateConstBuffer()
-{
-	// Copie des données dans le buffer
-	BYTE* mappedData = nullptr;
-	GFX_THROW_INFO_ONLY(constBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
-	memcpy(mappedData, constBufferData, constBufferSize);
-	constBuffer->Unmap(0, nullptr);
-}
-
-void Entity::CreateDescriptorHeap(D3D12_CONSTANT_BUFFER_VIEW_DESC* cbvDesc)
-{
-	D3D12_CONSTANT_BUFFER_VIEW_DESC* cbvDesc = CreateConstantBufferView();
-
-	// Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-	D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-	cbvSrvUavHeapDesc.NumDescriptors = 1;
-	cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-	// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-	ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-	m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-
-	// Stockage du constant buffer view dans le tas
-	m_device->CreateConstantBufferView(&cbvDesc, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-	descriptorHeaps.push_back(cbvSrvUavHeap);
-}
-
-D3D12_CONSTANT_BUFFER_VIEW_DESC* Entity::CreateConstantBufferView()
-{
-	// Défini l'emplacement et la taille des données du constant buffer
-	D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-	constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();		// Localisation du constant buffer
-	constBufferView.SizeInBytes = constBufferSize;											// Taille du constant buffer
-
-	return &constBufferView;
 }

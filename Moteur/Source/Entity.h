@@ -1,16 +1,8 @@
 #pragma once
-
 #include "framwork.h"
 #include "Transform.h"
 
 class Component;
-
-struct ConstantBufferData
-{
-	//DirectX::XMMATRIX View;
-	DirectX::XMMATRIX World;
-	//DirectX::XMMATRIX Projection;
-};
 
 class Entity
 {
@@ -43,20 +35,7 @@ protected:
 
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:
-	UINT constBufferSize;
-	ConstantBufferData* constBufferData;
-	ID3D12Resource* constBuffer;
-	std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {}; // Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
 
-
-	// Create a buffer on the GPU and copy the contents of the CPU buffer into it
-	void CreateBuffer();
-	// Update the constant buffer
-	void UpdateConstBuffer();
-	// Create a view of the buffer on the GPU
-	D3D12_CONSTANT_BUFFER_VIEW_DESC* CreateConstantBufferView();
-	// Create descriptor heap
-	void CreateDescriptorHeap(D3D12_CONSTANT_BUFFER_VIEW_DESC* cbvDesc);
 	// Prevent copying parent/child or nullptr
 	bool CheckAddChild(Entity* child);
 	// Prevent copying components
