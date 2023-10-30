@@ -1,7 +1,6 @@
 #pragma once
 #include "framwork.h"
 #include "DxgiInfoManager.h"
-#include "Entity.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -12,86 +11,124 @@ public:
     void OnInit(UINT width, UINT height, HWND hWnd);
     void OnUpdate();
     void OnRender();
+    void OnDestroy();
 
-    // Gestion des touches
-    virtual void OnKeyDown(UINT8 key) {}// Fonction réaliser lors de l'appui d'une touche
-    virtual void OnKeyUp(UINT8 key) {}// Fonction réaliser lors du relachement d'une touche
+    // Samples override the event handlers to handle specific messages.
+    virtual void OnKeyDown(UINT8 /*key*/) {}
+    virtual void OnKeyUp(UINT8 /*key*/) {}
+
+    static std::string ConvertWCharTToString(const wchar_t* wcharArray)
+    {
+        // Obtenir la taille nécessaire pour la chaîne de destination
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, wcharArray, -1, NULL, 0, NULL, NULL);
+        std::string result_string(size_needed, 0);
+
+        // Convertir la chaîne wchar_t* en std::string
+        WideCharToMultiByte(CP_UTF8, 0, wcharArray, -1, &result_string[0], size_needed, NULL, NULL);
+
+        return result_string;
+    };
 
 private:
-    // Gestion des erreurs
-    #ifndef  NDEBUG
-    DxgiInfoManager infoManager = {};
-    #endif
+#ifndef  NDEBUG
+    DxgiInfoManager infoManager;
+#endif // ! NDEBUG
 
-    // Périphérique de rendu
+    static const UINT FrameCount = 2;
+
+    // Viewport dimensions.
+    float m_aspectRatio;
+
+    // Adapter info.
+    bool m_useWarpDevice;
+
+    // Pipeline objects.
+    CD3DX12_VIEWPORT m_viewport = {};
+    CD3DX12_RECT m_scissorRect = {};
+    IDXGISwapChain3* m_swapChain = nullptr;
     ID3D12Device* m_device = nullptr;
+    ID3D12Resource* m_renderTargets[FrameCount] = {};
+    ID3D12CommandAllocator* m_commandAllocator = nullptr;
+    ID3D12CommandQueue* m_commandQueue = nullptr;
+    ID3D12RootSignature* m_rootSignature = nullptr;
+    ID3D12DescriptorHeap* m_rtvHeap = nullptr;
+   
+    ID3D12DescriptorHeap* m_cbvHeap = nullptr;
 
-    // Gestion des fenêtres
-    std::vector<CD3DX12_VIEWPORT> m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
-    std::vector<CD3DX12_RECT> m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
 
-    // Gestion des commandes
-    ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de géométrie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D
-    ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes
-    ID3D12CommandAllocator* m_commandAllocator = nullptr;// Allocations de stockage pour les commandes du GPU
+    ID3D12PipelineState* m_pipelineState = nullptr;
+    ID3D12GraphicsCommandList* m_commandList = nullptr;
+    UINT m_rtvDescriptorSize;
+    UINT m_cbvDescriptorSize;
+    // App resources.
 
-    // Gestion des "surfaces de dessin" (= Render Target)
-    static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain gère pour l'application
-    ID3D12Resource* m_renderTargets[FrameCount] = {};// Tableau contenant les "surfaces de dessin"
-    ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements prévu pour les "surfaces de dessin"
-    UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements prévu pour les "surfaces de dessin"
-    IDXGISwapChain3* m_swapChain = nullptr;// Permet l'échange des "surfaces de dessin" dans les buffers
+    ID3D12Resource* m_vertexBuffer = nullptr;
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
 
-    // Gestion des shaders
-    ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
-    ID3D12RootSignature* m_rootSignature = nullptr;// Mécanisme qui définit comment les shaders accèdent aux ressources graphiques
-    std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {};// Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
+    ID3D12Resource* m_constBuffer = nullptr;
+    ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC m_constBufferView = {};
+
+    // Synchronization objects.
+    UINT m_frameIndex = -1;
+    HANDLE m_fenceEvent = {};
+    ID3D12Fence* m_fence = {};
+    UINT64 m_fenceValue = -1;
 
     // Gestion des vertices
-    std::vector<UINT16> m_indices = {};
-    std::vector<D3D12_VERTEX_BUFFER_VIEW> m_vertexBufferView = {};// tableau indiquant au GPU comment interpréter les données de chaque vertex buffer
-    std::vector<D3D12_INDEX_BUFFER_VIEW > m_indexBufferView = {};// tableau des indexations des vertex
+    std::vector<Vertex> m_vertices = { {  } };
 
-    // Synchronisation du rendu
-    UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
-    UINT64 m_fenceId = 0;// Id de la frame actuelle
-    ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
+    void GetHardwareAdapter(
+        _In_ IDXGIFactory1* pFactory,
+        _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter,
+        bool requestHighPerformanceAdapter = false);
 
-    // TO DO : A SUPPRIMER
-    Entity e1;
-    Entity e2;
+    void LoadPipeline(UINT width, UINT height, HWND hWnd);
 
-
-    void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
-
-    void SetupDebugLayer();// Activation du debuggage de Direct3D
-    IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU
-    void CreateD3DDevice(IDXGIFactory4* factory);// Création du périphérique de rendu
-    void CreateCommandQueue();// Création de la file d'attente de commandes
-    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);// Création de la Swap chain
-    void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
-    void CreateFrameResources();// Création de la "surface de dessin" au bon endroit (= Render Target View)
-    void CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
+    void SetupDebugLayer();
+    void CreateD3DDevice(IDXGIFactory4* factory);
+    IDXGIFactory4* CreateDXGIFactory();
+    void CreateCommandQueue();
+    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);
+    void CreateDescriptorHeaps();
+    void CreateFrameResources();
+    void CreateCommandAllocator();
 
 
-    void LoadAssets();// Chargement des ressources nécessaire pour le rendu
-
-    void CreateRootSignature();// Création de la root signature
-    void CreatePipelineStateObject();// Création de la PSO (Pipeline State Object)
-    void CreateCommandList();// Création de la liste de commandes
-    ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
-    void CreateVertexBuffer();// Création du vertex buffer
-    void CreateIndexBuffer();// Création de l'index buffer
-    void CreateConstantBuffer();// Création du constant buffer
-    void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 
-    void PopulateCommandList();// Enregistre les commandes pour le rendu actuel
-    void WaitForPreviousFrame();// Attend que la frame soit traitée avant de pouvoir être affiché
+    void LoadAssets();
 
-    // Recherche d'un adaptateur (ou une carte graphique) compatible avec DirectX 12
-    bool IsValidAdapter(IDXGIAdapter1* adapter);
-    bool AdapterFind(IDXGIFactory6* factory6, UINT adapterIndex, bool requestHighPerformanceAdapter, IDXGIAdapter1** pAdapter);
-    IDXGIAdapter1* GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter = false);
+    void CreateRootSignature();
+    void CreateVertexBuffer();
+    void CreateConstantBuffer();
+    void CreateSyncObj();
+
+
+
+    void PopulateCommandList();
+    void WaitForPreviousFrame();
+
+
+    void GetAssetsPath(_Out_writes_(pathSize) WCHAR* path, UINT pathSize)
+    {
+        if (path == nullptr)
+        {
+            throw std::exception();
+        }
+
+        DWORD size = GetModuleFileName(nullptr, path, pathSize);
+        if (size == 0 || size == pathSize)
+        {
+            // Method failed or path was truncated.
+            throw std::exception();
+        }
+
+        WCHAR* lastSlash = wcsrchr(path, L'\\');
+        if (lastSlash)
+        {
+            *(lastSlash + 1) = L'\0';
+        }
+    }
 };
 
