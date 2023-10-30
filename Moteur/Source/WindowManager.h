@@ -1,7 +1,6 @@
 #pragma once
 #include "framwork.h"
 #include "DxgiInfoManager.h"
-#include "Entity.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -22,9 +21,6 @@ private:
     #ifndef  NDEBUG
     DxgiInfoManager infoManager = {};
     #endif
-
-    // Périphérique de rendu
-    ID3D12Device* m_device = nullptr;
 
     // Gestion des fenêtres
     std::vector<CD3DX12_VIEWPORT> m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre

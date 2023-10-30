@@ -1,6 +1,8 @@
 #include "WindowManager.h"
 #include "MyException.h"
 #include "Transform.h"
+#include "Engine.h"
+#include "Rectangle.h"// TO DO : A SUPPRIMER
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
@@ -67,7 +69,7 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&Engine::Device)));
 }
 
 void WindowManager::CreateCommandQueue()
@@ -75,7 +77,7 @@ void WindowManager::CreateCommandQueue()
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
 }
 
 void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory)
@@ -104,8 +106,8 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    GFX_THROW_INFO_ONLY(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
-    m_rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
+    m_rtvDescriptorSize = Engine::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
 }
 
 void WindowManager::CreateFrameResources()
@@ -115,14 +117,14 @@ void WindowManager::CreateFrameResources()
     for (UINT n = 0; n < FrameCount; n++)
     {
         GFX_THROW_INFO_ONLY(m_swapChain->GetBuffer(n, IID_PPV_ARGS(&m_renderTargets[n])));// Récupération de la "surface de dessin" n
-        m_device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);// Création de la "surface de dessin" n dans l'emplacement prévu
+        Engine::Device->CreateRenderTargetView(m_renderTargets[n], nullptr, rtvHandle);// Création de la "surface de dessin" n dans l'emplacement prévu
         rtvHandle.Offset(1, m_rtvDescriptorSize);// Récupération de l'emplacement prévu pour la "surface de dessin" n+1
     }
 }
 
 void WindowManager::CreateCommandAllocator()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator)));
 }
 #pragma endregion
 
@@ -172,7 +174,7 @@ void WindowManager::CreateRootSignature()
     D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
 
     // Création de la signature racine
-    GFX_THROW_INFO_ONLY(m_device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 }
 
 void WindowManager::CreatePipelineStateObject()
@@ -213,12 +215,12 @@ void WindowManager::CreatePipelineStateObject()
     psoDesc.SampleDesc.Count = 1;
 
     // Création de la PSO
-    GFX_THROW_INFO_ONLY(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
 }
 
 void WindowManager::CreateCommandList()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
@@ -227,7 +229,7 @@ void WindowManager::CreateCommandList()
 //    ID3D12Resource* buffer = nullptr;
 //    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 //    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
-//    GFX_THROW_INFO_ONLY(m_device->CreateCommittedResource(
+//    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommittedResource(
 //        &tmp1,
 //        D3D12_HEAP_FLAG_NONE,
 //        &tmp2,
@@ -278,18 +280,9 @@ void WindowManager::CreateIndexBuffer()
 void WindowManager::CreateConstantBuffer()
 {
     {
+        MyRectangle r1 = MyRectangle();
 
-       
-       
-
-        
-    }
-    {
-        // Création de la matrice monde
-        e2 = Entity();
-        e2.AddComponent<Transform>();
-
-        ConstantBufferData* constBufferData = new ConstantBufferData();
+        r1.AddComponent<Transform>();
         e2.GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
         e2.GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
         e2.GetComponent<Transform>()->UpdateMatrix();
@@ -313,10 +306,10 @@ void WindowManager::CreateConstantBuffer()
 
         // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
         ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+        Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
 
         // Stockage du constant buffer view dans le tas
-        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+        Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 
         descriptorHeaps.push_back(cbvSrvUavHeap);
     }
@@ -325,7 +318,7 @@ void WindowManager::CreateConstantBuffer()
 
 void WindowManager::CreateSyncObj()
 {
-    GFX_THROW_INFO_ONLY(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
 }
 #pragma endregion
 
@@ -361,10 +354,10 @@ void WindowManager::OnUpdate()
 
     // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
     ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+    Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
 
     // Stockage du constant buffer view dans le tas
-    m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+    Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 
     descriptorHeaps[0] = cbvSrvUavHeap;
 }

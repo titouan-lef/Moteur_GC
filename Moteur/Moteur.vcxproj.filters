@@ -82,13 +82,19 @@
     <ClInclude Include="Source\Rectangle.h">
       <Filter>Public\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Buffer.h">
       <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\ConstantBuffer.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VertexBuffer.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\IndexBuffer.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine.h">
       <Filter>Private\header</Filter>
     </ClInclude>
   </ItemGroup>
@@ -138,13 +144,19 @@
     <ClCompile Include="Source\Rectangle.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Buffer.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\ConstantBuffer.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VertexBuffer.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IndexBuffer.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>

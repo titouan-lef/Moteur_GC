@@ -1,31 +1,31 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle()
+MyRectangle::MyRectangle()
 {
 	this->AddComponent<Transform>();
 }
 
-Rectangle::~Rectangle()
+MyRectangle::~MyRectangle()
 {
 }
 
-void Rectangle::Init()
+void MyRectangle::Init()
 {
 }
 
-void Rectangle::Update()
+void MyRectangle::Update()
 {
 
 }
 
-void Rectangle::PostUpdate()
+void MyRectangle::PostUpdate()
 {
 }
 
-void Rectangle::Render()
+void MyRectangle::Render()
 {
 }
 
-void Rectangle::OnDestroy()
+void MyRectangle::OnDestroy()
 {
 }

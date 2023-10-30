@@ -3,11 +3,11 @@
 #include "Entity.h"
 #include "framwork.h"
 
-class Rectangle : public Entity
+class MyRectangle : public Entity
 {
 public:
-	Rectangle();
-	~Rectangle();
+	MyRectangle();
+	~MyRectangle();
 
 	void Init() override;
 	void Update() override;

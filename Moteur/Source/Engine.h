@@ -13,6 +13,6 @@ public:
 	//Get the instance of the engine
 	static Engine* GetInstance() { return m_Instance; }
 
-	// DirectX Device
+    // Périphérique de rendu DirectX
 	static ID3D12Device* Device;
 };

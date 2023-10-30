@@ -32,10 +32,12 @@
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\Rectangle.h" />
     <ClInclude Include="Source\Transform.h" />
+    <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WindowManager.h" />
     <ClInclude Include="Source\WindowManagerHelper.h" />
@@ -52,11 +54,13 @@
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
+    <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>

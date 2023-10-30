@@ -1,9 +1,6 @@
+#include <memory>
 #include "DxgiInfoManager.h"
 #include "Window.h"
-
-#include <dxgidebug.h>
-#include <memory>
-
 #include "MyException.h"
 
 #pragma comment(lib, "dxguid.lib")
