@@ -31,6 +31,7 @@
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\TestTransform.h" />
+    <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WindowManager.h" />
     <ClInclude Include="Source\WindowManagerHelper.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\TestTransform.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>

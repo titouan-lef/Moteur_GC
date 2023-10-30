@@ -4,6 +4,7 @@
 App::App() : wnd(L"Triangle", 800, 600)
 {
     // Constructeur de l'application : Initialise la fenêtre "wnd" avec le nom "Triangle" et les dimensions 800x600.
+
 }
 
 int App::Go()
@@ -16,6 +17,7 @@ int App::Go()
         if (const auto ecode = Window::Run()) {
             return *ecode;
         }
+      
 
     }
 }

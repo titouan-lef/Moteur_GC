@@ -3,6 +3,7 @@
 #include "DxgiInfoManager.h"
 #include "Entity.h"// TO DO : A SUPPRIMER
 #include "Input.h"
+#include "Timer.h"
 class WindowManager
 {
 public:
@@ -19,7 +20,12 @@ public:
     //TEST INPUT
     Input m_input;
 
+    void CreateEntity();
 private:
+    std::vector<std::shared_ptr<Entity>> m_entities;
+    std::unique_ptr<Timer> m_entityTimer;
+    std::unique_ptr<Timer> m_entityDeletionTimer;
+
     // Gestion des erreurs
     #ifndef  NDEBUG
     DxgiInfoManager infoManager = {};
@@ -84,7 +90,7 @@ private:
     ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
     void CreateVertexBuffer();// Création du vertex buffer
     void CreateIndexBuffer();// Création de l'index buffer
-    void CreateConstantBuffer();// Création du constant buffer
+    void CreateConstantBuffer(std::shared_ptr<Entity> entity);// Création du constant buffer
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 

@@ -5,11 +5,27 @@ WindowManager::WindowManager(UINT width, UINT height)
 {
     m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
     m_scissorRect.push_back(CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)));
+    m_entityTimer = std::make_unique<Timer>();
+    m_entityDeletionTimer = std::make_unique<Timer>();
+
+    
 }
 
 WindowManager::~WindowManager()
 {
     m_indices.clear();
+}
+
+void WindowManager::CreateEntity()
+{
+    std::shared_ptr<Entity> newEntity = std::make_shared<Entity>();
+    newEntity->m_Transform.SetScale(0.5f, 0.5f, 0.5f);
+    newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
+    newEntity->m_Transform.UpdateMatrix();
+    m_entities.push_back(newEntity);
+    CreateConstantBuffer(newEntity);
+    // Initialisez et configurez newEntity ici si nécessaire
+    //std::cout << "New Entity Created!" << std::endl;
 }
 
 void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
@@ -132,7 +148,6 @@ void WindowManager::LoadAssets()
     CreateCommandList();
     CreateVertexBuffer();
     CreateIndexBuffer();
-    CreateConstantBuffer();
     CreateSyncObj();
 }
 
@@ -274,40 +289,31 @@ void WindowManager::CreateIndexBuffer()
     m_indexBufferView.push_back(D3D12_INDEX_BUFFER_VIEW(indexBuffer->GetGPUVirtualAddress(), indexBufferSize, DXGI_FORMAT_R16_UINT));
 }
 
-void WindowManager::CreateConstantBuffer()
+void WindowManager::CreateConstantBuffer(std::shared_ptr<Entity> entity)
 {
 
     struct ConstantBufferData
     {
         DirectX::XMMATRIX World;
     };
+    // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
+    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+    cbvSrvUavHeapDesc.NumDescriptors = 1;
+    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    {
-        // Création de la matrice monde
-        e1 = Entity();
 
-        ConstantBufferData* constBufferData = new ConstantBufferData();
-        e1.m_Transform.SetScale(0.5f, 0.5f, 0.5f);
-        e1.m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
-        //e.m_Transform.Rotate(0.5f, -0.25f, 0);
-        e1.m_Transform.UpdateMatrix();
-        constBufferData->World = e1.m_Transform.GetMatrixTranspose();
-        /**************************************/
+        ConstantBufferData constBufferData;
+        constBufferData.World = entity->m_Transform.GetMatrixTranspose();
 
         // Création du constant buffer
         const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
+        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, &constBufferData);
 
         // Défini l'emplacement et la taille des données du constant buffer
         D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-
-        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-        cbvSrvUavHeapDesc.NumDescriptors = 1;
-        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();
+        constBufferView.SizeInBytes = constBufferSize;
 
         // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
         ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
@@ -317,42 +323,6 @@ void WindowManager::CreateConstantBuffer()
         m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
 
         descriptorHeaps.push_back(cbvSrvUavHeap);
-    }
-    {
-        // Création de la matrice monde
-        e2 = Entity();
-
-        ConstantBufferData* constBufferData = new ConstantBufferData();
-        e2.m_Transform.MoveByVector({ -0.5f, 0, 0.5f });
-        e2.m_Transform.SetScale(0.5f, 1, 0.5f);
-        e2.m_Transform.UpdateMatrix();
-        constBufferData->World = e2.m_Transform.GetMatrixTranspose();
-        /**************************************/
-
-        // Création du constant buffer
-        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-
-        // Défini l'emplacement et la taille des données du constant buffer
-        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-
-        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-        cbvSrvUavHeapDesc.NumDescriptors = 1;
-        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-        // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-
-        // Stockage du constant buffer view dans le tas
-        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-        descriptorHeaps.push_back(cbvSrvUavHeap);
-    }
     
 }
 
@@ -364,55 +334,69 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
+
+    float elapsedTime = m_entityTimer->Peek();
+    if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
+    {
+        CreateEntity();
+
+        m_entityTimer->Mark();  // Réinitialiser le timer
+    }
+
+    //float elapsedDeletionTime = m_entityDeletionTimer->Peek();
+    //if (elapsedDeletionTime > 10.0f)  // Plus de 10 secondes se sont écoulées
+    //{
+    //    if (!m_entities.empty()) {
+    //        m_entities.pop_back();
+    //        descriptorHeaps.pop_back();
+    //
+    //    }
+    //    m_entityDeletionTimer->Mark();  // Réinitialiser le timer de suppression
+    //}
+
     struct ConstantBufferData
     {
         DirectX::XMMATRIX World;
     };
-    m_input.Update();
 
-    if (m_input.KeyIsPressedOnce(1) ) {
-
-        if (e1.m_Transform.GetPosition().y + 0.01f > 1) {
-    
-            e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y, e1.m_Transform.GetPosition().z);
-        }
-        else {
-    
-            e1.m_Transform.SetPosition(e1.m_Transform.GetPosition().x, e1.m_Transform.GetPosition().y + 0.01f, e1.m_Transform.GetPosition().z);
-        }
-    
-    }
-
-    e1.m_Transform.UpdateMatrix();
-
-    ConstantBufferData* constBufferData = new ConstantBufferData();
-    constBufferData->World = e1.m_Transform.GetMatrixTranspose();
-    /**************************************/
-
-    // Création du constant buffer
+    // Calculez la taille du constant buffer en dehors de la boucle pour éviter les recalculs inutiles
     const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-    ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-
-    // Défini l'emplacement et la taille des données du constant buffer
-    D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-    constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-    constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-
-    // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-    cbvSrvUavHeapDesc.NumDescriptors = 1;
-    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-    // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-    ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-    m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-
-    // Stockage du constant buffer view dans le tas
-    m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-    descriptorHeaps[0] = cbvSrvUavHeap;
-
+    int i = 0;
+    for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
+        auto& entity = *entityIt;
+        // Mettre à jour la position
+        auto position = entity->m_Transform.GetPosition();
+        position.y += 0.01f;
+        entity->m_Transform.SetPosition(position.x, position.y, position.z);
+        entity->m_Transform.UpdateMatrix();
+    
+        // Création et initialisation du constant buffer data
+        std::unique_ptr<ConstantBufferData> constBufferData(new ConstantBufferData());
+        constBufferData->World = entity->m_Transform.GetMatrixTranspose();
+    
+        // Création du constant buffer
+        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData.get());
+    
+        // Définition de la vue du constant buffer
+        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
+        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();
+        constBufferView.SizeInBytes = constBufferSize;
+    
+        // Propriétés du tas de descripteurs CBV_SRV_UAV
+        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+        cbvSrvUavHeapDesc.NumDescriptors = 1;
+        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    
+        // Création du tas de descripteurs CBV_SRV_UAV
+        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
+        m_device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+    
+        // Stockage du constant buffer view dans le tas
+        m_device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+    
+        descriptorHeaps[std::distance(m_entities.begin(), entityIt)] = cbvSrvUavHeap;
+    }
 }
 
 void WindowManager::OnRender()
