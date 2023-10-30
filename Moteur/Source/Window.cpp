@@ -106,53 +106,7 @@ int Window::Finish(WPARAM wParam)
 	return static_cast<char>(wParam);
 }
 
-/*
-* _hWnd : handle pour la fen�tre
-* _msg : message re�u de DispatchMessage()
-* _wParam : information suppl�mentaire sur le message
-* _lParam : information suppl�mentaire sur le message
-*/
-LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
-	switch (msg)
-	{
-	case WM_CREATE:
-	{
-		// Sauvegarde le WindowManager* passé dans CreateWindow
-		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-	}
-	return 0;
-
-	case WM_KEYDOWN:
-		if (pWinManager)
-			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_KEYUP:
-		if (pWinManager)
-			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_PAINT:
-		if (pWinManager)
-		{
-			pWinManager->OnUpdate();
-			pWinManager->OnRender();
-		}
-		return 0;
-
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
-		PostQuitMessage(0);// (voir readme Windows.h)
-		return 0;
-	}
-
-	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
-}
 // Handle the initial setup of the window message handler
 LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{

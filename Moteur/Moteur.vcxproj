@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Source\App.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\d3dx12.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Source\WindowManagerHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Source\App.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />

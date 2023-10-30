@@ -82,6 +82,9 @@
     <ClInclude Include="Source\Timer.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -127,6 +130,9 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Timer.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
