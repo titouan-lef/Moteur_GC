@@ -1,4 +1,3 @@
-#include "framwork.h"
 #include "Component.h"
 #include "Entity.h"
 

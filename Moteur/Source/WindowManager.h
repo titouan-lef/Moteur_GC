@@ -1,5 +1,4 @@
 #pragma once
-#include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
 

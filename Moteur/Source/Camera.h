@@ -17,15 +17,15 @@ public:
 #pragma endregion
 
 protected:
-	float m_fov;
-	float m_aspectRatio;
-	float m_nearPlane;
-	float m_farPlane;
+	float m_fov = -1;
+	float m_aspectRatio = -1;
+	float m_nearPlane = -1;
+	float m_farPlane = -1;
 
-	Transform* m_transform;
+	Transform* m_transform = nullptr;
 
-	XMFLOAT4X4 m_viewMatrix;
-	XMFLOAT4X4 m_projMatrix;
+	XMFLOAT4X4 m_viewMatrix = {};
+	XMFLOAT4X4 m_projMatrix = {};
 
 private:
 

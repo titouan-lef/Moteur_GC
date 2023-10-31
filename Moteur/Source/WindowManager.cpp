@@ -1,3 +1,4 @@
+#include "framwork.h"
 #include "WindowManager.h"
 #include "MyException.h"
 #include "Transform.h"

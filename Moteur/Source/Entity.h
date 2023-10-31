@@ -1,5 +1,4 @@
 #pragma once
-#include "framwork.h"
 #include "Transform.h"
 
 class Component;

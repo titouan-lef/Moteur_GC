@@ -1,6 +1,4 @@
 #pragma once 
-
-#include "framwork.h"
 #include "Entity.h"
 
 class MyRectangle : public Entity

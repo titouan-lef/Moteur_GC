@@ -1,7 +1,8 @@
 #pragma once
-#include "Component.h"
 #include "ConstantBuffer.h"
 #include "Mesh.h"
+
+class Component;
 
 class MeshRenderer : public Component
 {

@@ -1,3 +1,4 @@
+#include "Component.h"
 #include "MeshRenderer.h"
 
 MeshRenderer::MeshRenderer()

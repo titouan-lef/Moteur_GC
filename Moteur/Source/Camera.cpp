@@ -13,7 +13,7 @@ void Camera::Init()
 	m_nearPlane = 0.1f;
 	m_farPlane = 1000.0f;
 	XMStoreFloat4x4(&m_projMatrix, XMMatrixPerspectiveFovLH(m_fov, m_aspectRatio, m_nearPlane, m_farPlane));
-	this->AddComponent<Transform>();
+	m_transform = this->AddComponent<Transform>();
 }
 
 void Camera::Update()
