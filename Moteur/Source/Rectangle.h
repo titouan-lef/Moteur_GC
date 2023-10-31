@@ -2,7 +2,6 @@
 
 #include "framwork.h"
 #include "Entity.h"
-#include "Mesh.h"
 
 class MyRectangle : public Entity
 {

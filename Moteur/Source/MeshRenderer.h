@@ -1,6 +1,5 @@
 #pragma once
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
+#include "Component.h"
 #include "ConstantBuffer.h"
 #include "Mesh.h"
 

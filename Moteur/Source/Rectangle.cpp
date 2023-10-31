@@ -1,6 +1,7 @@
 ﻿#include "Rectangle.h"
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
+#include "Mesh.h"
 
 
 std::vector<Vertex> MyRectangle::m_vertices = {
@@ -26,10 +27,8 @@ MyRectangle::MyRectangle()
     Camera* camera = new Camera();
     //cbd->View = camera->GetViewMatrix();
     //cbd->Projection = camera->GetProjMatrix();
-    Mesh* mesh = new Mesh(m_vertices, m_indices);
 
-    this->AddComponent<MeshRenderer>()->Init(mesh, cbd);
-    //this->GetComponent<MeshRenderer>()->Init(m_mesh, cbd);
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), cbd);
 }
 
 MyRectangle::~MyRectangle()
