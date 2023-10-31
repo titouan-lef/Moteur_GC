@@ -75,6 +75,11 @@ Entity::~Entity()
 	m_Components.clear();*/
 }
 
+bool Entity::IsInWindow()
+{
+	return m_Transform.GetPosition().y> 1;
+}
+
 //void Entity::AddComponent(Entity* entity, Component* component)
 //{
 //	entity->m_Components.push_back(component);

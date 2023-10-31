@@ -16,15 +16,6 @@ void Input::Update()
 }
 
 
-void Input::UpdateCursor()
-{
-    GetCursorPos(m_mouse);
-}
-
-POINT *Input::GetCursorPoint()
-{
-    return m_mouse;
-}
 
 bool Input::KeyIsPressed(unsigned char keycode) const
 {

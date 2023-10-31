@@ -91,7 +91,7 @@ class Entity
 public:
 	Entity();
 	virtual ~Entity();
-
+	bool IsInWindow();
 	TRANSFORM m_Transform;
 	//std::vector<Component*> m_Components;
 

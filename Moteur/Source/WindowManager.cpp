@@ -334,7 +334,8 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-
+    std::vector<std::shared_ptr<Entity>> entitiesToDelete;
+    std::vector<ID3D12DescriptorHeap*> descriptorHeapsDelete;
     float elapsedTime = m_entityTimer->Peek();
     if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
     {
@@ -342,17 +343,6 @@ void WindowManager::OnUpdate()
 
         m_entityTimer->Mark();  // Réinitialiser le timer
     }
-
-    //float elapsedDeletionTime = m_entityDeletionTimer->Peek();
-    //if (elapsedDeletionTime > 10.0f)  // Plus de 10 secondes se sont écoulées
-    //{
-    //    if (!m_entities.empty()) {
-    //        m_entities.pop_back();
-    //        descriptorHeaps.pop_back();
-    //
-    //    }
-    //    m_entityDeletionTimer->Mark();  // Réinitialiser le timer de suppression
-    //}
 
     struct ConstantBufferData
     {
@@ -369,7 +359,10 @@ void WindowManager::OnUpdate()
         position.y += 0.01f;
         entity->m_Transform.SetPosition(position.x, position.y, position.z);
         entity->m_Transform.UpdateMatrix();
-    
+        if (entity->IsInWindow()) {
+            entitiesToDelete.push_back(entity);
+            descriptorHeapsDelete.push_back(descriptorHeaps[std::distance(m_entities.begin(), entityIt)]);
+        }
         // Création et initialisation du constant buffer data
         std::unique_ptr<ConstantBufferData> constBufferData(new ConstantBufferData());
         constBufferData->World = entity->m_Transform.GetMatrixTranspose();
@@ -397,6 +390,45 @@ void WindowManager::OnUpdate()
     
         descriptorHeaps[std::distance(m_entities.begin(), entityIt)] = cbvSrvUavHeap;
     }
+    // Supprimer les entités marquées
+    for (const auto& entityToDelete : entitiesToDelete) {
+        // Utilisez une méthode appropriée pour supprimer l'entité de m_entities
+
+        // L'exemple suivant supprime l'entité en utilisant la fonction erase
+        // avec std::remove_if pour déplacer les entités à supprimer à la fin,
+        // puis les supprimer à l'aide de erase.
+
+        // Remarque : Vous devrez peut-être ajuster cette partie en fonction de la
+        // structure réelle de votre conteneur m_entities.
+
+        auto entityIt = std::remove_if(m_entities.begin(), m_entities.end(),
+            [&entityToDelete](const std::shared_ptr<Entity>& entity) {
+                return entity == entityToDelete;
+            });
+
+        // Supprimez réellement l'entité en utilisant erase
+        m_entities.erase(entityIt, m_entities.end());
+    }
+    // Supprimer les entités marquées
+    for (const auto& descriptorHeapsToDelete : descriptorHeapsDelete) {
+        // Utilisez une méthode appropriée pour supprimer l'entité de m_entities
+
+        // L'exemple suivant supprime l'entité en utilisant la fonction erase
+        // avec std::remove_if pour déplacer les entités à supprimer à la fin,
+        // puis les supprimer à l'aide de erase.
+
+        // Remarque : Vous devrez peut-être ajuster cette partie en fonction de la
+        // structure réelle de votre conteneur m_entities.
+
+        auto heap = std::remove_if(descriptorHeaps.begin(), descriptorHeaps.end(),
+            [&descriptorHeapsToDelete](const ID3D12DescriptorHeap*& descHeap) {
+                return descHeap == descriptorHeapsToDelete;
+            });
+
+        // Supprimez réellement l'entité en utilisant erase
+        descriptorHeaps.erase(heap, descriptorHeaps.end());
+    }
+
 }
 
 void WindowManager::OnRender()

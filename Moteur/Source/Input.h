@@ -8,8 +8,7 @@ public:
 
     // Met à jour l'état du clavier à chaque trame
     void Update();
-    void UpdateCursor();
-    POINT* GetCursorPoint();
+
 
     // Vérifie si une touche est enfoncée
     bool KeyIsPressed(unsigned char keycode) const;
