@@ -11,8 +11,8 @@ public:
 	virtual void Update() override;	
 
 #pragma region Gets/Sets
-	inline XMFLOAT4X4 GetViewMatrix() { return m_viewMatrix; }
-	inline XMFLOAT4X4 GetProjMatrix() { return m_projMatrix; }
+	inline XMMATRIX GetViewMatrix() { return XMLoadFloat4x4(&m_viewMatrix); }
+	inline XMMATRIX GetProjMatrix() { return XMLoadFloat4x4(&m_projMatrix); }
 	inline XMMATRIX GetViewProjMatrix() { return XMMatrixMultiply(XMLoadFloat4x4(&m_viewMatrix), XMLoadFloat4x4(&m_projMatrix)); }
 #pragma endregion
 

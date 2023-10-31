@@ -33,6 +33,7 @@
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
+    <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\Rectangle.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />

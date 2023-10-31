@@ -31,7 +31,7 @@ struct Vertex
 
 struct ConstantBufferData
 {
-	//DirectX::XMMATRIX View;
+	DirectX::XMMATRIX View;
 	DirectX::XMMATRIX World;
-	//DirectX::XMMATRIX Projection;
+	DirectX::XMMATRIX Projection;
 };

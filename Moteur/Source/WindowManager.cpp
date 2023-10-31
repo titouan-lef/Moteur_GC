@@ -1,8 +1,8 @@
 #include "WindowManager.h"
 #include "MyException.h"
 #include "Transform.h"
+#include "MeshRenderer.h"
 #include "Engine.h"
-#include "Rectangle.h"// TO DO : A SUPPRIMER
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
@@ -12,7 +12,7 @@ WindowManager::WindowManager(UINT width, UINT height)
 
 WindowManager::~WindowManager()
 {
-    m_indices.clear();
+    //m_indices.clear();
 }
 
 void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
@@ -69,7 +69,9 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&Engine::Device)));
+    ID3D12Device* tmp;
+    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&tmp)));
+    Engine::Device = tmp;
 }
 
 void WindowManager::CreateCommandQueue()
@@ -425,14 +427,19 @@ void WindowManager::PopulateCommandList()
     * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
-    for (int i = 0; i < descriptorHeaps.size(); ++i)
-    {
-        m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-        m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-        m_commandList->IASetVertexBuffers(0, (UINT)m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
-        m_commandList->IASetIndexBuffer(&m_indexBufferView[0]);// Ajout des index buffer
-        m_commandList->DrawIndexedInstanced((UINT)m_indices.size(), nbForme, 0, 0, 0);// Affichage
-    }
+
+    MyRectangle* r1 = new MyRectangle();//TO DO : A supprimer
+    MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
+    //mr->m_mesh->m_vertexBuffer.size();
+    //mr->m_mesh->m_indexBuffer->m_indexBufferView;
+    //for (int i = 0; i < mr->m_constBuffer->m_descriptorHeaps.size(); ++i)
+    //{
+    //    m_commandList->SetDescriptorHeaps(1, &mr->m_constBuffer->m_descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+    //    m_commandList->SetGraphicsRootDescriptorTable(0, mr->m_constBuffer->m_descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+    //    m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView.size(), mr->m_mesh->m_vertexBuffer->m_vertexBufferView.data());// Ajout des vertex buffer
+    //    m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView[0]);// Ajout des index buffer
+    //    m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage
+    //}
 
 
     // Indique au back buffer les render target à ne plus utiliser

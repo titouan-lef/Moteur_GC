@@ -1,5 +1,4 @@
 #include "ConstantBuffer.h"
-#include "Engine.h"
 
 ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData) : Buffer((sizeof(ConstantBufferData) + 255) & ~255, constBufferData)
 {

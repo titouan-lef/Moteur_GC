@@ -8,7 +8,7 @@ class Mesh
 public:
 	Mesh(std::vector<Vertex> vertices, std::vector<UINT16> indices);
 	virtual ~Mesh();
-private:
+public://TO DO : en private ?
 	VertexBuffer* m_vertexBuffer = nullptr;
 	IndexBuffer* m_indexBuffer = nullptr;
 };

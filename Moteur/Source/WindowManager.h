@@ -1,6 +1,7 @@
 #pragma once
 #include "framwork.h"
 #include "DxgiInfoManager.h"
+#include "Rectangle.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -41,21 +42,17 @@ private:
     // Gestion des shaders
     ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
     ID3D12RootSignature* m_rootSignature = nullptr;// Mécanisme qui définit comment les shaders accèdent aux ressources graphiques
-    std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {};// Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
+    //std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {};// Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
 
     // Gestion des vertices
-    std::vector<UINT16> m_indices = {};
-    std::vector<D3D12_VERTEX_BUFFER_VIEW> m_vertexBufferView = {};// tableau indiquant au GPU comment interpréter les données de chaque vertex buffer
-    std::vector<D3D12_INDEX_BUFFER_VIEW > m_indexBufferView = {};// tableau des indexations des vertex
+    //std::vector<UINT16> m_indices = {};
+    //std::vector<D3D12_VERTEX_BUFFER_VIEW> m_vertexBufferView = {};// tableau indiquant au GPU comment interpréter les données de chaque vertex buffer
+    //std::vector<D3D12_INDEX_BUFFER_VIEW > m_indexBufferView = {};// tableau des indexations des vertex
 
     // Synchronisation du rendu
     UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
     UINT64 m_fenceId = 0;// Id de la frame actuelle
     ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
-
-    // TO DO : A SUPPRIMER
-    Entity e1;
-    Entity e2;
 
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
