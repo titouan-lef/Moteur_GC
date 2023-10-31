@@ -1,6 +1,12 @@
 #pragma once
 #include "Buffer.h"
 
+struct Vertex
+{
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT4 m_color;
+};
+
 class VertexBuffer : public Buffer
 {
 public:

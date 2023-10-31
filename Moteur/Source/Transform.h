@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+using namespace DirectX;
+
 class Transform : public Component
 {
 public:

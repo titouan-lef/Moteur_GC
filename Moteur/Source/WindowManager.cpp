@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "Engine.h"
+#include "Camera.h"// TO DO : A supprimer
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
@@ -20,7 +21,18 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     LoadPipeline(width, height, hWnd);
     LoadAssets();
 
-    r1 = new MyRectangle();//TO DO : A supprimer
+    //TO DO : A supprimer
+    r1 = new MyRectangle();
+    r2 = new MyRectangle();
+    ConstantBufferData* cbd2 = new ConstantBufferData();
+    r2->GetComponent<Transform>()->SetPosition(0.5f, 0, 0);
+    r2->GetComponent<Transform>()->UpdateMatrix();
+    cbd2->World = r2->GetComponent<Transform>()->GetMatrixTranspose();
+    Camera* camera = new Camera();
+    camera->Init();
+    camera->Update();
+    cbd2->View = camera->GetViewMatrix();
+    r2->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2);
 }
 
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
@@ -301,11 +313,15 @@ void WindowManager::PopulateCommandList()
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
     MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
-    //for (int i = 0; i < mr->m_constBuffer->m_descriptorHeaps.size(); ++i)
-    for (int i = 0; i < 1; ++i)
+    ConstantBuffer* cb[] = {
+        r1->GetComponent<MeshRenderer>()->m_constBuffer,
+        r2->GetComponent<MeshRenderer>()->m_constBuffer
+    };
+
+    for (int i = 0; i < 2; ++i)
     {
-        m_commandList->SetDescriptorHeaps(1, &mr->m_constBuffer->m_descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-        m_commandList->SetGraphicsRootDescriptorTable(0, mr->m_constBuffer->m_descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps[0]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps[0]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
         m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView.size(), mr->m_mesh->m_vertexBuffer->m_vertexBufferView.data());// Ajout des vertex buffer
         m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView[0]);// Ajout des index buffer
         m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage

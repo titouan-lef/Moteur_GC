@@ -1,6 +1,13 @@
 #pragma once
 #include "Buffer.h"
 
+struct ConstantBufferData
+{
+	DirectX::XMMATRIX World;
+	DirectX::XMMATRIX View;
+	//DirectX::XMMATRIX Projection;
+};
+
 
 class ConstantBuffer : public Buffer
 {

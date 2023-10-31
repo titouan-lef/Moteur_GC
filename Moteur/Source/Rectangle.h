@@ -1,6 +1,8 @@
 #pragma once 
 #include "Entity.h"
 
+struct Vertex;
+
 class MyRectangle : public Entity
 {
 public:

@@ -48,6 +48,7 @@ private:
     ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
 
     MyRectangle* r1 = nullptr;//TO DO : A supprimer
+    MyRectangle* r2 = nullptr;//TO DO : A supprimer
 
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu

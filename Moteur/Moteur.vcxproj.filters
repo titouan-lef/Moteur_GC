@@ -43,16 +43,10 @@
     <ClInclude Include="Source\framwork.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameObject.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Window.h">
       <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\WindowManager.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WindowManagerHelper.h">
       <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Transform.h">
@@ -106,9 +100,6 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Entity.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GameObject.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Window.cpp">

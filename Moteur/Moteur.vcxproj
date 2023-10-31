@@ -31,7 +31,6 @@
     <ClInclude Include="Source\EngineException.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
-    <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
@@ -41,7 +40,6 @@
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WindowManager.h" />
-    <ClInclude Include="Source\WindowManagerHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Buffer.cpp" />
@@ -54,7 +52,6 @@
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
-    <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
