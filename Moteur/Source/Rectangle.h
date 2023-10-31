@@ -1,7 +1,7 @@
 #pragma once 
 
-#include "Entity.h"
 #include "framwork.h"
+#include "Entity.h"
 #include "Mesh.h"
 
 class MyRectangle : public Entity
@@ -17,5 +17,6 @@ public:
 	void OnDestroy() override;
 
 private:
-	static Mesh* m_mesh;
+	static std::vector<Vertex> m_vertices;
+	static std::vector<UINT16> m_indices;
 };

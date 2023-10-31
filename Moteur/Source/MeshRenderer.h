@@ -16,7 +16,7 @@ private:
 	std::string m_shaderPath;
 
 public://TO DO : a mettre en private ?
-	Mesh* m_mesh = nullptr;
+	Mesh* m_mesh;
 	ConstantBuffer* m_constBuffer = nullptr;
 
 };
