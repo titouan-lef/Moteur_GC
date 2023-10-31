@@ -93,6 +93,7 @@ public:
 	virtual ~Entity();
 	bool IsInWindow();
 	TRANSFORM m_Transform;
+	XMFLOAT3 m_Direction;
 	//std::vector<Component*> m_Components;
 
 	/*virtual void Init() = 0;

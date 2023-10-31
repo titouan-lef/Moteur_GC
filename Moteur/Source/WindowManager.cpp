@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 #include "MyException.h"
-
+#include <iostream>
+#include <random>
 WindowManager::WindowManager(UINT width, UINT height)
 {
     m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
@@ -18,10 +19,19 @@ WindowManager::~WindowManager()
 
 void WindowManager::CreateEntity()
 {
+    std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
+    std::default_random_engine gen(rd()); // Utilisez le moteur par défaut
+
+    std::uniform_real_distribution<float> dist(0.1f, 1.0f);
+    std::uniform_real_distribution<float> distDir(-0.01f, 0.01f);
+    std::uniform_real_distribution<float> distPos(-0.5f, 0.5f);
+
     std::shared_ptr<Entity> newEntity = std::make_shared<Entity>();
-    newEntity->m_Transform.SetScale(0.5f, 0.5f, 0.5f);
-    newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
+    newEntity->m_Transform.SetScale(dist(gen), dist(gen), dist(gen));
+    newEntity->m_Transform.Position = { distPos(gen), distPos(gen), 0 };
+    //newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
     newEntity->m_Transform.UpdateMatrix();
+    newEntity->m_Direction = { distDir(gen), distDir(gen),0  };
     m_entities.push_back(newEntity);
     CreateConstantBuffer(newEntity);
     // Initialisez et configurez newEntity ici si nécessaire
@@ -334,8 +344,7 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    std::vector<std::shared_ptr<Entity>> entitiesToDelete;
-    std::vector<ID3D12DescriptorHeap*> descriptorHeapsDelete;
+
     float elapsedTime = m_entityTimer->Peek();
     if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
     {
@@ -355,14 +364,9 @@ void WindowManager::OnUpdate()
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
         // Mettre à jour la position
-        auto position = entity->m_Transform.GetPosition();
-        position.y += 0.01f;
-        entity->m_Transform.SetPosition(position.x, position.y, position.z);
+        entity->m_Transform.MoveByVector(entity->m_Direction);
         entity->m_Transform.UpdateMatrix();
-        if (entity->IsInWindow()) {
-            entitiesToDelete.push_back(entity);
-            descriptorHeapsDelete.push_back(descriptorHeaps[std::distance(m_entities.begin(), entityIt)]);
-        }
+
         // Création et initialisation du constant buffer data
         std::unique_ptr<ConstantBufferData> constBufferData(new ConstantBufferData());
         constBufferData->World = entity->m_Transform.GetMatrixTranspose();
@@ -390,44 +394,7 @@ void WindowManager::OnUpdate()
     
         descriptorHeaps[std::distance(m_entities.begin(), entityIt)] = cbvSrvUavHeap;
     }
-    // Supprimer les entités marquées
-    for (const auto& entityToDelete : entitiesToDelete) {
-        // Utilisez une méthode appropriée pour supprimer l'entité de m_entities
 
-        // L'exemple suivant supprime l'entité en utilisant la fonction erase
-        // avec std::remove_if pour déplacer les entités à supprimer à la fin,
-        // puis les supprimer à l'aide de erase.
-
-        // Remarque : Vous devrez peut-être ajuster cette partie en fonction de la
-        // structure réelle de votre conteneur m_entities.
-
-        auto entityIt = std::remove_if(m_entities.begin(), m_entities.end(),
-            [&entityToDelete](const std::shared_ptr<Entity>& entity) {
-                return entity == entityToDelete;
-            });
-
-        // Supprimez réellement l'entité en utilisant erase
-        m_entities.erase(entityIt, m_entities.end());
-    }
-    // Supprimer les entités marquées
-    for (const auto& descriptorHeapsToDelete : descriptorHeapsDelete) {
-        // Utilisez une méthode appropriée pour supprimer l'entité de m_entities
-
-        // L'exemple suivant supprime l'entité en utilisant la fonction erase
-        // avec std::remove_if pour déplacer les entités à supprimer à la fin,
-        // puis les supprimer à l'aide de erase.
-
-        // Remarque : Vous devrez peut-être ajuster cette partie en fonction de la
-        // structure réelle de votre conteneur m_entities.
-
-        auto heap = std::remove_if(descriptorHeaps.begin(), descriptorHeaps.end(),
-            [&descriptorHeapsToDelete](const ID3D12DescriptorHeap*& descHeap) {
-                return descHeap == descriptorHeapsToDelete;
-            });
-
-        // Supprimez réellement l'entité en utilisant erase
-        descriptorHeaps.erase(heap, descriptorHeaps.end());
-    }
 
 }
 
