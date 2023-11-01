@@ -22,9 +22,9 @@ private:
     DxgiInfoManager infoManager = {};
     #endif
 
-    // Gestion des fenêtres
-    std::vector<CD3DX12_VIEWPORT> m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
-    std::vector<CD3DX12_RECT> m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
+    // Gestion des fenêtres (ici 1 seule)
+    CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
+    CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
 
     // Gestion des commandes
     ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de géométrie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D

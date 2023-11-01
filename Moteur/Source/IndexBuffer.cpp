@@ -5,5 +5,7 @@ IndexBuffer::IndexBuffer(std::vector<UINT16> m_indices) : Buffer(m_indices.size(
 	m_nbVertex = m_indices.size();
 
 	// Création de la vue de l'index buffer
-	m_indexBufferView.push_back(D3D12_INDEX_BUFFER_VIEW(m_buffer->GetGPUVirtualAddress(), m_bufferSize, DXGI_FORMAT_R16_UINT));
+	m_indexBufferView.BufferLocation = m_buffer->GetGPUVirtualAddress();
+	m_indexBufferView.SizeInBytes = m_bufferSize;
+	m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 }

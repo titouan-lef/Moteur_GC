@@ -14,18 +14,15 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData) : Buffer((si
 	cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-	ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-	Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
+	Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_descriptorHeaps));
 
 	// Stockage du constant buffer view dans le tas
-	Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-	m_descriptorHeaps.push_back(cbvSrvUavHeap);
+	Engine::Device->CreateConstantBufferView(&constBufferView, m_descriptorHeaps->GetCPUDescriptorHandleForHeapStart());
 }
 
 ConstantBuffer::~ConstantBuffer()
 {
-	m_descriptorHeaps.clear();
+	delete m_descriptorHeaps;
 }
 
 void ConstantBuffer::Update(ConstantBufferData* constBufferData)
