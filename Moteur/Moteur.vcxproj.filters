@@ -26,8 +26,20 @@
     <Filter Include="Public\cpp">
       <UniqueIdentifier>{6257e815-027b-45a9-8487-f48263ac60ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\header\dxerr">
+    <Filter Include="Private\cpp\Buffer">
+      <UniqueIdentifier>{7943c5a7-2dea-4b84-a7f2-72e685c5a1f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header\Buffer">
+      <UniqueIdentifier>{ffbce20b-c659-4d2e-ac94-29aacf15af79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header\Debug">
+      <UniqueIdentifier>{a16f91f0-82ed-40a9-8a7e-9b66dc38ee9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header\Debug\dxerr">
       <UniqueIdentifier>{1d0c965c-4254-49fc-adeb-d5ea5ad16052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\cpp\Debug">
+      <UniqueIdentifier>{4af2406d-62bc-48a4-8d0a-807660112268}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -58,41 +70,41 @@
     <ClInclude Include="Source\Camera.h">
       <Filter>Public\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DxgiInfoManager.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EngineException.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\App.h">
       <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\dxerr.h">
-      <Filter>Private\header\dxerr</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MyException.h">
-      <Filter>Private\header</Filter>
+      <Filter>Private\header\Debug\dxerr</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rectangle.h">
       <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Buffer.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ConstantBuffer.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\VertexBuffer.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\IndexBuffer.h">
-      <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine.h">
       <Filter>Private\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mesh.h">
       <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Buffer.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ConstantBuffer.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\IndexBuffer.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VertexBuffer.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DxgiInfoManager.h">
+      <Filter>Private\header\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MyException.h">
+      <Filter>Private\header\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EngineException.h">
+      <Filter>Private\header\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,38 +135,38 @@
     <ClCompile Include="Source\App.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DxgiInfoManager.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EngineException.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\dxerr.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MyException.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Rectangle.cpp">
       <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Buffer.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ConstantBuffer.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VertexBuffer.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IndexBuffer.cpp">
-      <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mesh.cpp">
       <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Buffer.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VertexBuffer.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IndexBuffer.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ConstantBuffer.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\dxerr.cpp">
+      <Filter>Private\cpp\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DxgiInfoManager.cpp">
+      <Filter>Private\cpp\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EngineException.cpp">
+      <Filter>Private\cpp\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MyException.cpp">
+      <Filter>Private\cpp\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,13 +176,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\DXGetErrorDescription.inl">
-      <Filter>Private\header\dxerr</Filter>
+      <Filter>Private\header\Debug\dxerr</Filter>
     </None>
     <None Include="Source\DXGetErrorString.inl">
-      <Filter>Private\header\dxerr</Filter>
+      <Filter>Private\header\Debug\dxerr</Filter>
     </None>
     <None Include="Source\DXTrace.inl">
-      <Filter>Private\header\dxerr</Filter>
+      <Filter>Private\header\Debug\dxerr</Filter>
     </None>
   </ItemGroup>
 </Project>
