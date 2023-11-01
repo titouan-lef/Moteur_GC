@@ -13,12 +13,16 @@ Buffer::Buffer(UINT bufferSize, void* src) : m_bufferSize(bufferSize)
 		nullptr,
 		IID_PPV_ARGS(&m_buffer)));
 
-	UpdateConstBuffer(src);
+	UpdateBuffer(src);
 }
 
-void Buffer::UpdateConstBuffer(const void* src)
+Buffer::~Buffer()
 {
-	// Copie des données dans le buffer
+	delete m_buffer;
+}
+
+void Buffer::UpdateBuffer(const void* src)
+{
 	BYTE* mappedData = nullptr;
 	GFX_THROW_INFO_ONLY(m_buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
 	memcpy(mappedData, src, m_bufferSize);

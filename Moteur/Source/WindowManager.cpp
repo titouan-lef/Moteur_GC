@@ -24,15 +24,6 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     //TO DO : A supprimer
     r1 = new MyRectangle();
     r2 = new MyRectangle();
-    ConstantBufferData* cbd2 = new ConstantBufferData();
-    r2->GetComponent<Transform>()->SetPosition(0.5f, 0, 0);
-    r2->GetComponent<Transform>()->UpdateMatrix();
-    cbd2->World = r2->GetComponent<Transform>()->GetMatrixTranspose();
-    Camera* camera = new Camera();
-    camera->Init();
-    camera->Update();
-    cbd2->View = camera->GetViewMatrix();
-    r2->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2);
 }
 
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
@@ -246,7 +237,9 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    
+    r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
+    r2->GetComponent<Transform>()->RotateYaw(45);
+    r2->Update();
 }
 
 void WindowManager::OnRender()

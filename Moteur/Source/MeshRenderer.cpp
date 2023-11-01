@@ -16,3 +16,8 @@ void MeshRenderer::Init(Mesh* mesh, ConstantBufferData* constBufferData)
 	m_mesh = mesh;
 	m_constBuffer = new ConstantBuffer(constBufferData);
 }
+
+void MeshRenderer::Update(ConstantBufferData* constBufferData)
+{
+	m_constBuffer->Update(constBufferData);
+}

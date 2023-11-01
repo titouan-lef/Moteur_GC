@@ -24,7 +24,7 @@ MyRectangle::MyRectangle()
     this->GetComponent<Transform>()->UpdateMatrix();
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    Camera* camera = new Camera();
+    camera = new Camera();
     camera->Init();
     camera->Update();
     cbd->View = camera->GetViewMatrix();
@@ -43,7 +43,14 @@ void MyRectangle::Init()
 
 void MyRectangle::Update()
 {
+    this->GetComponent<Transform>()->UpdateMatrix();
+    camera->Update();
 
+    ConstantBufferData cbd = ConstantBufferData();
+    cbd.World = this->GetComponent<Transform>()->GetMatrixTranspose();
+    cbd.View = camera->GetViewMatrix();
+
+    this->GetComponent<MeshRenderer>()->Update(&cbd);
 }
 
 void MyRectangle::PostUpdate()

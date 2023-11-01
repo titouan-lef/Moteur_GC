@@ -22,3 +22,13 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData) : Buffer((si
 
 	m_descriptorHeaps.push_back(cbvSrvUavHeap);
 }
+
+ConstantBuffer::~ConstantBuffer()
+{
+	m_descriptorHeaps.clear();
+}
+
+void ConstantBuffer::Update(ConstantBufferData* constBufferData)
+{
+	UpdateBuffer(constBufferData);
+}
