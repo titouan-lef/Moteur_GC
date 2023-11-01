@@ -22,6 +22,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     LoadAssets();
 
     //TO DO : A supprimer
+    Camera::m_Instance = new Camera();
     r1 = new MyRectangle();
     r2 = new MyRectangle();
 }
