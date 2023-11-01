@@ -162,17 +162,16 @@ void WindowManager::CreateRootSignature()
     };
 
     /*
-    * Tableau des paramètres de la signature racine
+    * Tableau des paramètres de la signature racine (ici 1 seul)
     * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
     */
-    const UINT nbSlot = 1;
-    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
+    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
 
     // Initialisation des paramètres de la signature racine
-    slotRootParameter[0].InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
+    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
 
     // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(nbSlot, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
     ID3DBlob* serializedRootSig = nullptr;
