@@ -2,6 +2,8 @@
 #include "DxgiInfoManager.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
 
+#include "ConstantBuffer.h"
+#include "Timer.h"
 class WindowManager
 {
 public:
@@ -9,9 +11,11 @@ public:
     virtual ~WindowManager();
 
     void OnInit(UINT width, UINT height, HWND hWnd);
+    void CreateEntity();
     void OnUpdate();
     void OnRender();
 
+    std::shared_ptr<ConstantBufferData> cbd2;
     // Gestion des touches
     virtual void OnKeyDown(UINT8 key) {}// Fonction réaliser lors de l'appui d'une touche
     virtual void OnKeyUp(UINT8 key) {}// Fonction réaliser lors du relachement d'une touche
@@ -21,6 +25,9 @@ private:
     #ifndef  NDEBUG
     DxgiInfoManager infoManager = {};
     #endif
+
+    std::vector<std::shared_ptr<Entity>> m_entities;
+    std::unique_ptr<Timer> m_entityTimer;
 
     // Gestion des fenêtres
     std::vector<CD3DX12_VIEWPORT> m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre

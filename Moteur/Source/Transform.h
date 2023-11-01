@@ -27,6 +27,10 @@ public:
 	// Retourne la matrice de transformation
 	XMMATRIX inline GetMatrix() { return XMLoadFloat4x4(&Matrix); }
 	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
+	XMFLOAT3 GetDirection() { return m_Direction; }
+	void SetDirection(float x, float y, float z) {
+		m_Direction = XMFLOAT3(x, y, z);
+	};
 #pragma endregion
 
 	// Déplace la position en fonction d'un vecteur
@@ -66,5 +70,5 @@ private:
 	XMFLOAT3 Position;         // Position de l'entité
 
 	XMFLOAT4X4 Matrix;           // Matrice de transformation
-
+	XMFLOAT3 m_Direction;
 };

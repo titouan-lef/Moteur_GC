@@ -36,6 +36,7 @@
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\Rectangle.h" />
+    <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\Window.cpp" />

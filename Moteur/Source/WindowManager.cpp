@@ -5,11 +5,13 @@
 #include "MeshRenderer.h"
 #include "Engine.h"
 #include "Camera.h"// TO DO : A supprimer
-
+#include <iostream>
+#include <random>
 WindowManager::WindowManager(UINT width, UINT height)
 {
     m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
     m_scissorRect.push_back(CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)));
+    m_entityTimer = std::make_unique<Timer>();
 }
 
 WindowManager::~WindowManager()
@@ -22,19 +24,40 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     LoadAssets();
 
     //TO DO : A supprimer
-    r1 = new MyRectangle();
-    r2 = new MyRectangle();
-    ConstantBufferData* cbd2 = new ConstantBufferData();
-    r2->GetComponent<Transform>()->SetPosition(0.5f, 0, 0);
-    r2->GetComponent<Transform>()->UpdateMatrix();
-    cbd2->World = r2->GetComponent<Transform>()->GetMatrixTranspose();
+   //r1 = new MyRectangle();
+   //r2 = new MyRectangle();
+    cbd2 = std::make_shared<ConstantBufferData>();
+   //r2->GetComponent<Transform>()->SetPosition(0.5f, 0, 0);
+   //r2->GetComponent<Transform>()->UpdateMatrix();
+   //cbd2->World = r2->GetComponent<Transform>()->GetMatrixTranspose();
     Camera* camera = new Camera();
     camera->Init();
     camera->Update();
     cbd2->View = camera->GetViewMatrix();
-    r2->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2);
+    //r2->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2);
 }
+void WindowManager::CreateEntity()
+{
+    std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
+    std::default_random_engine gen(rd()); // Utilisez le moteur par défaut
 
+    std::uniform_real_distribution<float> dist(0.1f, 1.0f);
+    std::uniform_real_distribution<float> distDir(-0.01f, 0.01f);
+    std::uniform_real_distribution<float> distPos(-0.5f, 0.5f);
+
+    std::shared_ptr<MyRectangle> newRec = std::make_shared<MyRectangle>();
+    newRec->GetComponent<Transform>()->SetScale(dist(gen), dist(gen), dist(gen));
+    newRec->GetComponent<Transform>()->SetPosition(distPos(gen), distPos(gen), 0);
+    //newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
+    newRec->GetComponent<Transform>()->UpdateMatrix();
+    newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen),0);
+    cbd2->World = newRec->GetComponent<Transform>()->GetMatrixTranspose();
+    newRec->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
+    m_entities.push_back(newRec);
+
+    // Initialisez et configurez newEntity ici si nécessaire
+    //std::cout << "New Entity Created!" << std::endl;
+}
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
     #if defined(_DEBUG)
@@ -246,7 +269,31 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    
+
+    float elapsedTime = m_entityTimer->Peek();
+    if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
+    {
+        CreateEntity();
+
+        m_entityTimer->Mark();  // Réinitialiser le timer
+    }
+
+
+
+    // Calculez la taille du constant buffer en dehors de la boucle pour éviter les recalculs inutiles
+    const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
+    int i = 0;
+    for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
+        auto& entity = *entityIt;
+        // Mettre à jour la position
+        entity->GetComponent<Transform>()->MoveByVector(entity->GetComponent<Transform>()->GetDirection());
+        entity->GetComponent<Transform>()->UpdateMatrix();
+
+        // Création et initialisation du constant buffer data
+        cbd2->World = entity->GetComponent<Transform>()->GetMatrixTranspose();
+        entity->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
+
+    }
 }
 
 void WindowManager::OnRender()
