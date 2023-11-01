@@ -47,6 +47,8 @@ private:
     UINT64 m_fenceId = 0;// Id de la frame actuelle
     ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
 
+    const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fenêtre
+
     MyRectangle* r1 = nullptr;//TO DO : A supprimer
     MyRectangle* r2 = nullptr;//TO DO : A supprimer
 

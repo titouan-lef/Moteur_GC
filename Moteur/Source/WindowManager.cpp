@@ -287,8 +287,7 @@ void WindowManager::PopulateCommandList()
     m_commandList->OMSetRenderTargets(1, &renderTarget, FALSE, nullptr);
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
-    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    m_commandList->ClearRenderTargetView(renderTarget, clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
+    m_commandList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
 
     // Ajout de l'affichage
     /*
