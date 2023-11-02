@@ -26,6 +26,7 @@
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\App.h" />
+    <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />
     <ClInclude Include="Source\Cube.h" />
@@ -54,6 +55,7 @@
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\App.cpp" />
+    <ClCompile Include="Source\Collider.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Cube.cpp" />

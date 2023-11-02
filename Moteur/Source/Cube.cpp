@@ -1,4 +1,5 @@
 #include "Cube.h"
+#include "Collider.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "Mesh.h"
@@ -60,7 +61,7 @@ void Cube::Init()
 
 void Cube::Update() {
     this->GetComponent<Transform>()->UpdateMatrix();
-
+    this->GetComponent<Collider>()->GetCollider()->UpdateMatrix();
     ConstantBufferData cbd = ConstantBufferData();
     cbd.World = this->GetComponent<Transform>()->GetMatrixTranspose();
     cbd.View = Camera::m_Instance->GetViewMatrix();
