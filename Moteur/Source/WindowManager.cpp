@@ -54,6 +54,7 @@ void WindowManager::CreateEntity()
     cbd2->World = newRec->GetComponent<Transform>()->GetMatrixTranspose();
     newRec->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
     m_entities.push_back(newRec);
+    cb.push_back(newRec->GetComponent<MeshRenderer>()->m_constBuffer);
 
     // Initialisez et configurez newEntity ici si nécessaire
     //std::cout << "New Entity Created!" << std::endl;
@@ -286,7 +287,9 @@ void WindowManager::OnUpdate()
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
         // Mettre à jour la position
-        entity->GetComponent<Transform>()->MoveByVector(entity->GetComponent<Transform>()->GetDirection());
+        entity->GetComponent<Transform>()->MoveByVector(XMFLOAT3(0, 0, -0.01f));
+       // entity->GetComponent<Transform>()->RotatePitch(10);
+
         entity->GetComponent<Transform>()->UpdateMatrix();
 
         // Création et initialisation du constant buffer data
@@ -359,20 +362,22 @@ void WindowManager::PopulateCommandList()
     * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
-    MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
-    ConstantBuffer* cb[] = {
-        r1->GetComponent<MeshRenderer>()->m_constBuffer,
-        r2->GetComponent<MeshRenderer>()->m_constBuffer
-    };
 
-    for (int i = 0; i < 2; ++i)
-    {
-        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps[0]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps[0]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-        m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView.size(), mr->m_mesh->m_vertexBuffer->m_vertexBufferView.data());// Ajout des vertex buffer
-        m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView[0]);// Ajout des index buffer
-        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage
+    if (m_entities.size() > 0) {
+        MeshRenderer* mr = m_entities[0]->GetComponent<MeshRenderer>();
+
+
+
+        for (int i = 0; i < cb.size(); ++i)
+        {
+            m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps[0]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+            m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps[0]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+            m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView.size(), mr->m_mesh->m_vertexBuffer->m_vertexBufferView.data());// Ajout des vertex buffer
+            m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView[0]);// Ajout des index buffer
+            m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage
+        }
     }
+ 
 
 
     // Indique au back buffer les render target à ne plus utiliser

@@ -4,6 +4,7 @@
 
 #include "ConstantBuffer.h"
 #include "Timer.h"
+#include <vector>
 class WindowManager
 {
 public:
@@ -16,6 +17,7 @@ public:
     void OnRender();
 
     std::shared_ptr<ConstantBufferData> cbd2;
+    std::vector<ConstantBuffer*> cb;
     // Gestion des touches
     virtual void OnKeyDown(UINT8 key) {}// Fonction réaliser lors de l'appui d'une touche
     virtual void OnKeyUp(UINT8 key) {}// Fonction réaliser lors du relachement d'une touche
