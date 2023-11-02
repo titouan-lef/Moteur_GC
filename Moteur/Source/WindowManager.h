@@ -1,10 +1,11 @@
 #pragma once
 #include "DxgiInfoManager.h"
-#include "Rectangle.h"// TO DO : A SUPPRIMER
-
+//#include "Rectangle.h"// TO DO : A SUPPRIMER
+#include "Cube.h"
 #include "ConstantBuffer.h"
 #include "Timer.h"
 #include <vector>
+
 class WindowManager
 {
 public:
@@ -57,8 +58,8 @@ private:
 
     const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fen�tre
 
-    MyRectangle* r1 = nullptr;//TO DO : A supprimer
-    MyRectangle* r2 = nullptr;//TO DO : A supprimer
+    std::shared_ptr<Cube> r1 = nullptr;//TO DO : A supprimer
+    std::shared_ptr<Cube> r2 = nullptr;//TO DO : A supprimer
 
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu

@@ -43,9 +43,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Component.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\d3dx12.h">
       <Filter>Private\header</Filter>
     </ClInclude>
@@ -106,11 +103,21 @@
     <ClInclude Include="Source\EngineException.h">
       <Filter>Private\header\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="AttackState.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="IdleState.h" />
+    <ClInclude Include="MoveState.h" />
+    <ClInclude Include="Source\EnemyState.h" />
+    <ClInclude Include="Source\Timer.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Source\Component.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Cube.h">
+      <Filter>Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Component.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Entity.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
@@ -167,6 +174,18 @@
     </ClCompile>
     <ClCompile Include="Source\MyException.cpp">
       <Filter>Private\cpp\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AttackState.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\IdleState.cpp" />
+    <ClCompile Include="Source\MoveState.cpp" />
+    <ClCompile Include="Source\State.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cube.cpp">
+      <Filter>Public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

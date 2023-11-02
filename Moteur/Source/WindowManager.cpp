@@ -1,9 +1,10 @@
 #include "framwork.h"
-#include "WindowManager.h"
 #include "MyException.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "Engine.h"
+
+#include "WindowManager.h"
 #include "Camera.h"// TO DO : A supprimer
 #include <iostream>
 #include <random>
@@ -25,6 +26,25 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     //TO DO : A supprimer
     Camera::m_Instance = new Camera();
+   
+   r1 = std::make_shared<Cube>();
+   r2 = std::make_shared<Cube>();
+   
+   r1->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
+   r1->GetComponent<Transform>()->SetPosition(-0.25f, 0.25f, 1);
+   r1->GetComponent<Transform>()->UpdateMatrix();
+   r1->GetComponent<Transform>()->SetDirection(0.01f, -0.001f, 0);
+   r1->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+
+   r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
+   r2->GetComponent<Transform>()->SetPosition(0.25f, -0.25f, 1);
+   r2->GetComponent<Transform>()->UpdateMatrix();
+   r2->GetComponent<Transform>()->SetDirection(-0.001f, 0.01f, 0);
+   r2->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+   m_entities.push_back(r1);
+   m_entities.push_back(r2);
+   cb.push_back(r1->GetComponent<MeshRenderer>()->m_constBuffer);
+   cb.push_back(r2->GetComponent<MeshRenderer>()->m_constBuffer);
 
 }
 void WindowManager::CreateEntity()
@@ -35,13 +55,15 @@ void WindowManager::CreateEntity()
     std::uniform_real_distribution<float> dist(0.1f, 1.0f);
     std::uniform_real_distribution<float> distDir(-0.01f, 0.01f);
     std::uniform_real_distribution<float> distPos(-0.5f, 0.5f);
+    std::uniform_real_distribution<float> distRot(-90.0f, 90.0f);
 
-    std::shared_ptr<MyRectangle> newRec = std::make_shared<MyRectangle>();
+    std::shared_ptr<Cube> newRec = std::make_shared<Cube>();
     newRec->GetComponent<Transform>()->SetScale(dist(gen), dist(gen), dist(gen));
-    newRec->GetComponent<Transform>()->SetPosition(distPos(gen), distPos(gen), 0);
+    newRec->GetComponent<Transform>()->SetPosition(distPos(gen), distPos(gen), 10.0f);
     //newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
     newRec->GetComponent<Transform>()->UpdateMatrix();
-    newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen),0);
+    newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen), -0.05f);
+    newRec->GetComponent<Transform>()->SetRotationSpeed(distRot(gen), distRot(gen), distRot(gen));
    
     m_entities.push_back(newRec);
     cb.push_back(newRec->GetComponent<MeshRenderer>()->m_constBuffer);
@@ -260,27 +282,45 @@ void WindowManager::OnUpdate()
 {
 
     float elapsedTime = m_entityTimer->Peek();
-    if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
-    {
-        CreateEntity();
+    //if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
+    //{
+    //    CreateEntity();
+    //
+    //    m_entityTimer->Mark();  // Réinitialiser le timer
+    //}
 
-        m_entityTimer->Mark();  // Réinitialiser le timer
-    }
-
-
-
-    // Calculez la taille du constant buffer en dehors de la boucle pour éviter les recalculs inutiles
-    const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-    int i = 0;
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
+        auto transform = entity->GetComponent<Transform>();
+
         // Mettre à jour la position
-        entity->GetComponent<Transform>()->MoveByVector(XMFLOAT3(0, 0, 0.05f));
-       // entity->GetComponent<Transform>()->RotatePitch(10);
+        transform->MoveByVector(XMFLOAT3(transform->GetDirection()));
+
+        // Mettre à jour la rotation
+        XMFLOAT3 rotationSpeed = transform->GetRotationSpeed();
+        transform->RotateRoll(rotationSpeed.x * elapsedTime*0.1f);
+        transform->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
+        transform->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
+
         entity->Update();
 
 
     }
+    for (int i = 0; i < m_entities.size(); ++i) {
+        auto& entity1 = m_entities[i];
+        auto transform1 = entity1->GetComponent<Transform>();
+
+        for (int j = i + 1; j < m_entities.size(); ++j) {
+            auto& entity2 = m_entities[j];
+            auto transform2 = entity2->GetComponent<Transform>();
+
+            if (transform1->CheckCollision(*transform1, *transform2)) {
+                Transform::ChangeDirection(transform1);
+                Transform::ChangeDirection(transform2);
+            }
+        }
+    }
+
 }
 
 void WindowManager::OnRender()

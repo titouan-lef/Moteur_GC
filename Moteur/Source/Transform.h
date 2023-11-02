@@ -40,10 +40,23 @@ public:
 	void Rotate(float yaw, float pitch, float roll);	// Effectue une rotation en utilisant des angles yaw, pitch et roll
 	void RotateRoll(float angle);						// Effectue une rotation autour de l'axe X (roll)
 	void RotatePitch(float angle);						// Effectue une rotation autour de l'axe Y (pitch)
-	void RotateYaw(float angle);						// Effectue une rotation autour de l'axe Z (yaw)
+	void RotateYaw(float angle);
+	bool CheckCollision( Transform& cube1,  Transform& cube2);
+	static void ChangeDirection(Transform* transform);
+
+
+	// Ajoutez ces méthodes à votre classe Transform
+	void SetRotationSpeed(float yawSpeed, float pitchSpeed, float rollSpeed) {
+		RotationSpeed = XMFLOAT3(yawSpeed, pitchSpeed, rollSpeed);
+	}// Effectue une rotation autour de l'axe Z (yaw)
+	XMFLOAT3 GetRotationSpeed() { return RotationSpeed; };
 #pragma endregion
 
 private:
+	// Ajoutez ces propriétés à votre classe Transform
+	XMFLOAT3 RotationSpeed;  // Vitesse de rotation (en radians par seconde)
+
+
 	// Position de l'entité
 	XMFLOAT3 Position;
 
