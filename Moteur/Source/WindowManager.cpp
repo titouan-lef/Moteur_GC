@@ -351,8 +351,8 @@ void WindowManager::PopulateCommandList()
         {
             m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps[0]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
             m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps[0]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-            m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView.size(), mr->m_mesh->m_vertexBuffer->m_vertexBufferView.data());// Ajout des vertex buffer
-            m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView[0]);// Ajout des index buffer
+            m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView, mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
+            m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer
             m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage
         }
     }
