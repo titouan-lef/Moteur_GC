@@ -1,6 +1,8 @@
 cbuffer ConstantBufferData : register(b0)
 {
+    matrix View;
     matrix World;
+    matrix Projection;
 }
 
 struct PSInput
