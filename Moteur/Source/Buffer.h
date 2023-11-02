@@ -6,9 +6,10 @@ class Buffer
 {
 public:
 	Buffer(UINT bufferSize, void* src);
+	virtual ~Buffer();
 
-	// Update the constant buffer
-	void UpdateConstBuffer(const void* src);
+	void UpdateBuffer(const void* src);// Copie la source de données dans le buffer
+	
 
 protected:
 	UINT m_bufferSize = 0;

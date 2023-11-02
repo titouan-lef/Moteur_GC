@@ -3,6 +3,8 @@
 
 struct Vertex;
 
+class Camera;
+
 class MyRectangle : public Entity
 {
 public:
@@ -18,4 +20,6 @@ public:
 private:
 	static std::vector<Vertex> m_vertices;
 	static std::vector<UINT16> m_indices;
+
+	Camera* camera = nullptr;
 };

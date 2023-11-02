@@ -9,8 +9,8 @@
 #include <random>
 WindowManager::WindowManager(UINT width, UINT height)
 {
-    m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
-    m_scissorRect.push_back(CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)));
+    m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
+    m_scissorRect = CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height));
     m_entityTimer = std::make_unique<Timer>();
 }
 
@@ -24,17 +24,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     LoadAssets();
 
     //TO DO : A supprimer
-   //r1 = new MyRectangle();
-   //r2 = new MyRectangle();
-    cbd2 = std::make_shared<ConstantBufferData>();
-   //r2->GetComponent<Transform>()->SetPosition(0.5f, 0, 0);
-   //r2->GetComponent<Transform>()->UpdateMatrix();
-   //cbd2->World = r2->GetComponent<Transform>()->GetMatrixTranspose();
-    Camera* camera = new Camera();
-    camera->Init();
-    camera->Update();
-    cbd2->View = camera->GetViewMatrix();
-    //r2->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2);
+Camera::m_Instance = new Camera();
 }
 void WindowManager::CreateEntity()
 {
@@ -189,22 +179,21 @@ void WindowManager::CreateRootSignature()
     cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
     // Liste des différent Descriptor Range
-    const UINT nbDescriptorRange = 1;
-    CD3DX12_DESCRIPTOR_RANGE descriptorRange[nbDescriptorRange];
-    descriptorRange[0] = cbvTable;
+    CD3DX12_DESCRIPTOR_RANGE descriptorRange[]{
+        cbvTable
+    };
 
     /*
-    * Tableau des paramètres de la signature racine
+    * Tableau des paramètres de la signature racine (ici 1 seul)
     * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
     */
-    const UINT nbSlot = 1;
-    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
+    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
 
     // Initialisation des paramètres de la signature racine
-    slotRootParameter[0].InitAsDescriptorTable(nbDescriptorRange, descriptorRange);
+    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
 
     // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(nbSlot, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
     ID3DBlob* serializedRootSig = nullptr;
@@ -260,7 +249,6 @@ void WindowManager::CreateCommandList()
     GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
-
 
 void WindowManager::CreateSyncObj()
 {
@@ -318,43 +306,35 @@ void WindowManager::PopulateCommandList()
     GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
     GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
-
-    /* GESTION DES BUFFER */
-
-    // Gestion Vertex Buffer
-    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Paramètre l'affichage pour fonctionner avec une liste de triangle
-
+    // Paramètre l'affichage pour fonctionner avec une liste de triangle
+    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     /* AJOUT DES COMMANDES */
 
     // Ajout de la Root Signature
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);// Ajout de la root signature
+    m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
     // Ajout de la pipeline de rendu
     m_commandList->SetPipelineState(m_pipelineState);
 
     // Ajout des différentes fenêtres et de leur zone de rendu
-    m_commandList->RSSetViewports((UINT)m_viewport.size(), m_viewport.data());// Ajout des fenêtres
-    m_commandList->RSSetScissorRects((UINT)m_scissorRect.size(), m_scissorRect.data());// Ajout des zones de rendu
+    m_commandList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
+    m_commandList->RSSetScissorRects(1, &m_scissorRect); // Ajout des zones de rendu (ici 1 seule)
 
-    // Ajout des "surfaces de dessin" à utiliser
-    CD3DX12_RESOURCE_BARRIER transition[] = {
-        CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET)// Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
-    };
-    m_commandList->ResourceBarrier(_countof(transition), transition);// Ajout des "surfaces de dessin" prêtes à être utilisées
+    // Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    
+    // Ajout des "surfaces de dessin" prêtes à être utilisées (ici 1 seule)
+    m_commandList->ResourceBarrier(1, &transition);
 
-    // Ajout des "surfaces de dessin" au back buffer
-    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget[] = {
-        CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize)
-    };
-    m_commandList->OMSetRenderTargets(_countof(renderTarget), renderTarget, FALSE, nullptr);
+    // Ajout des "surfaces de dessin" au back buffer (ici 1 seule)
+    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize);
+    m_commandList->OMSetRenderTargets(1, &renderTarget, FALSE, nullptr);
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
-    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, (UINT)m_scissorRect.size(), m_scissorRect.data());
+    m_commandList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
 
     // Ajout de l'affichage
-    const UINT nbForme = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
     /*
     * TO DO :
     * créer un vertex buffer par forme
@@ -379,9 +359,9 @@ void WindowManager::PopulateCommandList()
  
 
 
-    // Indique au back buffer les render target à ne plus utiliser
-    transition[0] = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);// Indique que m_renderTargets[m_backBufferIndex] ne doit plus être utilisée comme render target
-    m_commandList->ResourceBarrier(_countof(transition), transition);
+    // Indique au back buffer les "surfaces de dessin" à ne plus utiliser
+    transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    m_commandList->ResourceBarrier(1, &transition);
 
     // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(m_commandList->Close());

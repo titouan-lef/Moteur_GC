@@ -11,6 +11,7 @@ public:
 	virtual ~MeshRenderer();
 
 	void Init(Mesh* mesh, ConstantBufferData* constBufferData);
+	void Update(ConstantBufferData* constBufferData);
 
 private:
 	std::string m_shaderPath;
@@ -18,5 +19,4 @@ private:
 public://TO DO : a mettre en private ?
 	Mesh* m_mesh;
 	ConstantBuffer* m_constBuffer = nullptr;
-
 };
