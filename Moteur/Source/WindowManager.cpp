@@ -6,6 +6,13 @@
 #include "Engine.h"
 #include "Camera.h"// TO DO : A supprimer
 
+#include <wrl/client.h>
+#include <wincodec.h>
+using Microsoft::WRL::ComPtr;
+
+//TO DO A SUPPR
+Shaders* s1 = new Shaders();
+
 WindowManager::WindowManager(UINT width, UINT height)
 {
     m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
@@ -26,6 +33,8 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     r1 = new MyRectangle();
     r2 = new MyRectangle();
 }
+
+
 
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
@@ -116,7 +125,10 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(Engine::Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = Engine::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+
+    s1->CreateHeap();
 }
+
 
 void WindowManager::CreateFrameResources()
 {
@@ -138,89 +150,14 @@ void WindowManager::CreateCommandAllocator()
 
 void WindowManager::LoadAssets()
 {
-    CreateRootSignature();
-    CreatePipelineStateObject();
+    s1->CreateSignature();
+    s1->PipelineStateColor(&m_pipelineState, L"source/shadersColor.hlsl");
     CreateCommandList();
+    //s1->CreateTexture(m_commandList, L"source/pierre.jfif");
     CreateSyncObj();
 }
 
 #pragma region LoadAssetsFunction
-void WindowManager::CreateRootSignature()
-{
-    /*
-    * Création d'un descriptor table
-    * cbvTable.Init(a, b, c) :
-    * * b : nombre de constant buffer par objet
-    * * c : regsitre du shader
-    */
-    CD3DX12_DESCRIPTOR_RANGE cbvTable;
-    cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-
-    // Liste des différent Descriptor Range
-    CD3DX12_DESCRIPTOR_RANGE descriptorRange[]{
-        cbvTable
-    };
-
-    /*
-    * Tableau des paramètres de la signature racine (ici 1 seul)
-    * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
-    */
-    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
-
-    // Initialisation des paramètres de la signature racine
-    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
-
-    // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-    // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
-    ID3DBlob* serializedRootSig = nullptr;
-    D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
-
-    // Création de la signature racine
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
-}
-
-void WindowManager::CreatePipelineStateObject()
-{
-    #if defined(_DEBUG) 
-    UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-    #else
-    UINT compileFlags = 0;
-    #endif
-
-    // Récupération des shaders compilés
-    ID3DBlob* vertexShader = nullptr;
-    ID3DBlob* pixelShader = nullptr;
-    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
-
-    // Définition du vertex input layout
-    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-    };
-
-    // Paramétrage de la pipeline state object (PSO).
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
-    psoDesc.pRootSignature = m_rootSignature;
-    psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader);
-    psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader);
-    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    psoDesc.DepthStencilState.DepthEnable = FALSE;
-    psoDesc.DepthStencilState.StencilEnable = FALSE;
-    psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    psoDesc.NumRenderTargets = 1;
-    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-    psoDesc.SampleDesc.Count = 1;
-
-    // Création de la PSO
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
-}
 
 void WindowManager::CreateCommandList()
 {
@@ -267,7 +204,10 @@ void WindowManager::PopulateCommandList()
     /* AJOUT DES COMMANDES */
 
     // Ajout de la Root Signature
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);
+    m_commandList->SetGraphicsRootSignature(s1->m_rootSignature);
+
+    //Texture
+    s1->SetHeap(m_commandList);
 
     // Ajout de la pipeline de rendu
     m_commandList->SetPipelineState(m_pipelineState);

@@ -36,6 +36,7 @@
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\Rectangle.h" />
+    <ClInclude Include="Source\Shaders.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
+    <ClCompile Include="Source\Shaders.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\Window.cpp" />
@@ -72,6 +74,17 @@
     <None Include="Source\DXGetErrorDescription.inl" />
     <None Include="Source\DXGetErrorString.inl" />
     <None Include="Source\DXTrace.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shadersColor.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="Source\shadersTexture.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\pierre.jfif" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

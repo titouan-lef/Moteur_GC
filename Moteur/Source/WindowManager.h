@@ -1,6 +1,7 @@
 #pragma once
 #include "DxgiInfoManager.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
+#include "Shaders.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -52,7 +53,6 @@ private:
     MyRectangle* r1 = nullptr;//TO DO : A supprimer
     MyRectangle* r2 = nullptr;//TO DO : A supprimer
 
-
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
     void SetupDebugLayer();// Activation du debuggage de Direct3D
@@ -63,7 +63,6 @@ private:
     void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
     void CreateFrameResources();// Création de la "surface de dessin" au bon endroit (= Render Target View)
     void CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
-
 
     void LoadAssets();// Chargement des ressources nécessaire pour le rendu
 
