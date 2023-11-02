@@ -287,14 +287,13 @@ void WindowManager::OnUpdate()
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
         // Mettre à jour la position
-        entity->GetComponent<Transform>()->MoveByVector(XMFLOAT3(0, 0, -0.01f));
+        entity->GetComponent<Transform>()->MoveByVector(entity->GetComponent<Transform>()->GetDirection());
        // entity->GetComponent<Transform>()->RotatePitch(10);
-
-        entity->GetComponent<Transform>()->UpdateMatrix();
-
-        // Création et initialisation du constant buffer data
-        cbd2->World = entity->GetComponent<Transform>()->GetMatrixTranspose();
-        entity->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
+        entity->GetComponent<Transform>()->Update();
+    
+       //// Création et initialisation du constant buffer data
+       cbd2->World = entity->GetComponent<Transform>()->GetMatrixTranspose();
+       entity->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
 
     }
 }

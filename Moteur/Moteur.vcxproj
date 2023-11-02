@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttackState.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="IdleState.h" />
+    <ClInclude Include="MoveState.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\App.h" />
@@ -27,6 +31,7 @@
     <ClInclude Include="Source\d3dx12.h" />
     <ClInclude Include="Source\dxerr.h" />
     <ClInclude Include="Source\DxgiInfoManager.h" />
+    <ClInclude Include="Source\EnemyState.h" />
     <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\EngineException.h" />
     <ClInclude Include="Source\Entity.h" />
@@ -41,8 +46,10 @@
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WindowManager.h" />
+    <ClInclude Include="State.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AttackState.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\App.cpp" />
@@ -50,15 +57,19 @@
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />
     <ClCompile Include="Source\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\IdleState.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
+    <ClCompile Include="Source\MoveState.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
+    <ClCompile Include="Source\State.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
