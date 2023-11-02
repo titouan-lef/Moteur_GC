@@ -1,7 +1,6 @@
 #pragma once
 #include "DxgiInfoManager.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
-#include "Shaders.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -53,28 +52,19 @@ private:
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
     void SetupDebugLayer();// Activation du debuggage de Direct3D
-    IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU
-    void CreateD3DDevice(IDXGIFactory4* factory);// Création du périphérique de rendu
     void CreateCommandQueue();// Création de la file d'attente de commandes
-    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);// Création de la Swap chain
+    void CreateSwapChain(HWND hWnd, UINT width, UINT height);// Création de la Swap chain
     void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
     void CreateFrameResources();// Création de la "surface de dessin" au bon endroit (= Render Target View)
     void CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
 
     void LoadAssets();// Chargement des ressources nécessaire pour le rendu
 
-    void CreateRootSignature();// Création de la root signature
-    void CreatePipelineStateObject();// Création de la PSO (Pipeline State Object)
     void CreateCommandList();// Création de la liste de commandes
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 
     void PopulateCommandList();// Enregistre les commandes pour le rendu actuel
     void WaitForPreviousFrame();// Attend que la frame soit traitée avant de pouvoir être affiché
-
-    // Recherche d'un adaptateur (ou une carte graphique) compatible avec DirectX 12
-    bool IsValidAdapter(IDXGIAdapter1* adapter);
-    bool AdapterFind(IDXGIFactory6* factory6, UINT adapterIndex, bool requestHighPerformanceAdapter, IDXGIAdapter1** pAdapter);
-    IDXGIAdapter1* GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestHighPerformanceAdapter = false);
 };
 

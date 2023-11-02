@@ -44,6 +44,12 @@
     <Filter Include="Ressources\Texture">
       <UniqueIdentifier>{20049845-02ba-4e14-8429-c58b2dcb3a40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private\cpp\Shader">
+      <UniqueIdentifier>{69129452-508e-4419-964d-80b5fc561eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\header\Shader">
+      <UniqueIdentifier>{1c22acd4-2027-4c61-9d29-591c46c5b28f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Component.h">
@@ -109,8 +115,17 @@
     <ClInclude Include="Source\EngineException.h">
       <Filter>Private\header\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Shaders.h">
-      <Filter>Private\header</Filter>
+    <ClInclude Include="Source\Shader.h">
+      <Filter>Private\header\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ShaderColor.h">
+      <Filter>Private\header\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ShaderTexture.h">
+      <Filter>Private\header\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UploadBuffer.h">
+      <Filter>Private\header\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,8 +189,17 @@
     <ClCompile Include="Source\MyException.cpp">
       <Filter>Private\cpp\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Shaders.cpp">
-      <Filter>Private\cpp</Filter>
+    <ClCompile Include="Source\Shader.cpp">
+      <Filter>Private\cpp\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderColor.cpp">
+      <Filter>Private\cpp\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderTexture.cpp">
+      <Filter>Private\cpp\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UploadBuffer.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

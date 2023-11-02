@@ -1,16 +1,25 @@
+/*cbuffer ConstantBufferData : register(b0)
+{
+    matrix World;
+    matrix View;
+    matrix Projection;
+}*/
+
+Texture2D g_texture : register(t0);
+SamplerState g_sampler : register(s0);
+
+
 struct PSInput
 {
     float4 position : SV_POSITION;
     float2 uv : TEXCOORD;
 };
 
-Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
-
 PSInput VSMain(float4 position : POSITION, float4 uv : TEXCOORD)
 {
     PSInput result;
-
+    
+    //result.position = mul(mul(mul(position, World), View), Projection);
     result.position = position;
     result.uv = uv;
 

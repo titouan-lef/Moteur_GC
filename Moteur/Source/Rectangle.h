@@ -1,8 +1,7 @@
 #pragma once 
 #include "Entity.h"
 
-struct Vertex;
-
+class Mesh;
 class Camera;
 
 class MyRectangle : public Entity
@@ -18,8 +17,7 @@ public:
 	void OnDestroy() override;
 
 private:
-	static std::vector<Vertex> m_vertices;
-	static std::vector<UINT16> m_indices;
+	static Mesh* m_mesh;
 
 	Camera* camera = nullptr;
 };

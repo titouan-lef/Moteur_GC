@@ -2,17 +2,16 @@
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
+#include "ShaderColor.h"
 
 
-std::vector<Vertex> MyRectangle::m_vertices = {
+Mesh* MyRectangle::m_mesh = new Mesh({
     // Carre
     { { -0.5f, 0.5f, 0 }, { 0.0f, 0.0f } },// Coin superieur gauche
     { { 0.5f, 0.5f, 0 }, { 1.0f, 0.0f } },// Coin superieur droit
     { { -0.5f, -0.5f, 0 }, { 0.0f, 1.0f } },// Coin inferieur gauche
     { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f } },// Coin inferieur droit
-};
-
-std::vector<UINT16> MyRectangle::m_indices = { 0, 1, 2, 2, 1, 3 };
+}, { 0, 1, 2, 2, 1, 3 });
 
 MyRectangle::MyRectangle()
 {
@@ -27,7 +26,7 @@ MyRectangle::MyRectangle()
     cbd->View = Camera::GetViewMatrix();
     cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), cbd);
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, cbd, new ShaderColor());
 }
 
 MyRectangle::~MyRectangle()
