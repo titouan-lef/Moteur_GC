@@ -6,7 +6,8 @@
 class Shaders
 {
 public:
-	ID3D12RootSignature* m_rootSignature = nullptr;
+	ID3D12RootSignature* m_rootSignature = nullptr; // Mécanisme qui définit comment les shaders accèdent aux ressources graphiques
+	ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
 
 	UINT imageWidth = 0;
 	UINT imageHeight = 0;
@@ -19,8 +20,8 @@ public:
 	void SetHeap(ID3D12GraphicsCommandList* m_commandList);
 	void CreateHeap();
 	void CreateSignature();
-	void PipelineStateTexture(ID3D12PipelineState** m_pipelineState, LPCWSTR pFileName);
-	void PipelineStateColor(ID3D12PipelineState** m_pipelineState, LPCWSTR pFileName);
+	void CreatePSOTexture(LPCWSTR pFileName);
+	void CreatePSOColor(LPCWSTR pFileName);
 	void CreateTexture(ID3D12GraphicsCommandList* m_commandList, const std::wstring& filePath);
 
 private:

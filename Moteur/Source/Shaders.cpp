@@ -69,7 +69,7 @@ void Shaders::CreateSignature() {
     Engine::Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature));
 }
 
-void Shaders::PipelineStateTexture(ID3D12PipelineState** m_pipelineState, LPCWSTR pFileName) {
+void Shaders::CreatePSOTexture(LPCWSTR pFileName) {
 
     ID3DBlob* vertexShader;
     ID3DBlob* pixelShader;
@@ -106,10 +106,10 @@ void Shaders::PipelineStateTexture(ID3D12PipelineState** m_pipelineState, LPCWST
     psoDescTexture.NumRenderTargets = 1;
     psoDescTexture.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDescTexture.SampleDesc.Count = 1;
-    Engine::Device->CreateGraphicsPipelineState(&psoDescTexture, IID_PPV_ARGS(m_pipelineState));
+    Engine::Device->CreateGraphicsPipelineState(&psoDescTexture, IID_PPV_ARGS(&m_pipelineState));
 }
 
-void Shaders::PipelineStateColor(ID3D12PipelineState** m_pipelineState, LPCWSTR pFileName) {
+void Shaders::CreatePSOColor(LPCWSTR pFileName) {
 
     ID3DBlob* vertexShader;
     ID3DBlob* pixelShader;
@@ -146,7 +146,7 @@ void Shaders::PipelineStateColor(ID3D12PipelineState** m_pipelineState, LPCWSTR 
     psoDescColor.NumRenderTargets = 1;
     psoDescColor.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDescColor.SampleDesc.Count = 1;
-    Engine::Device->CreateGraphicsPipelineState(&psoDescColor, IID_PPV_ARGS(m_pipelineState));
+    Engine::Device->CreateGraphicsPipelineState(&psoDescColor, IID_PPV_ARGS(&m_pipelineState));
 }
 
 void Shaders::CreateTexture(ID3D12GraphicsCommandList* m_commandList, const std::wstring& filePath)

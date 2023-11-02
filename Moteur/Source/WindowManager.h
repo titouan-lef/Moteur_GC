@@ -38,10 +38,7 @@ private:
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements prévu pour les "surfaces de dessin"
     UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements prévu pour les "surfaces de dessin"
     IDXGISwapChain3* m_swapChain = nullptr;// Permet l'échange des "surfaces de dessin" dans les buffers
-
-    // Gestion des shaders
-    ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
-    ID3D12RootSignature* m_rootSignature = nullptr;// Mécanisme qui définit comment les shaders accèdent aux ressources graphiques
+    
 
     // Synchronisation du rendu
     UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)

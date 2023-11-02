@@ -151,7 +151,7 @@ void WindowManager::CreateCommandAllocator()
 void WindowManager::LoadAssets()
 {
     s1->CreateSignature();
-    s1->PipelineStateColor(&m_pipelineState, L"source/shadersColor.hlsl");
+    s1->CreatePSOColor(L"source/shadersColor.hlsl");
     CreateCommandList();
     //s1->CreateTexture(m_commandList, L"source/pierre.jfif");
     CreateSyncObj();
@@ -161,7 +161,7 @@ void WindowManager::LoadAssets()
 
 void WindowManager::CreateCommandList()
 {
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, s1->m_pipelineState, IID_PPV_ARGS(&m_commandList)));
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
@@ -196,7 +196,7 @@ void WindowManager::PopulateCommandList()
 {
     // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
     GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
-    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, s1->m_pipelineState));
 
     // Paramètre l'affichage pour fonctionner avec une liste de triangle
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -210,7 +210,7 @@ void WindowManager::PopulateCommandList()
     s1->SetHeap(m_commandList);
 
     // Ajout de la pipeline de rendu
-    m_commandList->SetPipelineState(m_pipelineState);
+    m_commandList->SetPipelineState(s1->m_pipelineState);
 
     // Ajout des différentes fenêtres et de leur zone de rendu
     m_commandList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
