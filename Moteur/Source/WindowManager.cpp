@@ -42,7 +42,7 @@ void WindowManager::CreateEntity()
     newRec->GetComponent<Transform>()->UpdateMatrix();
     newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen),0);
     cbd2->World = newRec->GetComponent<Transform>()->GetMatrixTranspose();
-    newRec->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
+    newRec->GetComponent<MeshRenderer>()->m_constBuffer->Update(cbd2.get());
     m_entities.push_back(newRec);
     cb.push_back(newRec->GetComponent<MeshRenderer>()->m_constBuffer);
 
@@ -281,7 +281,7 @@ void WindowManager::OnUpdate()
     
        //// Création et initialisation du constant buffer data
        cbd2->World = entity->GetComponent<Transform>()->GetMatrixTranspose();
-       entity->GetComponent<MeshRenderer>()->m_constBuffer->UpdateConstBuffer(cbd2.get());
+       entity->GetComponent<MeshRenderer>()->m_constBuffer->Update(cbd2.get());
 
     }
 }
