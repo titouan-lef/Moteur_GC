@@ -243,11 +243,14 @@ void WindowManager::OnUpdate()
 
 void WindowManager::OnRender()
 {
+    // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
+    GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
+    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+
     PopulateCommandList();
 
-    // Exécution des commandes (ici nous n'utilisons qu'une seul liste de comande)
-    ID3D12CommandList* ppCommandLists[] = { m_commandList };
-    m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+    // Exécution des commandes (ici nous n'utilisons qu'une seul liste de commande)
+    m_commandQueue->ExecuteCommandLists(ppCommandLists.size(), ppCommandLists.data());
 
     // Affichage de la frame.
     GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
@@ -255,26 +258,22 @@ void WindowManager::OnRender()
     WaitForPreviousFrame();
 }
 
-void WindowManager::PopulateCommandList()
+void WindowManager::PopulateCommandList(MeshRenderer* meshRenderer)
 {
-    // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
-    GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
-    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
-
     // Paramètre l'affichage pour fonctionner avec une liste de triangle
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     /* AJOUT DES COMMANDES */
 
     // Ajout de la Root Signature
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);
+    m_commandList->SetGraphicsRootSignature(meshRenderer->GetRS());
 
     // Ajout de la pipeline de rendu
-    m_commandList->SetPipelineState(m_pipelineState);
+    m_commandList->SetPipelineState(meshRenderer->GetPSO());
 
     // Ajout des différentes fenêtres et de leur zone de rendu
     m_commandList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
-    m_commandList->RSSetScissorRects(1, &m_scissorRect); // Ajout des zones de rendu (ici 1 seule)
+    m_commandList->RSSetScissorRects(1, &m_scissorRect);    // Ajout des zones de rendu (ici 1 seule)
 
     // Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
     CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -302,15 +301,15 @@ void WindowManager::PopulateCommandList()
         r2->GetComponent<MeshRenderer>()->m_constBuffer
     };
 
-    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
+    const UINT nbInstance = 1; // Nombre d'instance (= forme du vertex buffer) à dessiner
     for (int i = 0; i < _countof(cb); ++i)
     {
-        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
+        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);                                                    // Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
         // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
-        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
-        m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
-        m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
-        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
+        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());   // Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);                           // Ajout des vertex buffer (ici 1 seul)
+        m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);                                     // Ajout des index buffer (ici 1 seul)
+        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);                    // Affichage
     }
 
 
@@ -320,6 +319,9 @@ void WindowManager::PopulateCommandList()
 
     // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(m_commandList->Close());
+
+    // Ajout de la liste de commande à la liste des commandes à exécuter
+    ppCommandLists.push_back(m_commandList);
 }
 
 void WindowManager::WaitForPreviousFrame()
