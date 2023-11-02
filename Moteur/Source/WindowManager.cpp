@@ -42,8 +42,7 @@ void WindowManager::CreateEntity()
     //newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
     newRec->GetComponent<Transform>()->UpdateMatrix();
     newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen),0);
-    cbd2->World = newRec->GetComponent<Transform>()->GetMatrixTranspose();
-    newRec->GetComponent<MeshRenderer>()->m_constBuffer->Update(cbd2.get());
+   
     m_entities.push_back(newRec);
     cb.push_back(newRec->GetComponent<MeshRenderer>()->m_constBuffer);
 
@@ -276,13 +275,10 @@ void WindowManager::OnUpdate()
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
         // Mettre à jour la position
-        entity->GetComponent<Transform>()->MoveByVector(entity->GetComponent<Transform>()->GetDirection());
+        entity->GetComponent<Transform>()->MoveByVector(XMFLOAT3(0, 0, 0.05f));
        // entity->GetComponent<Transform>()->RotatePitch(10);
-        entity->GetComponent<Transform>()->Update();
-    
-       //// Création et initialisation du constant buffer data
-       cbd2->World = entity->GetComponent<Transform>()->GetMatrixTranspose();
-       entity->GetComponent<MeshRenderer>()->m_constBuffer->Update(cbd2.get());
+        entity->Update();
+
 
     }
 }

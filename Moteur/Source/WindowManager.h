@@ -16,7 +16,6 @@ public:
     void OnUpdate();
     void OnRender();
 
-    std::shared_ptr<ConstantBufferData> cbd2;
     std::vector<ConstantBuffer*> cb;
     // Gestion des touches
     virtual void OnKeyDown(UINT8 key) {}// Fonction r�aliser lors de l'appui d'une touche

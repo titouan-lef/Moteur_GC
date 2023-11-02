@@ -20,7 +20,7 @@ MyRectangle::MyRectangle()
     
     // TO DO : A supprimer
     GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
-    this->GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
+    //this->GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
     this->GetComponent<Transform>()->UpdateMatrix();
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
@@ -44,7 +44,7 @@ void MyRectangle::Update()
 
     ConstantBufferData cbd = ConstantBufferData();
     cbd.World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd.View = Camera::GetViewMatrix();
+    cbd.View = Camera::m_Instance->GetViewMatrix();
     cbd.Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
     this->GetComponent<MeshRenderer>()->Update(&cbd);
