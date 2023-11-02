@@ -24,7 +24,8 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     LoadAssets();
 
     //TO DO : A supprimer
-Camera::m_Instance = new Camera();
+    Camera::m_Instance = new Camera();
+
 }
 void WindowManager::CreateEntity()
 {
@@ -342,6 +343,7 @@ void WindowManager::PopulateCommandList()
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
 
+    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
     if (m_entities.size() > 0) {
         MeshRenderer* mr = m_entities[0]->GetComponent<MeshRenderer>();
 
@@ -349,14 +351,13 @@ void WindowManager::PopulateCommandList()
 
         for (int i = 0; i < cb.size(); ++i)
         {
-            m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps[0]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-            m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps[0]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-            m_commandList->IASetVertexBuffers(0, (UINT)mr->m_mesh->m_vertexBuffer->m_vertexBufferView, mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
+            m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+            m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+            m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
             m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer
-            m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbForme, 0, 0, 0);// Affichage
+            m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
         }
     }
- 
 
 
     // Indique au back buffer les "surfaces de dessin" à ne plus utiliser
