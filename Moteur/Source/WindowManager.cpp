@@ -238,7 +238,7 @@ void WindowManager::PopulateCommandList()
     */
     MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
     ConstantBuffer* cb[] = {
-        r1->GetComponent<MeshRenderer>()->m_constBuffer,
+        //r1->GetComponent<MeshRenderer>()->m_constBuffer,
         r2->GetComponent<MeshRenderer>()->m_constBuffer
     };
 

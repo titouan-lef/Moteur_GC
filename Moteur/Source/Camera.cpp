@@ -13,7 +13,7 @@ Camera::Camera()
 	m_nearPlane = 0.1f;
 	m_farPlane = 1000.0f;
 	XMStoreFloat4x4(&m_projMatrix, XMMatrixPerspectiveFovLH(m_fov, m_aspectRatio, m_nearPlane, m_farPlane));
-	m_transform = this->AddComponent<Transform>();
+	this->AddComponent<Transform>();
 
 	Update();
 }
@@ -28,8 +28,8 @@ void Camera::Init()
 
 void Camera::Update()
 {
-	if (m_transform->IsDirty())
+	if (this->GetComponent<Transform>()->IsDirty())
 	{
-		XMStoreFloat4x4(&m_viewMatrix, m_transform->GetMatrixTranspose());
+		XMStoreFloat4x4(&m_viewMatrix, this->GetComponent<Transform>()->GetMatrixTranspose());
 	}
 }
