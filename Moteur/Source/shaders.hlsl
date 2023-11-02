@@ -1,8 +1,8 @@
 cbuffer ConstantBufferData : register(b0)
 {
-    matrix View;
+    // matrix View;
     matrix World;
-    matrix Projection;
+    // matrix Projection;
 }
 
 struct PSInput
@@ -14,8 +14,8 @@ struct PSInput
 PSInput VSMain(float4 position : POSITION, float4 color : COLOR)
 {
     PSInput result;
-
-    result.position = mul(position, World);
+    result.position = mul(mul(position, World), View);
+    //result.position = mul(mul(mul(position, World), View), Projection);
     result.color = color;
 
     return result;

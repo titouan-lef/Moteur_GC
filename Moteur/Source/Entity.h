@@ -1,5 +1,4 @@
 #pragma once
-#include "framwork.h"
 #include "Transform.h"
 
 class Component;
@@ -31,7 +30,7 @@ public:
 
 	void RealUpdate();
 protected:
-	Entity* m_Parent;
+	Entity* m_Parent = nullptr;
 
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:

@@ -1,24 +1,30 @@
+#include "framwork.h"
 #include "WindowManager.h"
 #include "MyException.h"
 #include "Transform.h"
+#include "MeshRenderer.h"
 #include "Engine.h"
-#include "Rectangle.h"// TO DO : A SUPPRIMER
+#include "Camera.h"// TO DO : A supprimer
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
-    m_viewport.push_back(CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height)));
-    m_scissorRect.push_back(CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height)));
+    m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
+    m_scissorRect = CD3DX12_RECT(0, 0, static_cast<LONG>(width), static_cast<LONG>(height));
 }
 
 WindowManager::~WindowManager()
 {
-    m_indices.clear();
 }
 
 void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 {
     LoadPipeline(width, height, hWnd);
     LoadAssets();
+
+    //TO DO : A supprimer
+    Camera::m_Instance = new Camera();
+    r1 = new MyRectangle();
+    r2 = new MyRectangle();
 }
 
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
@@ -69,7 +75,9 @@ IDXGIFactory4* WindowManager::CreateDXGIFactory()
 
 void WindowManager::CreateD3DDevice(IDXGIFactory4* factory)
 {
-    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&Engine::Device)));
+    ID3D12Device* tmp;
+    GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&tmp)));
+    Engine::Device = tmp;
 }
 
 void WindowManager::CreateCommandQueue()
@@ -133,9 +141,6 @@ void WindowManager::LoadAssets()
     CreateRootSignature();
     CreatePipelineStateObject();
     CreateCommandList();
-    /*CreateVertexBuffer();
-    CreateIndexBuffer();
-    CreateConstantBuffer();*/
     CreateSyncObj();
 }
 
@@ -152,22 +157,21 @@ void WindowManager::CreateRootSignature()
     cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
     // Liste des différent Descriptor Range
-    const UINT nbDescriptorRange = 1;
-    CD3DX12_DESCRIPTOR_RANGE descriptorRange[nbDescriptorRange];
-    descriptorRange[0] = cbvTable;
+    CD3DX12_DESCRIPTOR_RANGE descriptorRange[]{
+        cbvTable
+    };
 
     /*
-    * Tableau des paramètres de la signature racine
+    * Tableau des paramètres de la signature racine (ici 1 seul)
     * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
     */
-    const UINT nbSlot = 1;
-    CD3DX12_ROOT_PARAMETER slotRootParameter[nbSlot];
+    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
 
     // Initialisation des paramètres de la signature racine
-    slotRootParameter[0].InitAsDescriptorTable(nbDescriptorRange, descriptorRange);
+    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
 
     // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(nbSlot, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
     ID3DBlob* serializedRootSig = nullptr;
@@ -224,98 +228,6 @@ void WindowManager::CreateCommandList()
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
-//ID3D12Resource* WindowManager::CreateBuffer(UINT bufferSize, const void* src)
-//{
-//    ID3D12Resource* buffer = nullptr;
-//    auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-//    auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
-//    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommittedResource(
-//        &tmp1,
-//        D3D12_HEAP_FLAG_NONE,
-//        &tmp2,
-//        D3D12_RESOURCE_STATE_GENERIC_READ,
-//        nullptr,
-//        IID_PPV_ARGS(&buffer)));
-//
-//    // Copie des données dans le buffer
-//    BYTE* mappedData = nullptr;
-//    GFX_THROW_INFO_ONLY(buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedData)));
-//    memcpy(mappedData, src, bufferSize);
-//    buffer->Unmap(0, nullptr);
-//
-//    return buffer;
-//}
-//
-//void WindowManager::CreateVertexBuffer()
-//{
-//    std::vector<Vertex>vertices = {
-//        // Carr�
-//        { { -0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur gauche
-//        { { 0.5f, 0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin sup�rieur droit
-//        { { -0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur gauche
-//        { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f } },// Coin inf�rieur droit
-//    };
-//
-//    // Création du vertex buffer
-//    const UINT vertexBufferSize = (UINT) (vertices.size() * sizeof(Vertex));
-//    ID3D12Resource* vertexBuffer = CreateBuffer(vertexBufferSize, vertices.data());
-//
-//    // Initialisation du vertex buffer view qui indique au GPU comment interpréter les données du vertex buffer
-//    m_vertexBufferView.push_back(D3D12_VERTEX_BUFFER_VIEW(vertexBuffer->GetGPUVirtualAddress(), vertexBufferSize, sizeof(Vertex)));
-//}
-//
-//void WindowManager::CreateIndexBuffer()
-//{
-//    // Définition de votre tableau d'indices
-//    m_indices = { 0, 1, 2, 2, 1, 3 };
-//
-//    // Création d'une allocation de mémoire pour l'index buffer
-//    const UINT indexBufferSize = (UINT)(m_indices.size() * sizeof(UINT16));
-//    ID3D12Resource* indexBuffer = CreateBuffer(indexBufferSize, m_indices.data());
-//
-//    // Création de la vue de l'index buffer
-//    m_indexBufferView.push_back(D3D12_INDEX_BUFFER_VIEW(indexBuffer->GetGPUVirtualAddress(), indexBufferSize, DXGI_FORMAT_R16_UINT));
-//}
-//
-//void WindowManager::CreateConstantBuffer()
-//{
-//    {
-//        MyRectangle r1 = MyRectangle();
-//
-//        r1.AddComponent<Transform>();
-//        e2.GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
-//        e2.GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
-//        e2.GetComponent<Transform>()->UpdateMatrix();
-//        constBufferData->World = e2.GetComponent<Transform>()->GetMatrixTranspose();
-//        /**************************************/
-//
-//        // Création du constant buffer
-//        const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-//        ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-//
-//        // Défini l'emplacement et la taille des données du constant buffer
-//        D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-//        constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-//        constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-//
-//        // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-//        D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-//        cbvSrvUavHeapDesc.NumDescriptors = 1;
-//        cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-//        cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-//
-//        // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-//        ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-//        Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-//
-//        // Stockage du constant buffer view dans le tas
-//        Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-//
-//        descriptorHeaps.push_back(cbvSrvUavHeap);
-//    }
-//    
-//}
-
 void WindowManager::CreateSyncObj()
 {
     GFX_THROW_INFO_ONLY(Engine::Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
@@ -324,42 +236,9 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    //struct ConstantBufferData
-    //{
-    //    DirectX::XMMATRIX World;
-    //};
-
-
-    //e1.GetComponent<Transform>()->MoveByVector({ 0, 0.01f, 0 });
-    //e1.GetComponent<Transform>()->UpdateMatrix();
-
-    //ConstantBufferData* constBufferData = new ConstantBufferData();
-    //constBufferData->World = e1.GetComponent<Transform>()->GetMatrixTranspose();
-    ///**************************************/
-
-    //// Création du constant buffer
-    //const UINT constBufferSize = (sizeof(ConstantBufferData) + 255) & ~255;
-    //ID3D12Resource* constBuffer = CreateBuffer(constBufferSize, constBufferData);
-
-    //// Défini l'emplacement et la taille des données du constant buffer
-    //D3D12_CONSTANT_BUFFER_VIEW_DESC constBufferView = {};
-    //constBufferView.BufferLocation = constBuffer->GetGPUVirtualAddress();// Localisation du constant buffer
-    //constBufferView.SizeInBytes = constBufferSize;// Taille du constant buffer
-
-    //// Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
-    //D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
-    //cbvSrvUavHeapDesc.NumDescriptors = 1;
-    //cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    //cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-    //// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-    //ID3D12DescriptorHeap* cbvSrvUavHeap = nullptr;
-    //Engine::Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&cbvSrvUavHeap));
-
-    //// Stockage du constant buffer view dans le tas
-    //Engine::Device->CreateConstantBufferView(&constBufferView, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
-
-    //descriptorHeaps[0] = cbvSrvUavHeap;
+    r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
+    r2->GetComponent<Transform>()->RotateYaw(45);
+    r2->Update();
 }
 
 void WindowManager::OnRender()
@@ -382,62 +261,62 @@ void WindowManager::PopulateCommandList()
     GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
     GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
 
-
-    /* GESTION DES BUFFER */
-
-    // Gestion Vertex Buffer
-    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Paramètre l'affichage pour fonctionner avec une liste de triangle
-
+    // Paramètre l'affichage pour fonctionner avec une liste de triangle
+    m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     /* AJOUT DES COMMANDES */
 
     // Ajout de la Root Signature
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);// Ajout de la root signature
+    m_commandList->SetGraphicsRootSignature(m_rootSignature);
 
     // Ajout de la pipeline de rendu
     m_commandList->SetPipelineState(m_pipelineState);
 
     // Ajout des différentes fenêtres et de leur zone de rendu
-    m_commandList->RSSetViewports((UINT)m_viewport.size(), m_viewport.data());// Ajout des fenêtres
-    m_commandList->RSSetScissorRects((UINT)m_scissorRect.size(), m_scissorRect.data());// Ajout des zones de rendu
+    m_commandList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
+    m_commandList->RSSetScissorRects(1, &m_scissorRect); // Ajout des zones de rendu (ici 1 seule)
 
-    // Ajout des "surfaces de dessin" à utiliser
-    CD3DX12_RESOURCE_BARRIER transition[] = {
-        CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET)// Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
-    };
-    m_commandList->ResourceBarrier(_countof(transition), transition);// Ajout des "surfaces de dessin" prêtes à être utilisées
+    // Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    
+    // Ajout des "surfaces de dessin" prêtes à être utilisées (ici 1 seule)
+    m_commandList->ResourceBarrier(1, &transition);
 
-    // Ajout des "surfaces de dessin" au back buffer
-    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget[] = {
-        CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize)
-    };
-    m_commandList->OMSetRenderTargets(_countof(renderTarget), renderTarget, FALSE, nullptr);
+    // Ajout des "surfaces de dessin" au back buffer (ici 1 seule)
+    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize);
+    m_commandList->OMSetRenderTargets(1, &renderTarget, FALSE, nullptr);
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
-    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    m_commandList->ClearRenderTargetView(renderTarget[0], clearColor, (UINT)m_scissorRect.size(), m_scissorRect.data());
+    m_commandList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
 
     // Ajout de l'affichage
-    const UINT nbForme = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
     /*
     * TO DO :
     * créer un vertex buffer par forme
     * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
-    for (int i = 0; i < descriptorHeaps.size(); ++i)
+    MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
+    ConstantBuffer* cb[] = {
+        r1->GetComponent<MeshRenderer>()->m_constBuffer,
+        r2->GetComponent<MeshRenderer>()->m_constBuffer
+    };
+
+    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
+    for (int i = 0; i < _countof(cb); ++i)
     {
-        m_commandList->SetDescriptorHeaps(1, &descriptorHeaps[i]);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-        m_commandList->SetGraphicsRootDescriptorTable(0, descriptorHeaps[i]->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-        m_commandList->IASetVertexBuffers(0, (UINT)m_vertexBufferView.size(), m_vertexBufferView.data());// Ajout des vertex buffer
-        m_commandList->IASetIndexBuffer(&m_indexBufferView[0]);// Ajout des index buffer
-        m_commandList->DrawIndexedInstanced((UINT)m_indices.size(), nbForme, 0, 0, 0);// Affichage
+        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
+        // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
+        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
+        m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
     }
 
 
-    // Indique au back buffer les render target à ne plus utiliser
-    transition[0] = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);// Indique que m_renderTargets[m_backBufferIndex] ne doit plus être utilisée comme render target
-    m_commandList->ResourceBarrier(_countof(transition), transition);
+    // Indique au back buffer les "surfaces de dessin" à ne plus utiliser
+    transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    m_commandList->ResourceBarrier(1, &transition);
 
     // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(m_commandList->Close());

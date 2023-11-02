@@ -1,11 +1,15 @@
 #pragma once
-#include "framwork.h"
+#include "Engine.h"
 #include "DxgiInfoManager.h"
 
 class Buffer
 {
 public:
 	Buffer(UINT bufferSize, void* src);
+	virtual ~Buffer();
+
+	void UpdateBuffer(const void* src);// Copie la source de données dans le buffer
+	
 
 protected:
 	UINT m_bufferSize = 0;
@@ -17,7 +21,5 @@ private:
 	DxgiInfoManager infoManager = {};
 #endif
 
-	// Update the constant buffer
-	void UpdateConstBuffer(const void* src);
 };
 

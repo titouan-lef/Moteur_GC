@@ -1,6 +1,6 @@
 #pragma once
-#include "framwork.h"
 #include "DxgiInfoManager.h"
+#include "Rectangle.h"// TO DO : A SUPPRIMER
 
 class WindowManager
 {
@@ -22,9 +22,9 @@ private:
     DxgiInfoManager infoManager = {};
     #endif
 
-    // Gestion des fenêtres
-    std::vector<CD3DX12_VIEWPORT> m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
-    std::vector<CD3DX12_RECT> m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
+    // Gestion des fenêtres (ici 1 seule)
+    CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
+    CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
 
     // Gestion des commandes
     ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de géométrie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D
@@ -41,21 +41,16 @@ private:
     // Gestion des shaders
     ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
     ID3D12RootSignature* m_rootSignature = nullptr;// Mécanisme qui définit comment les shaders accèdent aux ressources graphiques
-    std::vector<ID3D12DescriptorHeap*> descriptorHeaps = {};// Tableau de tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (1 tas par constant buffer)
-
-    // Gestion des vertices
-    std::vector<UINT16> m_indices = {};
-    std::vector<D3D12_VERTEX_BUFFER_VIEW> m_vertexBufferView = {};// tableau indiquant au GPU comment interpréter les données de chaque vertex buffer
-    std::vector<D3D12_INDEX_BUFFER_VIEW > m_indexBufferView = {};// tableau des indexations des vertex
 
     // Synchronisation du rendu
     UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
     UINT64 m_fenceId = 0;// Id de la frame actuelle
     ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
 
-    // TO DO : A SUPPRIMER
-    Entity e1;
-    Entity e2;
+    const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fenêtre
+
+    MyRectangle* r1 = nullptr;//TO DO : A supprimer
+    MyRectangle* r2 = nullptr;//TO DO : A supprimer
 
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
@@ -75,10 +70,6 @@ private:
     void CreateRootSignature();// Création de la root signature
     void CreatePipelineStateObject();// Création de la PSO (Pipeline State Object)
     void CreateCommandList();// Création de la liste de commandes
-    //ID3D12Resource* CreateBuffer(UINT bufferSize, const void* src);// Création d'un buffer
-    //void CreateVertexBuffer();// Création du vertex buffer
-    //void CreateIndexBuffer();// Création de l'index buffer
-    //void CreateConstantBuffer();// Création du constant buffer
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 
