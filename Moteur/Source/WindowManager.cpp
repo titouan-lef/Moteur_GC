@@ -17,8 +17,6 @@ Shaders* s1 = new Shaders();
 #include <wincodec.h>
 using Microsoft::WRL::ComPtr;
 
-//TO DO A SUPPR
-Shaders* s1 = new Shaders();
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
