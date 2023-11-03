@@ -41,8 +41,14 @@
     <Filter Include="Private\cpp\Debug">
       <UniqueIdentifier>{4af2406d-62bc-48a4-8d0a-807660112268}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ressources\Texture">
+      <UniqueIdentifier>{20049845-02ba-4e14-8429-c58b2dcb3a40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Component.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
     <ClInclude Include="Source\d3dx12.h">
       <Filter>Private\header</Filter>
     </ClInclude>
@@ -103,24 +109,23 @@
     <ClInclude Include="Source\EngineException.h">
       <Filter>Private\header\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="AttackState.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="IdleState.h" />
-    <ClInclude Include="MoveState.h" />
-    <ClInclude Include="Source\EnemyState.h" />
-    <ClInclude Include="Source\Timer.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="Source\Component.h">
+    <ClInclude Include="Source\Shaders.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Timer.h">
+      <Filter>Private\cpp</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Cube.h">
-      <Filter>Public</Filter>
+      <Filter>Public\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Collider.h">
       <Filter>Public\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Entity.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
@@ -129,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="Source\WindowManager.cpp">
       <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="Source\Transform.cpp">
       <Filter>Public\cpp</Filter>
@@ -175,27 +183,27 @@
     <ClCompile Include="Source\MyException.cpp">
       <Filter>Private\cpp\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AttackState.cpp" />
-    <ClCompile Include="Source\Enemy.cpp" />
-    <ClCompile Include="Source\IdleState.cpp" />
-    <ClCompile Include="Source\MoveState.cpp" />
-    <ClCompile Include="Source\State.cpp" />
-    <ClCompile Include="Source\Timer.cpp" />
-    <ClCompile Include="Source\Component.cpp">
+    <ClCompile Include="Source\Shaders.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cube.cpp">
-      <Filter>Public</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Main.cpp">
-      <Filter>Public</Filter>
+    <ClCompile Include="Source\Timer.cpp">
+      <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Collider.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cube.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\shaders.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
+    <Text Include="Source\shadersTexture.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
+    <Text Include="Source\shadersColor.hlsl">
       <Filter>Ressources\Shaders</Filter>
     </Text>
   </ItemGroup>
@@ -209,5 +217,10 @@
     <None Include="Source\DXTrace.inl">
       <Filter>Private\header\Debug\dxerr</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\pierre.jfif">
+      <Filter>Ressources\Texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

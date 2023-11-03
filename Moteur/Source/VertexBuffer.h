@@ -4,8 +4,14 @@
 struct Vertex
 {
 	DirectX::XMFLOAT3 m_position;
-	DirectX::XMFLOAT4 m_color;
+	DirectX::XMFLOAT2 m_textcord;
 };
+
+/*struct VertexColor
+{
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT4 m_color;
+};*/
 
 class VertexBuffer : public Buffer
 {

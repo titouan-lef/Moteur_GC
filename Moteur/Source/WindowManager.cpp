@@ -8,6 +8,11 @@
 #include "Camera.h"// TO DO : A supprimer
 #include <iostream>
 #include <random>
+using Microsoft::WRL::ComPtr;
+
+//TO DO A SUPPR
+Shaders* s1 = new Shaders();
+
 WindowManager::WindowManager(UINT width, UINT height)
 {
     m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
@@ -26,70 +31,47 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     //TO DO : A supprimer
     Camera::m_Instance = new Camera();
-   
-   r1 = std::make_shared<Cube>();
-   r2 = std::make_shared<Cube>();
-   
-   r1->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
-   r1->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
-   r1->GetComponent<Transform>()->UpdateMatrix();
-   r1->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
-   r1->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
-   r1->AddComponent<Collider>();
-   Transform colR1;
-   colR1.SetPosition(-0.45f, 0, 1);
-   colR1.SetScale(0.6f, 0.6f, 0.6f);
-   colR1.SetDirection(0.01f, 0, 0);
-   colR1.SetRotationSpeed(45, 35, 90);
-   colR1.UpdateMatrix();
-   r1->GetComponent<Collider>()->SetCollider(colR1);
+    r1 = new Cube();
+    r2 =new Cube();
 
-   r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
-   r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
-   r2->GetComponent<Transform>()->RotatePitch(45);
-   r2->GetComponent<Transform>()->UpdateMatrix();
-   r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
-   r2->GetComponent<Transform>()->SetRotationSpeed(-45, 35, -90);
-    
-   r2->AddComponent<Collider>();
-   Transform colR2;
-   colR2.SetPosition(0.45f, 0, 1);
-   colR2.SetScale(0.2f, 0.2f, 0.2f);
-   colR2.SetDirection(-0.001f, 0, 0);
-   colR2.SetRotationSpeed(-45, 35, -90);
-   colR2.UpdateMatrix();
-   r2->GetComponent<Collider>()->SetCollider(colR2);
+    r1->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
+    r1->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
+    r1->GetComponent<Transform>()->UpdateMatrix();
+    r1->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
+    r1->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+    r1->AddComponent<Collider>();
+    Transform colR1;
+    colR1.SetPosition(-0.45f, 0, 1);
+    colR1.SetScale(0.2f, 0.2f, 0.2f);
+    colR1.SetDirection(0.01f, 0, 0);
+    colR1.SetRotationSpeed(45, 35, 90);
+    colR1.UpdateMatrix();
+    r1->GetComponent<Collider>()->SetCollider(colR1);
 
-   m_entities.push_back(r1);
-   m_entities.push_back(r2);
-   cb.push_back(r1->GetComponent<MeshRenderer>()->m_constBuffer);
-   cb.push_back(r2->GetComponent<MeshRenderer>()->m_constBuffer);
+    r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
+    r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
+    r2->GetComponent<Transform>()->RotatePitch(45);
+    r2->GetComponent<Transform>()->UpdateMatrix();
+    r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
+    r2->GetComponent<Transform>()->SetRotationSpeed(-45, 35, -90);
 
+    r2->AddComponent<Collider>();
+    Transform colR2;
+    colR2.SetPosition(0.45f, 0, 1);
+    colR2.SetScale(0.2f, 0.2f, 0.2f);
+    colR2.SetDirection(-0.001f, 0, 0);
+    colR2.SetRotationSpeed(-45, 35, -90);
+    colR2.UpdateMatrix();
+    r2->GetComponent<Collider>()->SetCollider(colR2);
+
+    m_entities.push_back(r1);
+    m_entities.push_back(r2);
+    //cb.push_back(r1->GetComponent<MeshRenderer>()->m_constBuffer);
+    //cb.push_back(r2->GetComponent<MeshRenderer>()->m_constBuffer);
 }
-void WindowManager::CreateEntity()
-{
-    std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
-    std::default_random_engine gen(rd()); // Utilisez le moteur par défaut
 
-    std::uniform_real_distribution<float> dist(0.1f, 1.0f);
-    std::uniform_real_distribution<float> distDir(-0.01f, 0.01f);
-    std::uniform_real_distribution<float> distPos(-0.5f, 0.5f);
-    std::uniform_real_distribution<float> distRot(-90.0f, 90.0f);
 
-    std::shared_ptr<Cube> newRec = std::make_shared<Cube>();
-    newRec->GetComponent<Transform>()->SetScale(dist(gen), dist(gen), dist(gen));
-    newRec->GetComponent<Transform>()->SetPosition(distPos(gen), distPos(gen), 10.0f);
-    //newEntity->m_Transform.MoveByVector({ 0.5f, 0, 0.5f });
-    newRec->GetComponent<Transform>()->UpdateMatrix();
-    newRec->GetComponent<Transform>()->SetDirection( distDir(gen), distDir(gen), -0.05f);
-    newRec->GetComponent<Transform>()->SetRotationSpeed(distRot(gen), distRot(gen), distRot(gen));
-   
-    m_entities.push_back(newRec);
-    cb.push_back(newRec->GetComponent<MeshRenderer>()->m_constBuffer);
 
-    // Initialisez et configurez newEntity ici si nécessaire
-    //std::cout << "New Entity Created!" << std::endl;
-}
 void WindowManager::LoadPipeline(UINT width, UINT height, HWND hWnd)
 {
     #if defined(_DEBUG)
@@ -179,7 +161,10 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(Engine::Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = Engine::Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+
+    s1->CreateHeap();
 }
+
 
 void WindowManager::CreateFrameResources()
 {
@@ -201,93 +186,18 @@ void WindowManager::CreateCommandAllocator()
 
 void WindowManager::LoadAssets()
 {
-    CreateRootSignature();
-    CreatePipelineStateObject();
+    s1->CreateSignature();
+    s1->CreatePSOColor(L"Source/shaders.hlsl");
     CreateCommandList();
+    //s1->CreateTexture(m_commandList, L"source/pierre.jfif");
     CreateSyncObj();
 }
 
 #pragma region LoadAssetsFunction
-void WindowManager::CreateRootSignature()
-{
-    /*
-    * Création d'un descriptor table
-    * cbvTable.Init(a, b, c) :
-    * * b : nombre de constant buffer par objet
-    * * c : regsitre du shader
-    */
-    CD3DX12_DESCRIPTOR_RANGE cbvTable;
-    cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-
-    // Liste des différent Descriptor Range
-    CD3DX12_DESCRIPTOR_RANGE descriptorRange[]{
-        cbvTable
-    };
-
-    /*
-    * Tableau des paramètres de la signature racine (ici 1 seul)
-    * il existe 3 types de paramètres différents : root constant, root descriptor et descriptor table
-    */
-    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
-
-    // Initialisation des paramètres de la signature racine
-    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
-
-    // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-    // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
-    ID3DBlob* serializedRootSig = nullptr;
-    D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
-
-    // Création de la signature racine
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
-}
-
-void WindowManager::CreatePipelineStateObject()
-{
-    #if defined(_DEBUG) 
-    UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-    #else
-    UINT compileFlags = 0;
-    #endif
-
-    // Récupération des shaders compilés
-    ID3DBlob* vertexShader = nullptr;
-    ID3DBlob* pixelShader = nullptr;
-    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
-    GFX_THROW_INFO_ONLY(D3DCompileFromFile(L"Source/shaders.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
-
-    // Définition du vertex input layout
-    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-    };
-
-    // Paramétrage de la pipeline state object (PSO).
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
-    psoDesc.pRootSignature = m_rootSignature;
-    psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader);
-    psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader);
-    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-    psoDesc.DepthStencilState.DepthEnable = FALSE;
-    psoDesc.DepthStencilState.StencilEnable = FALSE;
-    psoDesc.SampleMask = UINT_MAX;
-    psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-    psoDesc.NumRenderTargets = 1;
-    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-    psoDesc.SampleDesc.Count = 1;
-
-    // Création de la PSO
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
-}
 
 void WindowManager::CreateCommandList()
 {
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, m_pipelineState, IID_PPV_ARGS(&m_commandList)));
+    GFX_THROW_INFO_ONLY(Engine::Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator, s1->m_pipelineState, IID_PPV_ARGS(&m_commandList)));
     GFX_THROW_INFO_ONLY(m_commandList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
 }
 
@@ -314,22 +224,22 @@ void WindowManager::OnUpdate()
         auto collider = entity->GetComponent<Collider>();
 
         // Mettre à jour la position
-       collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
-       //
-      //// //// Mettre à jour la rotation
-       XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
-       collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime*0.1f);
-       collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
-       collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
+        collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
+        //
+       //// //// Mettre à jour la rotation
+        XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
+        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.1f);
+        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
+        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
 
         // Mettre à jour la position
         transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
 
-      // // Mettre à jour la rotation
-       XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-       transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
-       transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
-       transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
+        // // Mettre à jour la rotation
+        XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
+        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
+        transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
+        transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
         entity->Update();
 
@@ -344,13 +254,13 @@ void WindowManager::OnUpdate()
             auto collider2 = entity2->GetComponent<Collider>();
             auto transform2 = entity2->GetComponent<Transform>();
             if (collider1->CheckCollision(*collider1, *collider2)) {
-               Transform::ChangeDirection(collider1->GetCollider());
-               Transform::ChangeDirection(collider2->GetCollider());
+                Transform::ChangeDirection(collider1->GetCollider());
+                Transform::ChangeDirection(collider2->GetCollider());
                 Transform::ChangeDirection(transform1);
                 Transform::ChangeDirection(transform2);
             }
         }
-        
+
     }
 }
 
@@ -372,7 +282,7 @@ void WindowManager::PopulateCommandList()
 {
     // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
     GFX_THROW_INFO_ONLY(m_commandAllocator->Reset());
-    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, m_pipelineState));
+    GFX_THROW_INFO_ONLY(m_commandList->Reset(m_commandAllocator, s1->m_pipelineState));
 
     // Paramètre l'affichage pour fonctionner avec une liste de triangle
     m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -380,10 +290,13 @@ void WindowManager::PopulateCommandList()
     /* AJOUT DES COMMANDES */
 
     // Ajout de la Root Signature
-    m_commandList->SetGraphicsRootSignature(m_rootSignature);
+    m_commandList->SetGraphicsRootSignature(s1->m_rootSignature);
+
+    //Texture
+    s1->SetHeap(m_commandList);
 
     // Ajout de la pipeline de rendu
-    m_commandList->SetPipelineState(m_pipelineState);
+    m_commandList->SetPipelineState(s1->m_pipelineState);
 
     // Ajout des différentes fenêtres et de leur zone de rendu
     m_commandList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
@@ -409,25 +322,22 @@ void WindowManager::PopulateCommandList()
     * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
+    MeshRenderer* mr = r1->GetComponent<MeshRenderer>();
+    ConstantBuffer* cb[] = {
+        r1->GetComponent<MeshRenderer>()->m_constBuffer,
+        r2->GetComponent<MeshRenderer>()->m_constBuffer
+    };
 
-   const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
-   if (m_entities.size() > 0) {
-       MeshRenderer* mr = m_entities[0]->GetComponent<MeshRenderer>();
-   
-   
-   
-       for (int i = 0; i < cb.size(); ++i)
-       {
-           m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-           m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-           m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
-           m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer
-           m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
-       }
-   }
-
-   
-
+    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
+    for (int i = 0; i < _countof(cb); ++i)
+    {
+        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
+        // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
+        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
+        m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
+    }
 
 
     // Indique au back buffer les "surfaces de dessin" à ne plus utiliser
