@@ -24,7 +24,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     //TO DO : A supprimer
     Camera::m_Instance = new Camera();
-    r1 = new MyRectangle();
+    //r1 = new MyRectangle();
     r2 = new MyRectangle();
 }
 
@@ -132,9 +132,9 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
+    /*r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
     r2->GetComponent<Transform>()->RotateYaw(45);
-    r2->Update();
+    r2->Update();*/
 }
 
 void WindowManager::OnRender()
@@ -194,10 +194,10 @@ void WindowManager::PopulateCommandList()
 
     ShaderTexture* st = (ShaderTexture*)(r2->GetComponent<MeshRenderer>()->m_shader);
 
-    //st->CreateTexture(m_commandList);
+    st->CreateTexture();
 
 
-    ID3D12DescriptorHeap* descriptorHeaps[] = { srvHeap.Get(), samplerHeap.Get() };
+    ID3D12DescriptorHeap* descriptorHeaps[] = { st->m_srvHeap, st->m_samplerHeap };
 
     const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
     for (int i = 0; i < _countof(cb); ++i)
@@ -207,18 +207,23 @@ void WindowManager::PopulateCommandList()
         //m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
         // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
         //m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        
         m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-        // Exemple 1 : Définir la table de descripteurs pour le Constant Buffer (matrices)
-        D3D12_GPU_DESCRIPTOR_HANDLE constantBufferView = cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour le constant buffer.
-        m_commandList->SetGraphicsRootDescriptorTable(0, constantBufferView); // Emplacement 0 correspond au paramètre de la Root Signature pour le constant buffer.
+
+        // Lier le tampon de constantes à l'emplacement de registre b0.
+        //CD3DX12_GPU_DESCRIPTOR_HANDLE cbvHandle(cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());
+        //m_commandList->SetGraphicsRootDescriptorTable(0, cbvHandle);
+
+        // Mettre à jour le tampon de constantes avec les données appropriées.
+        m_commandList->SetGraphicsRootConstantBufferView(0, cb[i]->m_buffer->GetGPUVirtualAddress());
 
         // Exemple 2 : Définir la table de descripteurs pour la Texture (g_texture)
-        D3D12_GPU_DESCRIPTOR_HANDLE textureSRV = ...; // Obtenez le GPU descriptor handle pour la texture.
-        m_commandList->SetGraphicsRootDescriptorTable(1, textureSRV); // Emplacement 1 correspond au paramètre de la Root Signature pour la texture.
+        D3D12_GPU_DESCRIPTOR_HANDLE textureSRV = st->m_srvHeap->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour la texture.
+        m_commandList->SetGraphicsRootDescriptorTable(0, textureSRV); // Emplacement 1 correspond au paramètre de la Root Signature pour la texture.
 
         // Exemple 3 : Définir la table de descripteurs pour le Sampler (g_sampler)
-        D3D12_GPU_DESCRIPTOR_HANDLE sampler = ...; // Obtenez le GPU descriptor handle pour le sampler.
-        m_commandList->SetGraphicsRootDescriptorTable(2, sampler); // Emplacement 2 correspond au paramètre de la Root Signature pour le sampler.
+        D3D12_GPU_DESCRIPTOR_HANDLE sampler = st->m_samplerHeap->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour le sampler.
+        m_commandList->SetGraphicsRootDescriptorTable(1, sampler); // Emplacement 2 correspond au paramètre de la Root Signature pour le sampler.
         
         m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
         m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)

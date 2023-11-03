@@ -16,6 +16,9 @@ ShaderTexture::ShaderTexture(Texture texture) : Shader(Type::texture, m_rootSign
     }
 
     m_texturePath = L"source/" + m_texturePath + L".jfif";
+
+    InitSRV();
+    InitSampler();
 }
 
 ShaderTexture::~ShaderTexture()
@@ -50,7 +53,7 @@ ID3D12RootSignature* ShaderTexture::CreateRootSignature()
     return Shader::CreateRootSignature(_countof(rootParameters), rootParameters);
 }
 
-void ShaderTexture::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
+void ShaderTexture::CreateTexture()
 {
     std::vector<UINT8> texture = LoadFromFile();
 
@@ -78,7 +81,7 @@ void ShaderTexture::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
         nullptr,
         IID_PPV_ARGS(&m_texture));
 
-    m_uploadBuffer = new UploadBuffer(m_texture);
+    //m_uploadBuffer = new UploadBuffer(m_texture);
 }
 
 std::vector<UINT8> ShaderTexture::LoadFromFile()
@@ -137,6 +140,77 @@ std::vector<UINT8> ShaderTexture::LoadFromFile()
         }
     }
     return std::vector<UINT8>();
+}
+
+void ShaderTexture::InitSRV()
+{
+    //std::vector<UINT8> texture = GenerateTextureData(width, height, pixelSize);
+    std::vector<UINT8> texture = LoadFromFile();
+
+    auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);// Paramètre les propriétés de la Texture2D
+
+    // Décrit la Texture2D
+    D3D12_RESOURCE_DESC textureDesc = {};
+    textureDesc.MipLevels = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.Width = imageWidth;
+    textureDesc.Height = imageHeight;
+    textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    textureDesc.DepthOrArraySize = 1;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+    // Création de la Texture2D
+    Engine::Device->CreateCommittedResource(
+        &var1,
+        D3D12_HEAP_FLAG_NONE,
+        &textureDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&m_texture));
+
+
+    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+    srvHeapDesc.NumDescriptors = 1;                                 // Nombre de SRVs à stocker
+    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;      // Type de tas (SRVs sont regroupés avec les CBVs et UAVs).
+    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;  // Doit être visible par les shaders.
+
+    Engine::Device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_srvHeap));
+
+    /*
+    // Describe and create a SRV for the texture.
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    Engine::Device->CreateShaderResourceView(m_texture, &srvDesc, srvHeap->GetCPUDescriptorHandleForHeapStart());// Créez le SRV*/
+}
+
+void ShaderTexture::InitSampler()
+{
+    // Création d'un état d'échantillonneur (Sampler State)
+    D3D12_SAMPLER_DESC  sampler = {};
+    sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;        // Filtrage de la texture
+    sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;   // Mode de répétition en U
+    sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;   // Mode de répétition en V
+    sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;   // Mode de répétition en W
+    sampler.MipLODBias = 0;
+    sampler.MaxAnisotropy = 0;                              // Anisotropie (1 pour désactiver)
+    sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+    sampler.MinLOD = 0.0f;                                  // Niveau de détail minimum
+    sampler.MaxLOD = D3D12_FLOAT32_MAX;                     // Niveau de détail maximum
+
+    D3D12_DESCRIPTOR_HEAP_DESC samplerHeapDesc = {};
+    samplerHeapDesc.NumDescriptors = 1;                                 // Nombre de samplers à stocker
+    samplerHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;          // Type de tas (pour les samplers)
+    samplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;  // Doit être visible par les shaders
+
+    Engine::Device->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap));
+    
+    //Engine::Device->CreateSampler(&sampler, samplerHeap->GetCPUDescriptorHandleForHeapStart());// Créez le Sampler
 }
 
 // Generate a simple black and white checkerboard texture.

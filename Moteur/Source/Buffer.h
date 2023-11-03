@@ -9,11 +9,12 @@ public:
 	virtual ~Buffer();
 
 	void UpdateBuffer(const void* src);// Copie la source de données dans le buffer
-	
 
-protected:
+	// TO DO : Protected ?
 	UINT m_bufferSize = 0;
 	ID3D12Resource* m_buffer = nullptr;
+
+protected:
 
 private:
 	// Gestion des erreurs
