@@ -196,14 +196,30 @@ void WindowManager::PopulateCommandList()
 
     //st->CreateTexture(m_commandList);
 
+
+    ID3D12DescriptorHeap* descriptorHeaps[] = { srvHeap.Get(), samplerHeap.Get() };
+
     const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
     for (int i = 0; i < _countof(cb); ++i)
     {
         m_commandList->SetGraphicsRootSignature(mr->m_shader->m_rootSignature);// Ajout de la Root Signature
         m_commandList->SetPipelineState(mr->m_shader->m_pipelineState);// Ajout de la pipeline de rendu
-        m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
+        //m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
         // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
-        m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        //m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
+        m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+        // Exemple 1 : Définir la table de descripteurs pour le Constant Buffer (matrices)
+        D3D12_GPU_DESCRIPTOR_HANDLE constantBufferView = cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour le constant buffer.
+        m_commandList->SetGraphicsRootDescriptorTable(0, constantBufferView); // Emplacement 0 correspond au paramètre de la Root Signature pour le constant buffer.
+
+        // Exemple 2 : Définir la table de descripteurs pour la Texture (g_texture)
+        D3D12_GPU_DESCRIPTOR_HANDLE textureSRV = ...; // Obtenez le GPU descriptor handle pour la texture.
+        m_commandList->SetGraphicsRootDescriptorTable(1, textureSRV); // Emplacement 1 correspond au paramètre de la Root Signature pour la texture.
+
+        // Exemple 3 : Définir la table de descripteurs pour le Sampler (g_sampler)
+        D3D12_GPU_DESCRIPTOR_HANDLE sampler = ...; // Obtenez le GPU descriptor handle pour le sampler.
+        m_commandList->SetGraphicsRootDescriptorTable(2, sampler); // Emplacement 2 correspond au paramètre de la Root Signature pour le sampler.
+        
         m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
         m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
         m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
