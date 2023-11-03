@@ -2,7 +2,7 @@
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
-#include "ShaderColor.h"
+#include "ShaderTexture.h"
 
 
 Mesh* MyRectangle::m_mesh = new Mesh({
@@ -26,7 +26,7 @@ MyRectangle::MyRectangle()
     cbd->View = Camera::GetViewMatrix();
     cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, cbd, new ShaderColor());
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, cbd, new ShaderTexture(pierre));
 }
 
 MyRectangle::~MyRectangle()

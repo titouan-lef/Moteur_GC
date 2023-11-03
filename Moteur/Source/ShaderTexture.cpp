@@ -31,16 +31,21 @@ ID3D12RootSignature* ShaderTexture::CreateRootSignature()
     * * b : nombre de descripteur
     * * c : regsitre du shader
     */
-    //auto tmp1 = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    auto tmp1 = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
     auto tmp2 = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
-    auto tmp3 = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-
 
     // Tableau des paramètres de la signature racine(ici 3 seul)
-    CD3DX12_ROOT_PARAMETER rootParameters[2];
-    //rootParameters[0].InitAsDescriptorTable(1, &tmp1); // Pour les textures (registre t0)
-    rootParameters[0].InitAsDescriptorTable(1, &tmp2); // Pour les échantillonneurs (registre s0)
-    rootParameters[1].InitAsDescriptorTable(1, &tmp3); // Pour les constant buffer (registre c0)
+    CD3DX12_ROOT_PARAMETER rootParameters[3];
+    
+    // Paramètre 0 : Constant Buffer (matrices)
+    rootParameters[0].InitAsConstantBufferView(0); // L'emplacement de registre doit correspondre à "b0" dans votre shader.
+
+    // Paramètre 1 : Texture (g_texture)
+    rootParameters[1].InitAsDescriptorTable(1, &tmp1); // L'emplacement de registre doit correspondre à "t0" dans votre shader.
+
+    // Paramètre 2 : Sampler (g_sampler)
+    rootParameters[2].InitAsDescriptorTable(1, &tmp2); // L'emplacement de registre doit correspondre à "s0" dans votre shader.
+
 
     return Shader::CreateRootSignature(_countof(rootParameters), rootParameters);
 }

@@ -59,20 +59,26 @@ void Shader::CreatePSO()
     ID3DBlob* pixelShader = nullptr;
     std::wstring fileName;
     LPCSTR inputName;
+    DXGI_FORMAT dxgiFormat;
 
     switch (m_type)
     {
     case texture:
         fileName = L"Texture";
         inputName = "TEXCOORD";
+        dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+        //inputName = "COLOR";
+        //dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
         break;
     case color:
         fileName = L"Color";
         inputName = "COLOR";
+        dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
         break;
     default:
         fileName = L"ErreurNomShader";
         inputName = "ErreurInputName";
+        dxgiFormat = DXGI_FORMAT::DXGI_FORMAT_YUY2;
         break;
     }
 
@@ -85,7 +91,7 @@ void Shader::CreatePSO()
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { inputName, 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+        { inputName, 0, dxgiFormat, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
     // Paramétrage de la pipeline state object (PSO).

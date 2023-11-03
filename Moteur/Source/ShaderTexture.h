@@ -28,7 +28,7 @@ private:
 	std::wstring m_texturePath = L"";
 
 	static ID3D12RootSignature* CreateRootSignature();
-	std::vector<UINT8> GenerateTextureData(UINT width, UINT height, UINT pixelSize);
 	std::vector<UINT8> LoadFromFile();
+	//std::vector<UINT8> GenerateTextureData(UINT width, UINT height, UINT pixelSize);
 };
 
