@@ -29,7 +29,8 @@ void Shaders::CreateHeap() {
     
 void Shaders::CreateSignature() {
 
-    D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
+  
+ /*D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
 
     // This is the highest version the sample supports. If CheckFeatureSupport succeeds, the HighestVersion returned will not be greater than this.
     featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
@@ -66,7 +67,40 @@ void Shaders::CreateSignature() {
     ID3DBlob* signature;
     ID3DBlob* error;
     D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
-    Engine::Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature));
+    Engine::Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature));*/
+
+    /*
+    * Crï¿½ation d'un descriptor table
+    * cbvTable.Init(a, b, c) :
+    * * b : nombre de constant buffer par objet
+    * * c : regsitre du shader
+    */
+    CD3DX12_DESCRIPTOR_RANGE cbvTable;
+    cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+
+    // Liste des diffï¿½rent Descriptor Range
+    CD3DX12_DESCRIPTOR_RANGE descriptorRange[]{
+        cbvTable
+    };
+
+    /*
+    * Tableau des paramï¿½tres de la signature racine (ici 1 seul)
+    * il existe 3 types de paramï¿½tres diffï¿½rents : root constant, root descriptor et descriptor table
+    */
+    CD3DX12_ROOT_PARAMETER slotRootParameter = CD3DX12_ROOT_PARAMETER();
+
+    // Initialisation des paramï¿½tres de la signature racine
+    slotRootParameter.InitAsDescriptorTable(_countof(descriptorRange), descriptorRange);
+
+    // Description de la disposition de la signature racine
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, &slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+    // Transformation de la description en une structure de donnï¿½es qui peut ï¿½tre utilisï¿½e pour crï¿½er la signature racine
+    ID3DBlob* serializedRootSig = nullptr;
+    D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
+
+    // Crï¿½ation de la signature racine
+    (Engine::Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 }
 
 void Shaders::CreatePSOTexture(LPCWSTR pFileName) {
@@ -253,9 +287,9 @@ std::vector<UINT8> Shaders::GenerateTextureData(UINT width, UINT height, UINT pi
 std::vector<UINT8> Shaders::LoadFromFile(const std::wstring& filePath)
 {
     ComPtr<IWICImagingFactory> wicFactory;
-    CoInitialize(nullptr); // Initialise COM si ce n'est pas déjà fait.
+    CoInitialize(nullptr); // Initialise COM si ce n'est pas dï¿½jï¿½ fait.
 
-    // Crée une instance de l'usine WIC
+    // Crï¿½e une instance de l'usine WIC
     HRESULT hr = CoCreateInstance(
         CLSID_WICImagingFactory,
         nullptr,
@@ -291,14 +325,14 @@ std::vector<UINT8> Shaders::LoadFromFile(const std::wstring& filePath)
                     // Calcule la taille de l'image en octets
                     UINT imageSize = imageWidth * imageHeight * imagePixelSize; // 4 octets par pixel (RGBA)
 
-                    // Crée un std::vector<UINT8> pour stocker les données de l'image
+                    // Crï¿½e un std::vector<UINT8> pour stocker les donnï¿½es de l'image
                     std::vector<UINT8> imageData(imageSize);
 
                     hr = wicFrame->CopyPixels(nullptr, imageWidth * imagePixelSize, imageSize, imageData.data());
 
                     if (SUCCEEDED(hr))
                     {
-                        // imageData contient maintenant les données de l'image au format std::vector<UINT8>
+                        // imageData contient maintenant les donnï¿½es de l'image au format std::vector<UINT8>
                         return imageData;
                     }
                 }

@@ -1,8 +1,9 @@
 #pragma once
 #include "DxgiInfoManager.h"
+#include "Cube.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
 #include "Shaders.h"// TO DO : A SUPPRIMER
-
+#include "Timer.h"
 class WindowManager
 {
 public:
@@ -14,8 +15,8 @@ public:
     void OnRender();
 
     // Gestion des touches
-    virtual void OnKeyDown(UINT8 key) {}// Fonction réaliser lors de l'appui d'une touche
-    virtual void OnKeyUp(UINT8 key) {}// Fonction réaliser lors du relachement d'une touche
+    virtual void OnKeyDown(UINT8 key) {}// Fonction rï¿½aliser lors de l'appui d'une touche
+    virtual void OnKeyUp(UINT8 key) {}// Fonction rï¿½aliser lors du relachement d'une touche
 
 private:
     // Gestion des erreurs
@@ -23,54 +24,58 @@ private:
     DxgiInfoManager infoManager = {};
     #endif
 
-    // Gestion des fenêtres (ici 1 seule)
-    CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fenêtre
-    CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
+    // Gestion des fenï¿½tres (ici 1 seule)
+    CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fenï¿½tre
+    CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui dï¿½finissent la zone oï¿½ le rendu sera effectuï¿½ pour chaque fenï¿½tre
+
+    std::vector<Entity*> m_entities;
+    std::unique_ptr<Timer> m_entityTimer;
 
     // Gestion des commandes
-    ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de géométrie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D
+    ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de gï¿½omï¿½trie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D
     ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes
     ID3D12CommandAllocator* m_commandAllocator = nullptr;// Allocations de stockage pour les commandes du GPU
 
     // Gestion des "surfaces de dessin" (= Render Target)
-    static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain gère pour l'application
+    static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain gï¿½re pour l'application
     ID3D12Resource* m_renderTargets[FrameCount] = {};// Tableau contenant les "surfaces de dessin"
-    ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements prévu pour les "surfaces de dessin"
-    UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements prévu pour les "surfaces de dessin"
-    IDXGISwapChain3* m_swapChain = nullptr;// Permet l'échange des "surfaces de dessin" dans les buffers
+    ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements prï¿½vu pour les "surfaces de dessin"
+    UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements prï¿½vu pour les "surfaces de dessin"
+    IDXGISwapChain3* m_swapChain = nullptr;// Permet l'ï¿½change des "surfaces de dessin" dans les buffers
     
 
     // Synchronisation du rendu
-    UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+    UINT m_backBufferIndex = 0;// Indique quel est le back buffer actuel (l'indice varie ici de 0 ï¿½ 1 car on utilise 2 buffers : le back et front buffer)
     UINT64 m_fenceId = 0;// Id de la frame actuelle
-    ID3D12Fence* m_fence = {};// Mécanisme de synchronisation utilisé pour attendre la fin d'une série de commandes graphiques avant d'en exécuter d'autres
+    ID3D12Fence* m_fence = {};// Mï¿½canisme de synchronisation utilisï¿½ pour attendre la fin d'une sï¿½rie de commandes graphiques avant d'en exï¿½cuter d'autres
 
-    const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fenêtre
+    const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fenï¿½tre
 
-    MyRectangle* r1 = nullptr;//TO DO : A supprimer
-    MyRectangle* r2 = nullptr;//TO DO : A supprimer
+
+    Cube* r1 = nullptr;//TO DO : A supprimer
+    Cube* r2 = nullptr;//TO DO : A supprimer
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
     void SetupDebugLayer();// Activation du debuggage de Direct3D
-    IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU
-    void CreateD3DDevice(IDXGIFactory4* factory);// Création du périphérique de rendu
-    void CreateCommandQueue();// Création de la file d'attente de commandes
-    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);// Création de la Swap chain
-    void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
-    void CreateFrameResources();// Création de la "surface de dessin" au bon endroit (= Render Target View)
-    void CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
+    IDXGIFactory4* CreateDXGIFactory();// Crï¿½ation de l'objet qui permet les interactions DirectX/GPU
+    void CreateD3DDevice(IDXGIFactory4* factory);// Crï¿½ation du pï¿½riphï¿½rique de rendu
+    void CreateCommandQueue();// Crï¿½ation de la file d'attente de commandes
+    void CreateSwapChain(HWND hWnd, UINT width, UINT height, IDXGIFactory4* factory);// Crï¿½ation de la Swap chain
+    void CreateDescriptorHeaps();// Crï¿½ation du tas de descripteurs RTV (Render Target View)
+    void CreateFrameResources();// Crï¿½ation de la "surface de dessin" au bon endroit (= Render Target View)
+    void CreateCommandAllocator();// Crï¿½ation des allocations de stockage pour les commandes du GPU
 
-    void LoadAssets();// Chargement des ressources nécessaire pour le rendu
+    void LoadAssets();// Chargement des ressources nï¿½cessaire pour le rendu
 
-    void CreateRootSignature();// Création de la root signature
-    void CreatePipelineStateObject();// Création de la PSO (Pipeline State Object)
-    void CreateCommandList();// Création de la liste de commandes
-    void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
+    void CreateRootSignature();// Crï¿½ation de la root signature
+    void CreatePipelineStateObject();// Crï¿½ation de la PSO (Pipeline State Object)
+    void CreateCommandList();// Crï¿½ation de la liste de commandes
+    void CreateSyncObj();// Crï¿½ation d'une infrastructure de synchronisation pour assurer que le GPU ait terminï¿½ son travail avant de passer ï¿½ la frame suivante
 
 
     void PopulateCommandList();// Enregistre les commandes pour le rendu actuel
-    void WaitForPreviousFrame();// Attend que la frame soit traitée avant de pouvoir être affiché
+    void WaitForPreviousFrame();// Attend que la frame soit traitï¿½e avant de pouvoir ï¿½tre affichï¿½
 
     // Recherche d'un adaptateur (ou une carte graphique) compatible avec DirectX 12
     bool IsValidAdapter(IDXGIAdapter1* adapter);

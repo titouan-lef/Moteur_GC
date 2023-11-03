@@ -19,6 +19,7 @@ public:
 	inline XMMATRIX GetViewProjMatrix() { return XMMatrixMultiply(XMLoadFloat4x4(&m_viewMatrix), XMLoadFloat4x4(&m_projMatrix)); }
 #pragma endregion
 
+	static XMFLOAT4X4 m_projMatrix;
 protected:
 	float m_fov = -1;
 	float m_aspectRatio = -1;
@@ -28,7 +29,6 @@ protected:
 	//Transform* m_transform = nullptr;
 
 	static XMFLOAT4X4 m_viewMatrix;
-	static XMFLOAT4X4 m_projMatrix;
 
 private:
 
