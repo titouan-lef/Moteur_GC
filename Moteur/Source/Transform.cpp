@@ -30,11 +30,11 @@ void Transform::Update()
 	}
 }
 
-void Transform::MoveByVector(XMFLOAT3 vec)
+void Transform::MoveByVector(XMFLOAT3 vec, float elapsed)
 {
-	Position.x += vec.x;
-	Position.y += vec.y;
-	Position.z += vec.z;
+	Position.x += vec.x* elapsed;
+	Position.y += vec.y * elapsed;
+	Position.z += vec.z * elapsed;
 	m_isDirty = true;
 }
 

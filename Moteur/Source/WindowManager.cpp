@@ -31,31 +31,32 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
    r2 = std::make_shared<Cube>();
    
    r1->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
-   r1->GetComponent<Transform>()->SetPosition(-0.25f, 0.25f, 1);
+   r1->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
    r1->GetComponent<Transform>()->UpdateMatrix();
-   r1->GetComponent<Transform>()->SetDirection(0.01f, -0.001f, 0);
+   r1->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
    r1->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
    r1->AddComponent<Collider>();
    Transform colR1;
-   colR1.SetPosition(-0.25f, 0.25f, 1);
-   colR1.SetScale(0.2f, 0.2f, 0.2f);
-   colR1.SetDirection(0.01f, -0.001f, 0);
+   colR1.SetPosition(-0.45f, 0, 1);
+   colR1.SetScale(0.6f, 0.6f, 0.6f);
+   colR1.SetDirection(0.01f, 0, 0);
    colR1.SetRotationSpeed(45, 35, 90);
    colR1.UpdateMatrix();
    r1->GetComponent<Collider>()->SetCollider(colR1);
 
    r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
-   r2->GetComponent<Transform>()->SetPosition(0.25f, -0.25f, 1);
+   r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
+   r2->GetComponent<Transform>()->RotatePitch(45);
    r2->GetComponent<Transform>()->UpdateMatrix();
-   r2->GetComponent<Transform>()->SetDirection(-0.001f, 0.01f, 0);
-   r2->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+   r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
+   r2->GetComponent<Transform>()->SetRotationSpeed(-45, 35, -90);
     
    r2->AddComponent<Collider>();
    Transform colR2;
-   colR2.SetPosition(0.25f, -0.25f, 1);
+   colR2.SetPosition(0.45f, 0, 1);
    colR2.SetScale(0.2f, 0.2f, 0.2f);
-   colR2.SetDirection(-0.001f, 0.01f, 0);
-   colR2.SetRotationSpeed(45, 35, 90);
+   colR2.SetDirection(-0.001f, 0, 0);
+   colR2.SetRotationSpeed(-45, 35, -90);
    colR2.UpdateMatrix();
    r2->GetComponent<Collider>()->SetCollider(colR2);
 
@@ -313,22 +314,22 @@ void WindowManager::OnUpdate()
         auto collider = entity->GetComponent<Collider>();
 
         // Mettre à jour la position
-       collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()));
+       collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
        //
-      // //// Mettre à jour la rotation
+      //// //// Mettre à jour la rotation
        XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime*0.1f);
        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
 
         // Mettre à jour la position
-        transform->MoveByVector(XMFLOAT3(transform->GetDirection()));
+        transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
 
-       // // Mettre à jour la rotation
-        XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
-        transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
-        transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
+      // // Mettre à jour la rotation
+       XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
+       transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
+       transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
+       transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
         entity->Update();
 
@@ -409,21 +410,24 @@ void WindowManager::PopulateCommandList()
     * mettre en place un systeme d'update des matrice World pour chaque objet
     */
 
-    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
-    if (m_entities.size() > 0) {
-        MeshRenderer* mr = m_entities[0]->GetComponent<MeshRenderer>();
+   const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
+   if (m_entities.size() > 0) {
+       MeshRenderer* mr = m_entities[0]->GetComponent<MeshRenderer>();
+   
+   
+   
+       for (int i = 0; i < cb.size(); ++i)
+       {
+           m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
+           m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
+           m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
+           m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer
+           m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
+       }
+   }
 
+   
 
-
-        for (int i = 0; i < cb.size(); ++i)
-        {
-            m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser
-            m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources (associé au constant buffer)
-            m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer
-            m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer
-            m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
-        }
-    }
 
 
     // Indique au back buffer les "surfaces de dessin" à ne plus utiliser

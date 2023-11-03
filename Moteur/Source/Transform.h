@@ -31,7 +31,7 @@ public:
 	};
 #pragma endregion
 
-	void MoveByVector(XMFLOAT3 vec);	// Déplace la position en fonction d'un vecteur
+	void MoveByVector(XMFLOAT3 vec, float elapsed);	// Déplace la position en fonction d'un vecteur
 	void Identity();					// Réinitialise la transformation à l'identité
 	void FromMatrix(XMMATRIX* matrix);	// Initialise la transformation à partir d'une matrice de transformation
 	void UpdateMatrix();				// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
