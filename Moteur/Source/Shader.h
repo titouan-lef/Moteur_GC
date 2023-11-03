@@ -2,6 +2,7 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Engine.h"
+#include "ConstantBuffer.h"
 
 enum Type
 {
@@ -18,12 +19,11 @@ public:
 	Shader(Type type, ID3D12RootSignature* rootSignature);
 	virtual ~Shader();
 
-	/*void SetHeap(ID3D12GraphicsCommandList* m_commandList);
-	void CreateHeap();
-	void CreateSignature();*/
 	static ID3D12RootSignature* CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[]);
 	void CreatePSO();
 
+	// TO DO : en private ?
+	ConstantBuffer* m_constBuffer;
 
 protected:
 	// Gestion des erreurs

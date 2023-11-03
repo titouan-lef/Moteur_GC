@@ -40,7 +40,7 @@
     <ClInclude Include="Source\ShaderColor.h" />
     <ClInclude Include="Source\ShaderTexture.h" />
     <ClInclude Include="Source\Transform.h" />
-    <ClInclude Include="Source\UploadBuffer.h" />
+    <ClInclude Include="Source\ConstantBufferSR.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
     <ClInclude Include="Source\Window.h" />
     <ClInclude Include="Source\WindowManager.h" />
@@ -66,7 +66,7 @@
     <ClCompile Include="Source\ShaderColor.cpp" />
     <ClCompile Include="Source\ShaderTexture.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
-    <ClCompile Include="Source\UploadBuffer.cpp" />
+    <ClCompile Include="Source\ConstantBufferSR.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />
     <ClCompile Include="Source\Window.cpp" />
     <ClCompile Include="Source\WindowManager.cpp" />

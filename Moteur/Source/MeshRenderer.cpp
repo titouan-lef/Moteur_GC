@@ -7,18 +7,12 @@ MeshRenderer::MeshRenderer()
 
 MeshRenderer::~MeshRenderer()
 {
-	delete m_constBuffer;
+	delete m_shader;
 	delete m_mesh;
 }
 
-void MeshRenderer::Init(Mesh* mesh, ConstantBufferData* constBufferData, Shader* shader)
+void MeshRenderer::Init(Mesh* mesh, Shader* shader)
 {
 	m_mesh = mesh;
-	m_constBuffer = new ConstantBuffer(constBufferData);
 	m_shader = shader;
-}
-
-void MeshRenderer::Update(ConstantBufferData* constBufferData)
-{
-	m_constBuffer->Update(constBufferData);
 }

@@ -7,7 +7,7 @@
 WindowManager* Window::m_pWinManager = nullptr;
 
 /*
-* x et y : coordon�es (x, y) du coin sup�rieur gauche de la fen�tre
+* x et y : coordonees (x, y) du coin superieur gauche de la fenetre
 */
 Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	:
@@ -33,14 +33,14 @@ void Window::Start()
 {
 	m_pWinManager = new WindowManager(m_width, m_height);
 
-	// Cr�ation d'une classe de fen�tre
+	// Creation d'une classe de fenetre
 	WNDCLASS wc = {};
 	wc.lpfnWndProc = HandleMsgSetup;
 	wc.hInstance = m_hInstance;
 	wc.lpszClassName = m_windowName;
 	RegisterClass(&wc);
 
-	// Agrandissement de la taille de la fen�tre pour prendre en compte son style et ses bordures
+	// Agrandissement de la taille de la fenetre pour prendre en compte son style et ses bordures
 	RECT winRect{};
 	winRect.left = m_x;
 	winRect.right = m_x + m_width;
@@ -50,7 +50,7 @@ void Window::Start()
 		throw EHWND_LAST_EXCEPT();
 	};// (voir readme Windows.h)
 	
-	// Cr�ation de la fen�tre
+	// Creation de la fenetre
 	m_hWnd = CreateWindow(
 		m_windowName, m_name,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
@@ -64,7 +64,7 @@ void Window::Start()
 
 	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
 
-	// Affichage de la fen�tre
+	// Affichage de la fenetre
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
 
@@ -72,10 +72,10 @@ std::optional<int> Window::Run()
 {
 	// Main sample loop.
 	MSG msg = {};
-	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fen�tre
+	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fenetre
 	{
 		// Process any messages in the queue.
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fen�tre est disponible (voir readme Windows.h)
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fenetre est disponible (voir readme Windows.h)
 		{
 			TranslateMessage(&msg);// (voir readme Windows.h)
 			DispatchMessage(&msg);// (voir readme Windows.h)
@@ -86,10 +86,10 @@ std::optional<int> Window::Run()
 }
 
 /*
-* _hWnd : handle pour la fen�tre
-* _msg : message re�u de DispatchMessage()
-* _wParam : information suppl�mentaire sur le message
-* _lParam : information suppl�mentaire sur le message
+* _hWnd : handle pour la fenetre
+* _msg : message reeu de DispatchMessage()
+* _wParam : information supplementaire sur le message
+* _lParam : information supplementaire sur le message
 */
 LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -125,7 +125,7 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 		}
 		return 0;
 
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
+	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenetre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
 	}
@@ -188,7 +188,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noex
 		}
 		return 0;
 
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fen�tre
+	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenetre
 		PostQuitMessage(0);// (voir readme Windows.h)
 		return 0;
 	}

@@ -33,6 +33,11 @@ void Entity::RealUpdate()
 	}
 }
 
+void Entity::Draw()
+{
+
+}
+
 bool Entity::CheckAddChild(Entity* child)
 {
 	if (child == nullptr)

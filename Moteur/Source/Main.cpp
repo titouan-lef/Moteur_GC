@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE m_hInstance, HINSTANCE, LPSTR, int nCmdShow)
 	//GameObject go2(-0.5f, 0, 0, 0.25f, 0.25f, 0.25f);
 
     try {
-        // Initialiser la fen�tre
+        // Initialiser la fenetre
 
 
         return App{}.Go();

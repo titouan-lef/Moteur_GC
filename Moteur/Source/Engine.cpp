@@ -85,3 +85,15 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
     return adapter;
 }
 #pragma endregion
+
+
+
+
+
+
+
+
+
+void Engine::Draw(Entity e)
+{
+}

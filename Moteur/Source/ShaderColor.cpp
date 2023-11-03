@@ -1,15 +1,15 @@
 #include "ShaderColor.h"
 #include "MyException.h"
 
-ID3D12RootSignature* ShaderColor::m_rootSignature = ShaderColor::CreateRootSignature();
+ID3D12RootSignature* ShaderColor::s_rootSignature = ShaderColor::CreateRootSignature();
 
-ShaderColor::ShaderColor() : Shader(Type::color, m_rootSignature)
+ShaderColor::ShaderColor(ConstantBufferData* cbd) : Shader(Type::color, s_rootSignature)
 {
+    m_constBuffer = new ConstantBuffer(cbd);
 }
 
 ShaderColor::~ShaderColor()
 {
-    delete m_rootSignature;
 }
 
 ID3D12RootSignature* ShaderColor::CreateRootSignature()

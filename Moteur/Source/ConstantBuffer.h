@@ -8,16 +8,13 @@ struct ConstantBufferData
 	DirectX::XMMATRIX Projection;
 };
 
-
 class ConstantBuffer : public Buffer
 {
 public:
-	ConstantBuffer(ConstantBufferData* constBufferData);
+	ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor = 1);
 	virtual ~ConstantBuffer();
 
-	void Update(ConstantBufferData* constBufferData);
-
 public://TO DO : en private ?
-	ID3D12DescriptorHeap* m_descriptorHeaps = nullptr;// Tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources
+	ID3D12DescriptorHeap* m_cbvHeapDesc = nullptr;// Tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (il est de type cbv ou cbv-srv
 };
 

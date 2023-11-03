@@ -121,11 +121,11 @@
     <ClInclude Include="Source\ShaderColor.h">
       <Filter>Private\header\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ConstantBufferSR.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
     <ClInclude Include="Source\ShaderTexture.h">
       <Filter>Private\header\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\UploadBuffer.h">
-      <Filter>Private\header\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,11 +195,11 @@
     <ClCompile Include="Source\ShaderColor.cpp">
       <Filter>Private\cpp\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ConstantBufferSR.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
+    </ClCompile>
     <ClCompile Include="Source\ShaderTexture.cpp">
       <Filter>Private\cpp\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UploadBuffer.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

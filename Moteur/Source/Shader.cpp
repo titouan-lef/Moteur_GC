@@ -12,22 +12,10 @@ Shader::Shader(Type type, ID3D12RootSignature* rootSignature) :
 
 Shader::~Shader()
 {
+    delete m_rootSignature;
+    delete m_pipelineState;
+    delete m_constBuffer;
 }
-
-//void Shader::SetHeap(ID3D12GraphicsCommandList* m_commandList) {
-//    ID3D12DescriptorHeap* ppHeaps[] = { m_srvHeap };
-//    m_commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-//    m_commandList->SetGraphicsRootDescriptorTable(0, m_srvHeap->GetGPUDescriptorHandleForHeapStart());
-//}
-//
-//void Shader::CreateHeap() {
-//    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-//
-//    srvHeapDesc.NumDescriptors = 1;
-//    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-//    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-//    Engine::Device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_srvHeap));
-//}
 
 ID3D12RootSignature* Shader::CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[])
 {
@@ -67,8 +55,6 @@ void Shader::CreatePSO()
         fileName = L"Texture";
         inputName = "TEXCOORD";
         dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
-        //inputName = "COLOR";
-        //dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
         break;
     case color:
         fileName = L"Color";

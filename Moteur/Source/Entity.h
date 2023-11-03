@@ -29,6 +29,17 @@ public:
 	T* GetComponent();
 
 	void RealUpdate();
+
+
+
+
+
+	void Draw();
+
+
+
+
+
 protected:
 	Entity* m_Parent = nullptr;
 

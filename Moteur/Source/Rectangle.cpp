@@ -2,7 +2,8 @@
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
-#include "ShaderTexture.h"
+//#include "ShaderTexture.h"
+#include "ShaderColor.h"
 
 
 Mesh* MyRectangle::m_mesh = new Mesh({
@@ -26,7 +27,8 @@ MyRectangle::MyRectangle()
     cbd->View = Camera::GetViewMatrix();
     cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, cbd, new ShaderTexture(pierre));
+    //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd));
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
 }
 
 MyRectangle::~MyRectangle()
@@ -41,12 +43,12 @@ void MyRectangle::Update()
 {
     this->GetComponent<Transform>()->UpdateMatrix();
 
-    ConstantBufferData cbd = ConstantBufferData();
-    cbd.World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd.View = Camera::GetViewMatrix();
-    cbd.Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
+    ConstantBufferData* cbd = new ConstantBufferData();
+    cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
+    cbd->View = Camera::GetViewMatrix();
+    cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->GetComponent<MeshRenderer>()->Update(&cbd);
+    this->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(cbd);
 }
 
 void MyRectangle::PostUpdate()

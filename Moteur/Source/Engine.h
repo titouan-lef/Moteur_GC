@@ -1,6 +1,7 @@
 #pragma once
 #include "framwork.h"
 #include "DxgiInfoManager.h"
+#include "Entity.h"
 
 class Engine 
 {
@@ -12,6 +13,9 @@ public:
 
 	//Get the instance of the engine
 	static Engine* GetInstance() { return m_Instance; }
+
+
+	static void Draw(Entity e);
 
 
 	static IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU

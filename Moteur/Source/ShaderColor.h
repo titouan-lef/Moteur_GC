@@ -4,11 +4,11 @@
 class ShaderColor : public Shader
 {
 public:
-	ShaderColor();
+	ShaderColor(ConstantBufferData* cbd);
 	virtual ~ShaderColor();
 
 private:
-	static ID3D12RootSignature* m_rootSignature;
+	static ID3D12RootSignature* s_rootSignature;
 
 	static ID3D12RootSignature* CreateRootSignature();
 };

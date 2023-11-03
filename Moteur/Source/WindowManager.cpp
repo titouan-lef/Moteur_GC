@@ -5,7 +5,8 @@
 #include "MeshRenderer.h"
 #include "Engine.h"
 #include "Camera.h"// TO DO : A supprimer
-#include "ShaderTexture.h"
+//#include "ShaderTexture.h"
+#include "ShaderColor.h"
 
 WindowManager::WindowManager(UINT width, UINT height)
 {
@@ -24,7 +25,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     //TO DO : A supprimer
     Camera::m_Instance = new Camera();
-    //r1 = new MyRectangle();
+    r1 = new MyRectangle();
     r2 = new MyRectangle();
 }
 
@@ -132,9 +133,9 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-    /*r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
+    r2->GetComponent<Transform>()->MoveByVector({ 0.001f, 0, 0 });
     r2->GetComponent<Transform>()->RotateYaw(45);
-    r2->Update();*/
+    r2->Update();
 }
 
 void WindowManager::OnRender()
@@ -180,54 +181,45 @@ void WindowManager::PopulateCommandList()
     m_commandList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
 
     // Ajout de l'affichage
-    /*
-    * TO DO :
-    * créer un vertex buffer par forme
-    * avoir une liste static dans la classe d'un objet pour avoir la matrice World de tous les objets dans une liste et appliquer la bonne matrice à la bonne instance via SV_InstanceID ?
-    * mettre en place un systeme d'update des matrice World pour chaque objet
-    */
     MeshRenderer* mr = r2->GetComponent<MeshRenderer>();
-    ConstantBuffer* cb[] = {
-        //r1->GetComponent<MeshRenderer>()->m_constBuffer,
-        r2->GetComponent<MeshRenderer>()->m_constBuffer
+    
+    // POUR LES TEXTURES
+    /*ShaderTexture* shader = (ShaderTexture*)(r2->GetComponent<MeshRenderer>()->m_shader);
+    ConstantBufferSR* constBuffer = (ConstantBufferSR*)shader->m_constBuffer;
+    constBuffer->CreateTexture(m_commandList);
+    ID3D12DescriptorHeap* descriptorHeaps[] = { constBuffer->m_cbvHeapDesc, shader->m_samplerHeap };*/
+
+    // POUR LES COULEURS
+    ShaderColor* shader[] = {
+        (ShaderColor*)(r1->GetComponent<MeshRenderer>()->m_shader),
+        (ShaderColor*)(r2->GetComponent<MeshRenderer>()->m_shader)
+    };
+    ConstantBuffer* constBuffer[] = {
+        shader[0]->m_constBuffer,
+        shader[1]->m_constBuffer
+    };
+    ID3D12DescriptorHeap* descriptorHeaps[][1] = {
+        {constBuffer[0]->m_cbvHeapDesc},
+        {constBuffer[1]->m_cbvHeapDesc}
     };
 
-    ShaderTexture* st = (ShaderTexture*)(r2->GetComponent<MeshRenderer>()->m_shader);
-
-    st->CreateTexture();
-
-
-    ID3D12DescriptorHeap* descriptorHeaps[] = { st->m_srvHeap, st->m_samplerHeap };
-
-    const UINT nbInstance = 1;// Nombre d'instance (= forme du vertex buffer) à dessiner
-    for (int i = 0; i < _countof(cb); ++i)
+    for (int i = 0; i < _countof(shader); ++i)
     {
         m_commandList->SetGraphicsRootSignature(mr->m_shader->m_rootSignature);// Ajout de la Root Signature
         m_commandList->SetPipelineState(mr->m_shader->m_pipelineState);// Ajout de la pipeline de rendu
-        //m_commandList->SetDescriptorHeaps(1, &cb[i]->m_descriptorHeaps);// Défini les descripteurs que la liste de commandes peut potentiellement utiliser (ici on utilise qu'un)
-        // si plusieurs descripteur, rappeler SetGraphicsRootDescriptorTable en augmentant de 1 le premier paramètre à chaque fois
-        //m_commandList->SetGraphicsRootDescriptorTable(0, cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());// Ajout des descripteurs dont le shader a besoin pour accéder à différentes ressources
         
-        m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+        m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps[i]), descriptorHeaps[i]);
 
-        // Lier le tampon de constantes à l'emplacement de registre b0.
-        //CD3DX12_GPU_DESCRIPTOR_HANDLE cbvHandle(cb[i]->m_descriptorHeaps->GetGPUDescriptorHandleForHeapStart());
-        //m_commandList->SetGraphicsRootDescriptorTable(0, cbvHandle);
+        D3D12_GPU_DESCRIPTOR_HANDLE srv = constBuffer[i]->m_cbvHeapDesc->GetGPUDescriptorHandleForHeapStart();
+        //D3D12_GPU_DESCRIPTOR_HANDLE sampler = shader->m_samplerHeap->GetGPUDescriptorHandleForHeapStart();
 
-        // Mettre à jour le tampon de constantes avec les données appropriées.
-        m_commandList->SetGraphicsRootConstantBufferView(0, cb[i]->m_buffer->GetGPUVirtualAddress());
-
-        // Exemple 2 : Définir la table de descripteurs pour la Texture (g_texture)
-        D3D12_GPU_DESCRIPTOR_HANDLE textureSRV = st->m_srvHeap->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour la texture.
-        m_commandList->SetGraphicsRootDescriptorTable(0, textureSRV); // Emplacement 1 correspond au paramètre de la Root Signature pour la texture.
-
-        // Exemple 3 : Définir la table de descripteurs pour le Sampler (g_sampler)
-        D3D12_GPU_DESCRIPTOR_HANDLE sampler = st->m_samplerHeap->GetGPUDescriptorHandleForHeapStart(); // Obtenez le GPU descriptor handle pour le sampler.
-        m_commandList->SetGraphicsRootDescriptorTable(1, sampler); // Emplacement 2 correspond au paramètre de la Root Signature pour le sampler.
+        m_commandList->SetGraphicsRootDescriptorTable(0, srv);
+        //m_commandList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
+        //m_commandList->SetGraphicsRootDescriptorTable(2, sampler);
         
         m_commandList->IASetVertexBuffers(0, 1, &mr->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
         m_commandList->IASetIndexBuffer(&mr->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
-        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, nbInstance, 0, 0, 0);// Affichage
+        m_commandList->DrawIndexedInstanced(mr->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
     }
 
 
