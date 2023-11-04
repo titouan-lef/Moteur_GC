@@ -1,12 +1,11 @@
 #include "framwork.h"
 #include "MyException.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
 #include "Engine.h"
-#include "Collider.h"
 #include "WindowManager.h"
 #include "Camera.h"// TO DO : A supprimer
 #include "Shader.h"
+#include "MeshRenderer.h"
+#include "Collider.h"
 
 
 WindowManager::WindowManager(UINT width, UINT height)
@@ -27,18 +26,16 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     //TO DO : A supprimer
     Camera::m_Instance = new Camera();
-
-    MyRectangle r1 = MyRectangle();
-    MyRectangle r2 = MyRectangle();
     
-    /*r1 = new Cube();
+    r1 = new Cube();
     r2 = new Cube();
-
+    
     r1->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
     r1->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
     r1->GetComponent<Transform>()->UpdateMatrix();
     r1->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
     r1->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+    
     r1->AddComponent<Collider>();
     Transform colR1;
     colR1.SetPosition(-0.45f, 0, 1);
@@ -54,7 +51,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     r2->GetComponent<Transform>()->UpdateMatrix();
     r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
     r2->GetComponent<Transform>()->SetRotationSpeed(-45, 35, -90);
-
+    
     r2->AddComponent<Collider>();
     Transform colR2;
     colR2.SetPosition(0.45f, 0, 1);
@@ -64,8 +61,11 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     colR2.UpdateMatrix();
     r2->GetComponent<Collider>()->SetCollider(colR2);
 
+    r1->Update();
+    r2->Update();
+
     m_entities.push_back(r1);
-    m_entities.push_back(r2);*/
+    m_entities.push_back(r2);
     //cb.push_back(r1->GetComponent<MeshRenderer>()->m_constBuffer);
     //cb.push_back(r2->GetComponent<MeshRenderer>()->m_constBuffer);
 }
@@ -161,7 +161,6 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::OnUpdate()
 {
-
     float elapsedTime = m_entityTimer->Peek();
     //if (elapsedTime > 5.0f)  // Plus de 5 secondes se sont écoulées
     //{
@@ -170,50 +169,50 @@ void WindowManager::OnUpdate()
     //    m_entityTimer->Mark();  // Réinitialiser le timer
     //}
 
-    //for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
-    //    auto& entity = *entityIt;
-    //    auto transform = entity->GetComponent<Transform>();
-    //    auto collider = entity->GetComponent<Collider>();
+    for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
+        auto& entity = *entityIt;
+        auto transform = entity->GetComponent<Transform>();
+        auto collider = entity->GetComponent<Collider>();
 
-    //    // Mettre à jour la position
-    //    collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
-    //    //
-    //   //// //// Mettre à jour la rotation
-    //    XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
-    //    collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.1f);
-    //    collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
-    //    collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
+        // Mettre à jour la position
+        collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
+        //
+       //// //// Mettre à jour la rotation
+        XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
+        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.1f);
+        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
+        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
 
-    //    // Mettre à jour la position
-    //    transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
+        // Mettre à jour la position
+        transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
 
-    //    // // Mettre à jour la rotation
-    //    XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-    //    transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
-    //    transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
-    //    transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
+        // // Mettre à jour la rotation
+        XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
+        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
+        transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
+        transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
-    //    entity->Update();
+        entity->Update();
 
 
-    //}
-    //for (int i = 0; i < m_entities.size(); ++i) {
-    //    auto& entity1 = m_entities[i];
-    //    auto collider1 = entity1->GetComponent<Collider>();
-    //    auto transform1 = entity1->GetComponent<Transform>();
-    //    for (int j = i + 1; j < m_entities.size(); ++j) {
-    //        auto& entity2 = m_entities[j];
-    //        auto collider2 = entity2->GetComponent<Collider>();
-    //        auto transform2 = entity2->GetComponent<Transform>();
-    //        if (collider1->CheckCollision(*collider1, *collider2)) {
-    //            Transform::ChangeDirection(collider1->GetCollider());
-    //            Transform::ChangeDirection(collider2->GetCollider());
-    //            Transform::ChangeDirection(transform1);
-    //            Transform::ChangeDirection(transform2);
-    //        }
-    //    }
+    }
+    for (int i = 0; i < m_entities.size(); ++i) {
+        auto& entity1 = m_entities[i];
+        auto collider1 = entity1->GetComponent<Collider>();
+        auto transform1 = entity1->GetComponent<Transform>();
+        for (int j = i + 1; j < m_entities.size(); ++j) {
+            auto& entity2 = m_entities[j];
+            auto collider2 = entity2->GetComponent<Collider>();
+            auto transform2 = entity2->GetComponent<Transform>();
+            if (collider1->CheckCollision(*collider1, *collider2)) {
+                Transform::ChangeDirection(collider1->GetCollider());
+                Transform::ChangeDirection(collider2->GetCollider());
+                Transform::ChangeDirection(transform1);
+                Transform::ChangeDirection(transform2);
+            }
+        }
 
-    //}
+    }
 }
 
 void WindowManager::OnRender()

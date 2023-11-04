@@ -28,7 +28,7 @@ private:
     CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fen�tre
     CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui d�finissent la zone o� le rendu sera effectu� pour chaque fen�tre
 
-    //std::vector<Entity*> m_entities;
+    std::vector<Entity*> m_entities;
     Timer* m_entityTimer;
 
     // Gestion des commandes
