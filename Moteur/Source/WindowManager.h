@@ -3,6 +3,7 @@
 #include "Cube.h"
 #include "Rectangle.h"// TO DO : A SUPPRIMER
 #include "Timer.h"
+
 class WindowManager
 {
 public:
@@ -27,8 +28,8 @@ private:
     CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fen�tre
     CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui d�finissent la zone o� le rendu sera effectu� pour chaque fen�tre
 
-    std::vector<Entity*> m_entities;
-    std::unique_ptr<Timer> m_entityTimer;
+    //std::vector<Entity*> m_entities;
+    Timer* m_entityTimer;
 
     // Gestion des commandes
     ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes

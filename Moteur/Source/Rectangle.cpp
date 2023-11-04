@@ -2,7 +2,7 @@
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
-#include "ShaderTexture.h"
+#include "ShaderColor.h"
 //#include "ShaderColor.h"
 
 
@@ -20,15 +20,15 @@ MyRectangle::MyRectangle()
     
     // TO DO : A supprimer
     GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
-   // this->GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
+   //this->GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
     this->GetComponent<Transform>()->UpdateMatrix();
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
     cbd->View = Camera::GetViewMatrix();
     cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
+    //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
 }
 
 MyRectangle::~MyRectangle()

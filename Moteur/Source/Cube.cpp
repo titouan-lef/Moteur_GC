@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Collider.h"
+#include "ShaderTexture.h"
 
 std::vector<Vertex> Cube::m_vertices = {
     // Front face
@@ -47,7 +48,7 @@ Cube::Cube() {
     cbd->View = Camera::m_Instance->GetViewMatrix();
     cbd->Projection = XMMatrixTranspose(XMLoadFloat4x4(&Camera::m_projMatrix));
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), cbd);
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderTexture(cbd, pierre));
 }
 
 Cube::~Cube()
@@ -67,7 +68,7 @@ void Cube::Update() {
     cbd.View = Camera::m_Instance->GetViewMatrix();
     cbd.Projection = XMMatrixTranspose(XMLoadFloat4x4(&Camera::m_projMatrix));
 
-    this->GetComponent<MeshRenderer>()->Update(&cbd);
+    this->GetComponent<MeshRenderer>()->Update();
 }
 
 void Cube::PostUpdate()
