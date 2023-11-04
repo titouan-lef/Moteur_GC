@@ -27,7 +27,7 @@ public:
 	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
 #pragma endregion
 
-	void MoveByVector(XMFLOAT3 vec);	// Déplace la position en fonction d'un vecteur
+	void MoveByVector(XMFLOAT3 vec, float elapsed);	// Déplace la position en fonction d'un vecteur
 	void Identity();					// Réinitialise la transformation à l'identité
 	void FromMatrix(XMMATRIX* matrix);	// Initialise la transformation à partir d'une matrice de transformation
 	void UpdateMatrix();				// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
@@ -36,10 +36,28 @@ public:
 	void Rotate(float yaw, float pitch, float roll);	// Effectue une rotation en utilisant des angles yaw, pitch et roll
 	void RotateRoll(float angle);						// Effectue une rotation autour de l'axe X (roll)
 	void RotatePitch(float angle);						// Effectue une rotation autour de l'axe Y (pitch)
-	void RotateYaw(float angle);						// Effectue une rotation autour de l'axe Z (yaw)
+	void RotateYaw(float angle);	
+	// Effectue une rotation autour de l'axe Z (yaw)
+	bool CheckCollision(Transform& cube1, Transform& cube2);
+	static void ChangeDirection(Transform* transform);
+
+
+	// Ajoutez ces méthodes à votre classe Transform
+	void SetRotationSpeed(float yawSpeed, float pitchSpeed, float rollSpeed) {
+		RotationSpeed = XMFLOAT3(yawSpeed, pitchSpeed, rollSpeed);
+	}// Effectue une rotation autour de l'axe Z (yaw)
+	XMFLOAT3 GetRotationSpeed() { return RotationSpeed; };
+	XMFLOAT3 GetDirection() { return m_Direction; }
+	void SetDirection(float x, float y, float z) {
+		m_Direction = XMFLOAT3(x, y, z);
+	};
 #pragma endregion
 
 private:
+	// Ajoutez ces propriétés à votre classe Transform
+	XMFLOAT3 RotationSpeed;  // Vitesse de rotation (en radians par seconde)
+
+	XMFLOAT3 m_Direction;
 	// Position de l'entité
 	XMFLOAT3 Position;
 

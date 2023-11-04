@@ -22,8 +22,10 @@
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\App.h" />
+    <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />
+    <ClInclude Include="Source\Cube.h" />
     <ClInclude Include="Source\d3dx12.h" />
     <ClInclude Include="Source\dxerr.h" />
     <ClInclude Include="Source\DxgiInfoManager.h" />
@@ -39,6 +41,7 @@
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\ShaderColor.h" />
     <ClInclude Include="Source\ShaderTexture.h" />
+    <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\ConstantBufferSR.h" />
     <ClInclude Include="Source\VertexBuffer.h" />
@@ -49,8 +52,10 @@
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\App.cpp" />
+    <ClCompile Include="Source\Collider.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Cube.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />
     <ClCompile Include="Source\DxgiInfoManager.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
@@ -65,6 +70,7 @@
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\ShaderColor.cpp" />
     <ClCompile Include="Source\ShaderTexture.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\ConstantBufferSR.cpp" />
     <ClCompile Include="Source\VertexBuffer.cpp" />

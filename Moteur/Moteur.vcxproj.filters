@@ -127,6 +127,15 @@
     <ClInclude Include="Source\ShaderTexture.h">
       <Filter>Private\header\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Timer.h">
+      <Filter>Private\cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Cube.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collider.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -200,6 +209,15 @@
     </ClCompile>
     <ClCompile Include="Source\ShaderTexture.cpp">
       <Filter>Private\cpp\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Timer.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Collider.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cube.cpp">
+      <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

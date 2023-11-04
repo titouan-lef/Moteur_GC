@@ -30,14 +30,13 @@ void Transform::Update()
 	}
 }
 
-void Transform::MoveByVector(XMFLOAT3 vec)
+void Transform::MoveByVector(XMFLOAT3 vec, float elapsed)
 {
-	Position.x += vec.x;
-	Position.y += vec.y;
-	Position.z += vec.z;
+	Position.x += vec.x * elapsed;
+	Position.y += vec.y * elapsed;
+	Position.z += vec.z * elapsed;
 	m_isDirty = true;
 }
-
 void Transform::Identity()
 {
 	XMStoreFloat4x4(&Matrix, XMMatrixIdentity());
@@ -66,6 +65,15 @@ void Transform::RotateYaw(float angle)
 	// Effectue une rotation autour de l'axe Z
 	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Dir), angle));
 	m_isDirty = true;
+}
+
+
+void Transform::ChangeDirection(Transform* transform) {
+	XMFLOAT3 direction = transform->GetDirection();
+	direction.x = -direction.x;
+	direction.y = -direction.y;
+	direction.z = -direction.z;
+	transform->SetDirection(direction.x, direction.y, direction.z);
 }
 
 void Transform::RotatePitch(float angle)
