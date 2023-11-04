@@ -6,11 +6,19 @@ ID3D12RootSignature* ShaderColor::s_rootSignature = ShaderColor::CreateRootSigna
 ShaderColor::ShaderColor(ConstantBufferData* cbd) : Shader(Type::color, s_rootSignature)
 {
     m_constBuffer = new ConstantBuffer(cbd);
+
+    m_descriptorHeaps = { m_constBuffer->m_cbvHeapDesc };
 }
 
 ShaderColor::~ShaderColor()
 {
 }
+
+void ShaderColor::SetGraphicsRoot()
+{
+    m_constBuffer->SetGraphicsRoot();
+}
+
 
 ID3D12RootSignature* ShaderColor::CreateRootSignature()
 {

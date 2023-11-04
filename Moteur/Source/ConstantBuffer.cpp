@@ -26,6 +26,12 @@ ConstantBuffer::~ConstantBuffer()
 	delete m_cbvHeapDesc;
 }
 
+void ConstantBuffer::SetGraphicsRoot()
+{
+	D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvHeapDesc->GetGPUDescriptorHandleForHeapStart();
+	Engine::CmdList->SetGraphicsRootDescriptorTable(0, srv);
+}
+
 
 
 

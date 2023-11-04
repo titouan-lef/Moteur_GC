@@ -27,9 +27,7 @@ private:
     CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui définissent la zone où le rendu sera effectué pour chaque fenêtre
 
     // Gestion des commandes
-    ID3D12GraphicsCommandList* m_commandList = nullptr;// Liste des commandes (dessin de géométrie, chargement de ressources, Configuration du pipeline graphique, ect) pour produire les rendus 3D
     ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes
-    ID3D12CommandAllocator* m_commandAllocator = nullptr;// Allocations de stockage pour les commandes du GPU
 
     // Gestion des "surfaces de dessin" (= Render Target)
     static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain gère pour l'application
@@ -56,11 +54,9 @@ private:
     void CreateSwapChain(HWND hWnd, UINT width, UINT height);// Création de la Swap chain
     void CreateDescriptorHeaps();// Création du tas de descripteurs RTV (Render Target View)
     void CreateFrameResources();// Création de la "surface de dessin" au bon endroit (= Render Target View)
-    void CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
 
     void LoadAssets();// Chargement des ressources nécessaire pour le rendu
 
-    void CreateCommandList();// Création de la liste de commandes
     void CreateSyncObj();// Création d'une infrastructure de synchronisation pour assurer que le GPU ait terminé son travail avant de passer à la frame suivante
 
 

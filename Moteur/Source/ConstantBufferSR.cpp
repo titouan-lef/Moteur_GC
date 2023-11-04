@@ -1,8 +1,11 @@
 #include "ConstantBufferSR.h"
 #include <wincodec.h>
 
-ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData) : ConstantBuffer(constBufferData, 2)
+ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData, Texture texture)
+    : ConstantBuffer(constBufferData, 2), m_texture(texture)// CREATION DU CBV
 {
+    // CREATION DU SRV
+
     // Décrit la Texture2D
     D3D12_RESOURCE_DESC textureDesc = {};
     textureDesc.MipLevels = 1;
@@ -37,16 +40,62 @@ ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData) : Consta
         nullptr,
         IID_PPV_ARGS(&ressource));
 
+    /*************************/
+
+
+    /*std::wstring filePath = L"";
+    switch (m_texture)
+    {
+    case pierre:
+        filePath = L"pierre";
+        break;
+    default:
+        break;
+    }
+    filePath = L"Source/" + filePath + L".jfif";
+
+    std::vector<UINT8> textureFile = LoadFromFile(filePath);
+
+
+    D3D12_SUBRESOURCE_DATA textureData = {};
+    textureData.pData = &textureFile[0];
+    textureData.RowPitch = imageWidth * imagePixelSize;
+    textureData.SlicePitch = textureData.RowPitch * imageHeight;
+    
+    
+    UpdateSubresources(Engine::CmdList, ressource, ressource, 0, 0, 1, &textureData);*/
+
+    /*************************/
+
     Engine::Device->CreateShaderResourceView(ressource, &srvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
+
 }
 
 ConstantBufferSR::~ConstantBufferSR()
 {
 }
 
+void ConstantBufferSR::SetGraphicsRoot()
+{
+    ConstantBuffer::SetGraphicsRoot();
+    Engine::CmdList->SetGraphicsRootConstantBufferView(1, m_buffer->GetGPUVirtualAddress());
+
+
+}
+
 void ConstantBufferSR::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
 {
-    const std::wstring& filePath = L"Source/pierre.jfif";
+    std::wstring filePath = L"";
+    switch (m_texture)
+    {
+    case pierre:
+        filePath = L"pierre";
+        break;
+    default:
+        break;
+    }
+    filePath = L"Source/" + filePath + L".jfif";
+
     std::vector<UINT8> texture = LoadFromFile(filePath);
 
     ID3D12Resource* textureUploadHeap;

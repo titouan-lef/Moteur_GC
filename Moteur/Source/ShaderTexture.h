@@ -2,16 +2,13 @@
 #include "Shader.h"
 #include "ConstantBufferSR.h"
 
-enum Texture
-{
-	pierre
-};
-
 class ShaderTexture : public Shader
 {
 public:
-	ShaderTexture(ConstantBufferData* cbd);
+	ShaderTexture(ConstantBufferData* cbd, Texture texture);
 	virtual ~ShaderTexture();
+
+	void SetGraphicsRoot();
 
 
 	UINT imageWidth = 0;

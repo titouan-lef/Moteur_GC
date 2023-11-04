@@ -1,7 +1,6 @@
 ﻿#include "framwork.h"
 #include "WindowManager.h"
 #include "Window.h"
-#include <sstream>
 #include "MyException.h"
 
 WindowManager* Window::m_pWinManager = nullptr;

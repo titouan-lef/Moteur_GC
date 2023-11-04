@@ -3,11 +3,12 @@
 
 ID3D12RootSignature* ShaderTexture::s_rootSignature = ShaderTexture::CreateRootSignature();
 
-ShaderTexture::ShaderTexture(ConstantBufferData* cbd) : Shader(Type::texture, s_rootSignature)
+ShaderTexture::ShaderTexture(ConstantBufferData* cbd, Texture texture) : Shader(Type::texture, s_rootSignature)
 {
-    m_constBuffer = new ConstantBufferSR(cbd);
+    // CREATION DU CBV ET DU SRV
+    m_constBuffer = new ConstantBufferSR(cbd, texture);
 
-    // Création d'un état d'échantillonneur (Sampler State)
+    // CREATION DU SAMPLER
     D3D12_SAMPLER_DESC  sampler = {};
     sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;        // Filtrage de la texture
     sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;   // Mode de répétition en U
@@ -27,11 +28,21 @@ ShaderTexture::ShaderTexture(ConstantBufferData* cbd) : Shader(Type::texture, s_
     Engine::Device->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap));
 
     //Engine::Device->CreateSampler(&sampler, samplerHeap->GetCPUDescriptorHandleForHeapStart());// Créez le Sampler
+
+    m_descriptorHeaps = { m_constBuffer->m_cbvHeapDesc, m_samplerHeap };
 }
 
 ShaderTexture::~ShaderTexture()
 {
     delete m_samplerHeap;
+}
+
+void ShaderTexture::SetGraphicsRoot()
+{
+    m_constBuffer->SetGraphicsRoot();
+
+    D3D12_GPU_DESCRIPTOR_HANDLE sampler = m_samplerHeap->GetGPUDescriptorHandleForHeapStart();
+    Engine::CmdList->SetGraphicsRootDescriptorTable(2, sampler);
 }
 
 ID3D12RootSignature* ShaderTexture::CreateRootSignature()

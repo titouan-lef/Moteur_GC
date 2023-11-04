@@ -4,8 +4,11 @@
 DxgiInfoManager Engine::infoManager = {};
 
 Engine* Engine::m_Instance = nullptr;
+
 IDXGIFactory4* Engine::Factory = CreateDXGIFactory();
 ID3D12Device* Engine::Device = CreateD3DDevice();
+ID3D12CommandAllocator* Engine::CmdAllocator = CreateCommandAllocator();
+ID3D12GraphicsCommandList* Engine::CmdList = CreateCommandList();
 
 Engine::Engine()
 {
@@ -42,6 +45,23 @@ ID3D12Device* Engine::CreateD3DDevice()
     GFX_THROW_INFO_ONLY(D3D12CreateDevice(GetHardwareAdapter(Factory), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device)));
     return device;
 }
+
+ID3D12GraphicsCommandList* Engine::CreateCommandList()
+{
+    ID3D12GraphicsCommandList* cmdList = nullptr;
+    GFX_THROW_INFO_ONLY(Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, CmdAllocator, nullptr, IID_PPV_ARGS(&cmdList)));
+    GFX_THROW_INFO_ONLY(cmdList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
+    return cmdList;
+}
+
+ID3D12CommandAllocator* Engine::CreateCommandAllocator()
+{
+    ID3D12CommandAllocator* cmdAllocator = nullptr;
+    GFX_THROW_INFO_ONLY(Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&cmdAllocator)));
+    return cmdAllocator;
+}
+
+
 
 #pragma region HardwareAdapter
 bool Engine::IsValidAdapter(IDXGIAdapter1* adapter)

@@ -2,8 +2,8 @@
 #include "MeshRenderer.h"
 #include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
-//#include "ShaderTexture.h"
-#include "ShaderColor.h"
+#include "ShaderTexture.h"
+//#include "ShaderColor.h"
 
 
 Mesh* MyRectangle::m_mesh = new Mesh({
@@ -27,8 +27,8 @@ MyRectangle::MyRectangle()
     cbd->View = Camera::GetViewMatrix();
     cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
 
-    //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd));
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
+    //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
 }
 
 MyRectangle::~MyRectangle()

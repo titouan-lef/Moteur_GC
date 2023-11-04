@@ -22,8 +22,11 @@ public:
 	static ID3D12RootSignature* CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[]);
 	void CreatePSO();
 
+	virtual void SetGraphicsRoot() = 0;
+
 	// TO DO : en private ?
 	ConstantBuffer* m_constBuffer;
+	std::vector<ID3D12DescriptorHeap*> m_descriptorHeaps;
 
 protected:
 	// Gestion des erreurs
