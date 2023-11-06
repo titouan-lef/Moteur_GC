@@ -3,6 +3,7 @@
 #include "DxgiInfoManager.h"
 #include "Engine.h"
 #include "ConstantBuffer.h"
+#include "ConstantBufferLight.h"
 
 enum Type
 {
@@ -29,6 +30,7 @@ public:
 	virtual void SetGraphicsRoot() = 0;
 
 	// TO DO : en private ?
+	ConstantBufferLight* m_constBufferLight;
 	ConstantBuffer* m_constBuffer;
 	std::vector<ID3D12DescriptorHeap*> m_descriptorHeaps;
 
