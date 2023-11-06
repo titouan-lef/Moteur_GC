@@ -2,7 +2,6 @@
 
 #include "EngineException.h"
 #include "WindowManager.h"
-#include <optional>
 
 class Window
 {
