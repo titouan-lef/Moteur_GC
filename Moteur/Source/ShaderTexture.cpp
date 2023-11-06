@@ -1,10 +1,11 @@
 #include "ShaderTexture.h"
 #include "MyException.h"
 
-ID3D12RootSignature* ShaderTexture::s_rootSignature = ShaderTexture::CreateRootSignature();
-
-ShaderTexture::ShaderTexture(ConstantBufferData* cbd, Texture texture) : Shader(Type::texture, s_rootSignature)
+ShaderTexture::ShaderTexture(ConstantBufferData* cbd, Texture texture) : Shader(Type::texture)
 {
+    m_rootSignature = CreateRootSignature();
+    CreatePSO();
+
     // CREATION DU CBV ET DU SRV
     m_constBuffer = new ConstantBufferSR(cbd, texture);
 

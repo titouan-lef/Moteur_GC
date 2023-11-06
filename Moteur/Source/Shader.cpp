@@ -1,13 +1,8 @@
 #include "Shader.h"
 #include "MyException.h"
 
-DxgiInfoManager Shader::infoManager = {};
-
-Shader::Shader(Type type, ID3D12RootSignature* rootSignature) :
-    m_type(type),
-    m_rootSignature(rootSignature)
+Shader::Shader(Type type) : m_type(type)
 {
-    CreatePSO();
 }
 
 Shader::~Shader()

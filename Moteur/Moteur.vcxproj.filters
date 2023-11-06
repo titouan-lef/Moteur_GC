@@ -127,14 +127,14 @@
     <ClInclude Include="Source\ShaderTexture.h">
       <Filter>Private\header\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Timer.h">
-      <Filter>Private\cpp</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Cube.h">
       <Filter>Public\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Collider.h">
       <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Timer.h">
+      <Filter>Private\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

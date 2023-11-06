@@ -16,10 +16,10 @@ public:
 	ID3D12PipelineState* m_pipelineState = nullptr;// Spécifie comment la pipeline de rendu doit fonctionner pour chaque rendu
 
 
-	Shader(Type type, ID3D12RootSignature* rootSignature);
+	Shader(Type type);
 	virtual ~Shader();
 
-	static ID3D12RootSignature* CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[]);
+	ID3D12RootSignature* CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[]);
 	void CreatePSO();
 
 	virtual void SetGraphicsRoot() = 0;
@@ -31,7 +31,7 @@ public:
 protected:
 	// Gestion des erreurs
 	#ifndef  NDEBUG
-		static DxgiInfoManager infoManager;
+		DxgiInfoManager infoManager;
 	#endif
 
 private:

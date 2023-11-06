@@ -1,23 +1,44 @@
-﻿#include "framwork.h"
-#include "WindowManager.h"
+﻿#include "WindowManager.h"
 #include "Window.h"
-#include "MyException.h"
-
-WindowManager* Window::m_pWinManager = nullptr;
 
 /*
-* x et y : coordonees (x, y) du coin superieur gauche de la fenetre
+* _x et _y : coordonées (x, y) du coin supérieur gauche de la fenêtre
 */
 Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	:
 	m_name(name),
 	m_width(width),
 	m_height(height),
-	m_x(x),
-	m_y(y),
-	m_hInstance(GetModuleHandle(nullptr))// (voir readme Windows.h)
+	m_hInstance(GetModuleHandle(nullptr)),// GetModuleHandle(nullptr)  : handle vers notre application
+	m_pWinManager(new WindowManager(width, height))
 {
-	Start();
+	// Création d'une classe de fenêtre
+	WNDCLASS wc = {};
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = m_hInstance;
+	wc.lpszClassName = m_windowName;
+	RegisterClass(&wc);
+
+	// Agrandissement de la taille de la fenêtre pour prendre en compte son style et ses bordures
+	RECT winRect{};
+	winRect.left = x;
+	winRect.right = x + width;
+	winRect.top = y;
+	winRect.bottom = y + height;
+	AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);// (voir readme Windows.h)
+
+	// Création de la fenêtre (voir readme Windows.h)
+	m_hWnd = CreateWindow(
+		m_windowName, m_name,
+		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		x, y, winRect.right - winRect.left, winRect.bottom - winRect.top,
+		nullptr, nullptr, m_hInstance, m_pWinManager
+	);// (voir readme Windows.h)
+
+	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
+
+	// Affichage de la fenêtre
+	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
 
 Window::~Window()
@@ -28,228 +49,53 @@ Window::~Window()
 	DestroyWindow(m_hWnd);
 }
 
-void Window::Start()
+
+bool Window::ProcessMessages()
 {
-	m_pWinManager = new WindowManager(m_width, m_height);
-
-	// Creation d'une classe de fenetre
-	WNDCLASS wc = {};
-	wc.lpfnWndProc = HandleMsgSetup;
-	wc.hInstance = m_hInstance;
-	wc.lpszClassName = m_windowName;
-	RegisterClass(&wc);
-
-	// Agrandissement de la taille de la fenetre pour prendre en compte son style et ses bordures
-	RECT winRect{};
-	winRect.left = m_x;
-	winRect.right = m_x + m_width;
-	winRect.top = m_y;
-	winRect.bottom = m_y + m_height;
-	if (AdjustWindowRect(&winRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)==0) {
-		throw EHWND_LAST_EXCEPT();
-	};// (voir readme Windows.h)
-	
-	// Creation de la fenetre
-	m_hWnd = CreateWindow(
-		m_windowName, m_name,
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-		m_x, m_y, winRect.right - winRect.left, winRect.bottom - winRect.top,
-		nullptr, nullptr, m_hInstance, m_pWinManager
-	);
-	//Error
-	if (m_hWnd == nullptr) {
-		throw EHWND_LAST_EXCEPT();
-	}
-
-	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
-
-	// Affichage de la fenetre
-	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
-}
-
-int Window::Run()
-{
-	// Main sample loop.
 	MSG msg = {};
-	while (msg.message != WM_QUIT)// Tant que le message n'indique pas la fermeture de la fenetre
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Tant qu'un message de fenêtre est disponible (voir readme Windows.h)
 	{
-		// Process any messages in the queue.
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Si un message de fenetre est disponible (voir readme Windows.h)
-		{
-			TranslateMessage(&msg);// (voir readme Windows.h)
-			DispatchMessage(&msg);// (voir readme Windows.h)
-		}
+		if (msg.message == WM_QUIT)// Si le message indique la fermeture de la fenêtre
+			return true;
+
+		TranslateMessage(&msg);// Convertie le message à clé virtuelle en messages caractères
+		DispatchMessage(&msg);// Transmet le message à une procédure de fenêtre pour réaliser l'action : wc.lpfnWndProc
 	}
 
-	return static_cast<char>(msg.wParam);
+	return false;
 }
 
 /*
-* _hWnd : handle pour la fenetre
-* _msg : message reeu de DispatchMessage()
-* _wParam : information supplementaire sur le message
-* _lParam : information supplementaire sur le message
+* hWnd : handle pour la fenêtre
+* msg : message reçu de DispatchMessage()
+* wParam : information supplémentaire sur le message
+* lParam : information supplémentaire sur le message
 */
-LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT _stdcall Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	LPCREATESTRUCT pCreateStruct;
 
 	switch (msg)
 	{
 	case WM_CREATE:
-	{
 		// Sauvegarde le WindowManager* passé dans CreateWindow
-		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+		pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-	}
-	return 0;
-
-	case WM_KEYDOWN:
-		if (pWinManager)
-			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_KEYUP:
-		if (pWinManager)
-			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
-
-		return 0;
-
+		break;
 	case WM_PAINT:
 		if (pWinManager)
 		{
 			pWinManager->OnUpdate();
-			pWinManager->OnRender();
+			//pWinManager->OnRender();
 		}
-		return 0;
-
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenetre
-		PostQuitMessage(0);// (voir readme Windows.h)
-		return 0;
+		break;
+	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenêtre
+		PostQuitMessage(0);// envoie du message WM_QUIT
+		break;
+	default:
+		break;
 	}
 
-	return DefWindowProc(hWnd, msg, wParam, lParam);// (voir readme Windows.h)
-}
-LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
-{
-	if (msg == WM_NCCREATE) {
-		//extrait ptr à Window
-		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
-		Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
-		//set winapi managed user data to store ptr to win class
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
-		//set msg proc to normal hangler now that setup is finished
-		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
-		//envoie du msg
-		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
-	}
-	//si on recoie un msg avant WM NCCREATE on utilise le default
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
-
-LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
-{
-	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
-}
-
-LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept
-{
-	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	switch (msg)
-	{
-	case WM_CREATE:
-	{
-		// Sauvegarde le WindowManager* passé dans CreateWindow
-		LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-	}
-	return 0;
-
-	case WM_KEYDOWN:
-		if (pWinManager)
-			pWinManager->OnKeyDown(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_KEYUP:
-		if (pWinManager)
-			pWinManager->OnKeyUp(static_cast<UINT8>(wParam));
-
-		return 0;
-
-	case WM_PAINT:
-		if (pWinManager)
-		{
-			pWinManager->OnUpdate();
-			pWinManager->OnRender();
-		}
-		return 0;
-
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenetre
-		PostQuitMessage(0);// (voir readme Windows.h)
-		return 0;
-	}
-
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
-
-
-
-//Exception Stuff
-Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept : Exception(line, file), hr(hr)
-{
-}
-const char* Window::HrException::what() const noexcept
-{
-	std::ostringstream oss;
-	oss << GetType() << std::endl
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
-		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
-		<< "[Description] " << GetErrorDescription() << std::endl
-		<< GetOriginString();
-	whatBuffer = oss.str();
-	return whatBuffer.c_str();
-}
-
-const char* Window::HrException::GetType() const noexcept
-{
-	return "Engine Window Exception";
-}
-
-std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
-{
-	char* pMsgBuf = nullptr;
-	DWORD nMsgLen = FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		MyException::convertCharArrayToLPCWSTR(pMsgBuf), 0, nullptr
-	);
-	if (nMsgLen == 0) {
-		return "Unidentified error code";
-	}
-	if (pMsgBuf == 0) {
-		return "pMsgBuf = 0 in Window::Eception";
-	}
-	std::string errorString = pMsgBuf;
-	LocalFree(pMsgBuf);
-	return errorString;
-}
-
-HRESULT Window::HrException::GetErrorCode() const noexcept
-{
-	return hr;
-}
-
-const char* Window::NoGfxException::GetType() const noexcept
-{
-	return "Window Exception [No Graphics]";
-}
-
-
-std::string Window::HrException::GetErrorDescription() const noexcept
-{
-	return Exception::TranslateErrorCode(hr);
+	return DefWindowProc(hWnd, msg, wParam, lParam);// Réalise le traitement par défaut du message
 }

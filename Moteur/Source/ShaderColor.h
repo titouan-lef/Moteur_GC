@@ -10,8 +10,6 @@ public:
 	void SetGraphicsRoot();
 
 private:
-	static ID3D12RootSignature* s_rootSignature;
-
-	static ID3D12RootSignature* CreateRootSignature();
+	ID3D12RootSignature* CreateRootSignature();
 };
 

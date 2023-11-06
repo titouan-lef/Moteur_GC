@@ -14,8 +14,9 @@ public:
 	//Get the instance of the engine
 	static Engine* GetInstance() { return m_Instance; }
 
-
-	static void Draw(Entity e);
+	static void BeforeRender();
+	static void Render(Entity e);
+	static void AfterRender();
 
 	static IDXGIFactory4* Factory;// Permet les interactions DirectX/GPU
 	static ID3D12Device* Device;// Périphérique de rendu DirectX

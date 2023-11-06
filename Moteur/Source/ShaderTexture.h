@@ -18,6 +18,6 @@ public:
 	ID3D12DescriptorHeap* m_samplerHeap = nullptr;
 
 private:
-	static ID3D12RootSignature* s_rootSignature;
-	static ID3D12RootSignature* CreateRootSignature();
+	ID3D12RootSignature* s_rootSignature;
+	ID3D12RootSignature* CreateRootSignature();
 };

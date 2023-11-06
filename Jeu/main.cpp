@@ -1,10 +1,28 @@
-#include "framwork.h"
-#include "App.h"
-#include "MyException.h"
-
-
+#include <Window.h>
+#include <Cube.h>
 
 int main()
 {
-    return 0;
+	Window window(L"DirectX 12", 800, 600);
+
+	Cube* c = new Cube();
+
+	while (true)
+	{
+		if (Window::ProcessMessages())
+			return 0;
+
+		Update();
+		Render();
+	}
+}
+
+void Update()
+{
+
+}
+
+void Render()
+{
+	
 }

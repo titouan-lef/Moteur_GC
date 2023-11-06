@@ -114,6 +114,81 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
 
 
 
-void Engine::Draw(Entity e)
+void Engine::BeforeRender()
 {
+    // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
+    GFX_THROW_INFO_ONLY(Engine::CmdAllocator->Reset());
+    GFX_THROW_INFO_ONLY(Engine::CmdList->Reset(Engine::CmdAllocator, nullptr));
+
+    // Paramètre l'affichage pour fonctionner avec une liste de triangle
+    Engine::CmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    /* AJOUT DES COMMANDES */
+
+    // Ajout des différentes fenêtres et de leur zone de rendu
+    Engine::CmdList->RSSetViewports(1, &m_viewport);          // Ajout des fenêtres (ici 1 seule)
+    Engine::CmdList->RSSetScissorRects(1, &m_scissorRect); // Ajout des zones de rendu (ici 1 seule)
+
+    // Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
+    CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    // Ajout des "surfaces de dessin" prêtes à être utilisées (ici 1 seule)
+    Engine::CmdList->ResourceBarrier(1, &transition);
+
+    // Ajout des "surfaces de dessin" au back buffer (ici 1 seule)
+    CD3DX12_CPU_DESCRIPTOR_HANDLE renderTarget = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_backBufferIndex, m_rtvDescriptorSize);
+    Engine::CmdList->OMSetRenderTargets(1, &renderTarget, FALSE, nullptr);
+
+    // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
+    Engine::CmdList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
+}
+
+void Engine::Render(Entity e)
+{
+    // POUR LES COULEURS
+    MeshRenderer* meshRenderer[] = {
+        r1->GetComponent<MeshRenderer>(),
+        r2->GetComponent<MeshRenderer>()
+    };
+    Shader* shader[] = {
+        meshRenderer[0]->m_shader,
+       meshRenderer[1]->m_shader
+    };
+    ConstantBuffer* constBuffer[] = {
+        shader[0]->m_constBuffer,
+        shader[1]->m_constBuffer
+    };
+
+    for (int i = 0; i < _countof(shader); ++i)
+    {
+        Engine::CmdList->SetGraphicsRootSignature(shader[i]->m_rootSignature);// Ajout de la Root Signature
+        Engine::CmdList->SetPipelineState(shader[i]->m_pipelineState);// Ajout de la pipeline de rendu
+        
+        Engine::CmdList->SetDescriptorHeaps(shader[i]->m_descriptorHeaps.size(), shader[i]->m_descriptorHeaps.data());
+
+        constBuffer[i]->SetGraphicsRoot();
+
+        Engine::CmdList->IASetVertexBuffers(0, 1, &meshRenderer[i]->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
+        Engine::CmdList->IASetIndexBuffer(&meshRenderer[i]->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+        Engine::CmdList->DrawIndexedInstanced(meshRenderer[i]->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
+    }
+}
+
+void Engine::AfterRender()
+{
+    // Indique au back buffer les "surfaces de dessin" à ne plus utiliser
+    transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+    Engine::CmdList->ResourceBarrier(1, &transition);
+
+    // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
+    GFX_THROW_INFO_ONLY(Engine::CmdList->Close());
+
+    // Exécution des commandes (ici nous n'utilisons qu'une seul liste de comande)
+    ID3D12CommandList* ppCommandLists[1] = { Engine::CmdList };
+    m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
+
+    // Affichage de la frame.
+    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
+
+    WaitForPreviousFrame();
 }
