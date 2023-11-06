@@ -233,7 +233,7 @@ void WindowManager::OnUpdate()
         collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.01f);
 
         // Mettre à jour la position
-        //transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
+        transform->MoveByVector(XMFLOAT3(0, 0, 0.01), elapsedTime);
 
         // // Mettre à jour la rotation
         XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
