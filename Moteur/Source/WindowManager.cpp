@@ -194,8 +194,6 @@ void WindowManager::OnUpdate()
         //transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
         entity->Update();
-        m_entityTimer->Mark();
-
 
     }
     for (int i = 0; i < m_entities.size(); ++i) {
