@@ -175,7 +175,7 @@ void WindowManager::OnUpdate()
         auto collider = entity->GetComponent<Collider>();
 
         // Mettre à jour la position
-        collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
+        //collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
         //
        //// //// Mettre à jour la rotation
         XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
@@ -184,15 +184,17 @@ void WindowManager::OnUpdate()
         collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
 
         // Mettre à jour la position
-        transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
+        //transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
 
         // // Mettre à jour la rotation
         XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
-        transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
-        transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
+        transform->Rotate(rotationSpeed2.x * elapsedTime * 0.01f, rotationSpeed2.y * elapsedTime * 0.1f, rotationSpeed2.z * elapsedTime * 0.1f);
+        //transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.01f);
+       // transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
+        //transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
         entity->Update();
+        m_entityTimer->Mark();
 
 
     }
