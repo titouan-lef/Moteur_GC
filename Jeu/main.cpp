@@ -1,5 +1,6 @@
 #include <Window.h>
 #include <Cube.h>
+#include <WindowManager.h>
 
 int main()
 {
@@ -12,8 +13,11 @@ int main()
 		if (Window::ProcessMessages())
 			return 0;
 
-		Update();
-		Render();
+		window.m_pWinManager->OnUpdate();
+		window.m_pWinManager->OnRender();
+
+		//Update();
+		//Render();
 	}
 }
 

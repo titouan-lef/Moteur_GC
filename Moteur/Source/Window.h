@@ -19,5 +19,6 @@ private:
 	HWND m_hWnd;// Handle de la fenêtre
 	HINSTANCE m_hInstance;// Handle de l'instance de la fenêtre
 
+public:
 	WindowManager* m_pWinManager = nullptr;
 };

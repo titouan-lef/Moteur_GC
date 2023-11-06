@@ -32,7 +32,7 @@ Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 		m_windowName, m_name,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		x, y, winRect.right - winRect.left, winRect.bottom - winRect.top,
-		nullptr, nullptr, m_hInstance, m_pWinManager
+		nullptr, nullptr, m_hInstance, this
 	);// (voir readme Windows.h)
 
 	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
@@ -73,29 +73,8 @@ bool Window::ProcessMessages()
 */
 LRESULT _stdcall Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	WindowManager* pWinManager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	LPCREATESTRUCT pCreateStruct;
-
-	switch (msg)
-	{
-	case WM_CREATE:
-		// Sauvegarde le WindowManager* passé dans CreateWindow
-		pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
-		break;
-	case WM_PAINT:
-		if (pWinManager)
-		{
-			pWinManager->OnUpdate();
-			//pWinManager->OnRender();
-		}
-		break;
-	case WM_DESTROY:// L'utilisateur appuie sur la croix de la fenêtre
+	if (msg == WM_DESTROY)// L'utilisateur appuie sur la croix de la fenêtre
 		PostQuitMessage(0);// envoie du message WM_QUIT
-		break;
-	default:
-		break;
-	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);// Réalise le traitement par défaut du message
 }
