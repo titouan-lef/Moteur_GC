@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Ressources\Shaders">
-      <UniqueIdentifier>{ea73b7e9-ae3c-45cb-beb0-1eb3a04b992a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Private">
       <UniqueIdentifier>{d97b63b6-a6d7-4811-9f2c-17586111d81a}</UniqueIdentifier>
     </Filter>
@@ -40,9 +33,6 @@
     </Filter>
     <Filter Include="Private\cpp\Debug">
       <UniqueIdentifier>{4af2406d-62bc-48a4-8d0a-807660112268}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ressources\Texture">
-      <UniqueIdentifier>{20049845-02ba-4e14-8429-c58b2dcb3a40}</UniqueIdentifier>
     </Filter>
     <Filter Include="Private\cpp\Shader">
       <UniqueIdentifier>{69129452-508e-4419-964d-80b5fc561eaa}</UniqueIdentifier>
@@ -136,6 +126,9 @@
     <ClInclude Include="Source\Timer.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -216,17 +209,9 @@
     <ClCompile Include="Source\Cube.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Source\shaders.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
-    <Text Include="Source\shadersTexture.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
-    <Text Include="Source\shadersColor.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
+    <ClCompile Include="Source\Game.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\DXGetErrorDescription.inl">
@@ -238,10 +223,5 @@
     <None Include="Source\DXTrace.inl">
       <Filter>Private\header\Debug\dxerr</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Source\pierre.jfif">
-      <Filter>Ressources\Texture</Filter>
-    </Image>
   </ItemGroup>
 </Project>

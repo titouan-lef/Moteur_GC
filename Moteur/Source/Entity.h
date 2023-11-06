@@ -9,6 +9,8 @@ public:
 	Entity();
 	virtual ~Entity();
 
+	void Render();
+
 	int m_ID;
 
 	std::vector<Entity*> m_Children;
@@ -17,7 +19,6 @@ public:
 	virtual void Init() {}
 	virtual void Update() {}
 	virtual void PostUpdate() {}
-	virtual void Render() {}
 	virtual void OnDestroy() {}
 
 	void AddChild(Entity* child);
@@ -29,16 +30,6 @@ public:
 	T* GetComponent();
 
 	void RealUpdate();
-
-
-
-
-
-	void Draw();
-
-
-
-
 
 protected:
 	Entity* m_Parent = nullptr;

@@ -2,19 +2,18 @@
 #include "Entity.h"
 #include "Mesh.h"
 
-class Camera;
-
 class Cube : public Entity
 {
 public:
 	Cube();
 	~Cube();
 
-	void Init() override;
+    void Update();
+	/*void Init() override;
 	void Update() override;
 	void PostUpdate() override;
 	void Render() override;
-	void OnDestroy() override;
+	void OnDestroy() override;*/
 
 private:
 	std::vector<Vertex> m_vertices = {
@@ -49,6 +48,4 @@ private:
         // Bottom face
         0, 1, 5, 5, 4, 0
     };
-
-	Camera* camera = nullptr;
 };

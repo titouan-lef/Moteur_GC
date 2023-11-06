@@ -33,6 +33,7 @@
     <ClInclude Include="Source\EngineException.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
@@ -61,6 +62,7 @@
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
@@ -77,25 +79,9 @@
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Source\shaders.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Source\DXGetErrorDescription.inl" />
     <None Include="Source\DXGetErrorString.inl" />
     <None Include="Source\DXTrace.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Source\shadersColor.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="Source\shadersTexture.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Source\pierre.jfif" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

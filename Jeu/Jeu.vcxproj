@@ -22,15 +22,28 @@
     <Image Include="Source\pierre.jfif" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Moteur\Moteur.vcxproj">
       <Project>{2512772c-c8a5-4236-b275-121512820629}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\main.h" />
+    <ClInclude Include="Source\MyGame.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\MyGame.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shaders.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="Source\shadersColor.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="Source\shadersTexture.hlsl">
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

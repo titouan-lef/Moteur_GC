@@ -9,8 +9,7 @@ Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	m_name(name),
 	m_width(width),
 	m_height(height),
-	m_hInstance(GetModuleHandle(nullptr)),// GetModuleHandle(nullptr)  : handle vers notre application
-	m_pWinManager(new WindowManager(width, height))
+	m_hInstance(GetModuleHandle(nullptr))// GetModuleHandle(nullptr)  : handle vers notre application
 {
 	// Création d'une classe de fenêtre
 	WNDCLASS wc = {};
@@ -35,16 +34,12 @@ Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 		nullptr, nullptr, m_hInstance, this
 	);// (voir readme Windows.h)
 
-	m_pWinManager->OnInit(m_width, m_height, m_hWnd);
-
 	// Affichage de la fenêtre
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
 
 Window::~Window()
 {
-	delete m_pWinManager;
-
 	UnregisterClass(m_windowName, m_hInstance);
 	DestroyWindow(m_hWnd);
 }

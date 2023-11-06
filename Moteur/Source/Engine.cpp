@@ -1,18 +1,16 @@
 #include "Engine.h"
 #include "MyException.h"
-
-DxgiInfoManager Engine::infoManager = {};
+#include "MeshRenderer.h"
 
 Engine* Engine::m_Instance = nullptr;
-
-IDXGIFactory4* Engine::Factory = CreateDXGIFactory();
-ID3D12Device* Engine::Device = CreateD3DDevice();
-ID3D12CommandAllocator* Engine::CmdAllocator = CreateCommandAllocator();
-ID3D12GraphicsCommandList* Engine::CmdList = CreateCommandList();
 
 Engine::Engine()
 {
 	this->m_Instance = this;
+    Factory = CreateDXGIFactory();
+    Device = CreateD3DDevice();
+    CmdAllocator = CreateCommandAllocator();
+    CmdList = CreateCommandList();
 }
 
 Engine::~Engine()
@@ -110,19 +108,25 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
 
 
 
-
-
-
-
-void Engine::BeforeRender()
+void Engine::Render(Entity* e)
 {
-    
-}
+    // Ajout de l'affichage    
+    // POUR LES TEXTURES
+    //constBuffer->CreateTexture(CmdList);
+    // POUR LES COULEURS
 
-void Engine::Render(Entity e)
-{
-}
+    MeshRenderer* meshRenderer = e->GetComponent<MeshRenderer>();
+    Shader* shader = meshRenderer->m_shader;
+    ConstantBuffer* constBuffer = shader->m_constBuffer;
 
-void Engine::AfterRender()
-{
+    CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
+    CmdList->SetPipelineState(shader->m_pipelineState);// Ajout de la pipeline de rendu
+
+    CmdList->SetDescriptorHeaps(shader->m_descriptorHeaps.size(), shader->m_descriptorHeaps.data());
+
+    constBuffer->SetGraphicsRoot();
+
+    CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
+    CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+    CmdList->DrawIndexedInstanced(meshRenderer->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
 }

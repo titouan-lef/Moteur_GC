@@ -10,6 +10,8 @@ public:
 	~Window();
 	static bool ProcessMessages();// Gérer les messages de la fenêtre (agrandir, quitter, ...)
 
+	inline HWND GethWnd() { return m_hWnd; }
+
 private:
 	static LRESULT _stdcall WindowProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);// Action à réaliser en fonction du message retourner par ProcessMessages()
 
@@ -18,7 +20,4 @@ private:
 	const wchar_t* m_windowName = L"DirectX 12";// Nom de la fenêtre (et non le nom affiché sur la fenêtre)
 	HWND m_hWnd;// Handle de la fenêtre
 	HINSTANCE m_hInstance;// Handle de l'instance de la fenêtre
-
-public:
-	WindowManager* m_pWinManager = nullptr;
 };

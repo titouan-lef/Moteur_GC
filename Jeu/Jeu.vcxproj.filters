@@ -16,6 +16,15 @@
     <Filter Include="Fichiers de ressources\texture">
       <UniqueIdentifier>{3a8fabca-83c0-4d1f-87ba-371bded72c9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ressources">
+      <UniqueIdentifier>{eeee85a6-0035-40ab-a7fd-4cfdec0a3d75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressources\Shaders">
+      <UniqueIdentifier>{e45af92c-1a00-49f8-a1fd-561aa4e3c928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressources\Texture">
+      <UniqueIdentifier>{e123f52a-638a-432e-9401-9a627b9751c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Source\pierre.jfif">
@@ -23,13 +32,30 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
+    <ClInclude Include="Source\main.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MyGame.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Source\main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MyGame.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shadersColor.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
+    <Text Include="Source\shadersTexture.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
+    <Text Include="Source\shaders.hlsl">
+      <Filter>Ressources\Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -26,9 +26,9 @@ ShaderTexture::ShaderTexture(ConstantBufferData* cbd, Texture texture) : Shader(
     samplerHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;          // Type de tas (pour les samplers)
     samplerHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;  // Doit être visible par les shaders
 
-    Engine::Device->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap));
+    Engine::m_Instance->Device->CreateDescriptorHeap(&samplerHeapDesc, IID_PPV_ARGS(&m_samplerHeap));
 
-    //Engine::Device->CreateSampler(&sampler, samplerHeap->GetCPUDescriptorHandleForHeapStart());// Créez le Sampler
+    //Engine::m_Instance->Device->CreateSampler(&sampler, samplerHeap->GetCPUDescriptorHandleForHeapStart());// Créez le Sampler
 
     m_descriptorHeaps = { m_constBuffer->m_cbvHeapDesc, m_samplerHeap };
 }
@@ -43,7 +43,7 @@ void ShaderTexture::SetGraphicsRoot()
     m_constBuffer->SetGraphicsRoot();
 
     D3D12_GPU_DESCRIPTOR_HANDLE sampler = m_samplerHeap->GetGPUDescriptorHandleForHeapStart();
-    Engine::CmdList->SetGraphicsRootDescriptorTable(2, sampler);
+    Engine::m_Instance->CmdList->SetGraphicsRootDescriptorTable(2, sampler);
 }
 
 ID3D12RootSignature* ShaderTexture::CreateRootSignature()
