@@ -11,10 +11,12 @@ ConstantBufferLight::ConstantBufferLight(ConstantBufferData* constBufferData, Li
 
     // Créer le buffer constant.
     const UINT bufferSize = (sizeof(Light) + 255) & ~255; // Aligné sur 256 octets
+    auto bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+    auto var = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     (Engine::Device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        &var,
         D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(bufferSize),
+        &bufferDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(&m_buffer)));
@@ -26,9 +28,7 @@ ConstantBufferLight::ConstantBufferLight(ConstantBufferData* constBufferData, Li
     Engine::Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
 }
 
-ConstantBufferLight::~ConstantBufferLight() {
-    // Libérer les ressources, si nécessaire.
-}
+
 
 void ConstantBufferLight::Update(const Light& lightData) {
     // Mettre à jour les données du buffer constant.

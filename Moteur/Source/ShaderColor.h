@@ -8,6 +8,7 @@ public:
 	virtual ~ShaderColor();
 
 	void SetGraphicsRoot();
+	ConstantBufferLight* m_constBufferLight;
 
 private:
 	static ID3D12RootSignature* s_rootSignature;

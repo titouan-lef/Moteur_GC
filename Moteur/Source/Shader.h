@@ -9,11 +9,7 @@ enum Type
 {
 	texture, color
 };
-struct Light {
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 intensity;
-	DirectX::XMFLOAT3 direction;
-};
+
 class Shader
 {
 public:
@@ -30,7 +26,7 @@ public:
 	virtual void SetGraphicsRoot() = 0;
 
 	// TO DO : en private ?
-	ConstantBufferLight* m_constBufferLight;
+
 	ConstantBuffer* m_constBuffer;
 	std::vector<ID3D12DescriptorHeap*> m_descriptorHeaps;
 

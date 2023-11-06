@@ -136,6 +136,9 @@
     <ClInclude Include="Source\Collider.h">
       <Filter>Public\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ConstantBufferLight.h">
+      <Filter>Private\header\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -218,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cube.cpp">
       <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ConstantBufferLight.cpp">
+      <Filter>Private\cpp\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -25,6 +25,7 @@
     <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />
+    <ClInclude Include="Source\ConstantBufferLight.h" />
     <ClInclude Include="Source\Cube.h" />
     <ClInclude Include="Source\d3dx12.h" />
     <ClInclude Include="Source\dxerr.h" />
@@ -55,6 +56,7 @@
     <ClCompile Include="Source\Collider.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\ConstantBufferLight.cpp" />
     <ClCompile Include="Source\Cube.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />
     <ClCompile Include="Source\DxgiInfoManager.cpp" />
