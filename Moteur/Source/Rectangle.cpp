@@ -6,10 +6,10 @@
 
 std::vector<Vertex> MyRectangle::m_vertices = {
     // Carre
-    { { -0.5f, 0.5f, 0 }, { 0.0f, 0.0f } },// Coin superieur gauche
-    { { 0.5f, 0.5f, 0 }, { 1.0f, 0.0f } },// Coin superieur droit
-    { { -0.5f, -0.5f, 0 }, { 0.0f, 1.0f } },// Coin inferieur gauche
-    { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f } },// Coin inferieur droit
+    { { -0.5f, 0.5f, 0 }, { 0.0f, 0.0f, 1.0f, 1.0f } },// Coin superieur gauche
+    { { 0.5f, 0.5f, 0 }, { 1.0f, 0.0f , 1.0f, 1.0f} },// Coin superieur droit
+    { { -0.5f, -0.5f, 0 }, { 0.0f, 1.0f, 1.0f, 1.0f } },// Coin inferieur gauche
+    { { 0.5f, -0.5f, 0 }, { 1.0f, 1.0f , 1.0f, 1.0f} },// Coin inferieur droit
 };
 
 std::vector<UINT16> MyRectangle::m_indices = { 0, 1, 2, 2, 1, 3 };

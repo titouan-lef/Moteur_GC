@@ -50,7 +50,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
 
     r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
     r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
-    r2->GetComponent<Transform>()->RotatePitch(45);
+    //r2->GetComponent<Transform>()->RotatePitch(45);
     r2->GetComponent<Transform>()->UpdateMatrix();
     r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
     r2->GetComponent<Transform>()->SetRotationSpeed(-45, 35, -90);
@@ -224,22 +224,22 @@ void WindowManager::OnUpdate()
         auto collider = entity->GetComponent<Collider>();
 
         // Mettre à jour la position
-        collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
+        //collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
         //
        //// //// Mettre à jour la rotation
         XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
-        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.1f);
-        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
-        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
+        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.01f);
+        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.01f);
+        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.01f);
 
         // Mettre à jour la position
-        transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
+        //transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
 
         // // Mettre à jour la rotation
         XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.1f);
-        transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
-        transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
+        transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.01f);
+        //transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.01f);
+        //transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.01f);
 
         entity->Update();
 
