@@ -20,10 +20,6 @@ Cube::~Cube()
 {
 }
 
-void Cube::Init()
-{
-}
-
 
 void Cube::Update() {
     this->GetComponent<Transform>()->UpdateMatrix();

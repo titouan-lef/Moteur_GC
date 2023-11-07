@@ -8,7 +8,6 @@ public:
 	Cube();
 	~Cube();
 
-    virtual void Init() override;
     virtual void Update() override;
 	
     /*void Update() override;

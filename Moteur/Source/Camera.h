@@ -10,7 +10,6 @@ public:
 
 	static Camera* m_Instance;
 
-	virtual void Init() override;
 	virtual void Update() override;	
 
 #pragma region Gets/Sets

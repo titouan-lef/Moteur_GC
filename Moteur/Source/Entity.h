@@ -16,7 +16,6 @@ public:
 	std::vector<Entity*> m_Children;
 	std::vector<Component*> m_Components;
 
-	virtual void Init() = 0;
 	virtual void Update() = 0;
 	//virtual void PostUpdate() = 0;
 	//virtual void OnDestroy() {}

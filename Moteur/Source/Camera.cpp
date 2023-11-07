@@ -21,10 +21,6 @@ Camera::~Camera()
 {
 }
 
-void Camera::Init()
-{
-}
-
 void Camera::Update()
 {
 	if (this->GetComponent<Transform>()->IsDirty())
