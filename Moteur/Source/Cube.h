@@ -9,11 +9,6 @@ public:
 	~Cube();
 
     virtual void Update() override;
-	
-    /*void Update() override;
-	void PostUpdate() override;
-	void Render() override;
-	void OnDestroy() override;*/
 
 private:
 	std::vector<Vertex> m_vertices = {

@@ -26,8 +26,6 @@ protected:
 	float m_nearPlane = -1;
 	float m_farPlane = -1;
 
-	//Transform* m_transform = nullptr;
-
 	XMFLOAT4X4 m_viewMatrix;
 
 private:
