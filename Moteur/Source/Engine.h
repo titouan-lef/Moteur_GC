@@ -10,8 +10,6 @@ public:
 	virtual ~Engine();
 
 	static void Init();
-	
-	static Engine* m_Instance;
 
 	//Get the instance of the engine
 	static Engine* GetInstance() { return m_Instance; }
@@ -26,6 +24,8 @@ public:
 	ID3D12CommandAllocator* CmdAllocator = nullptr;// Allocations de stockage pour les commandes du GPU
 
 private:
+	static Engine* m_Instance;
+
 	// Gestion des erreurs
 	#ifndef  NDEBUG
 		DxgiInfoManager infoManager;

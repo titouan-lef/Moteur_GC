@@ -24,8 +24,8 @@ MyRectangle::MyRectangle()
     this->GetComponent<Transform>()->UpdateMatrix();
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::m_Instance->GetViewMatrix();
-    cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
+    cbd->View = Camera::GetInstance()->GetViewMatrix();
+    cbd->Projection = Camera::GetInstance()->GetComponent<Transform>()->GetMatrixTranspose();
 
     this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
     //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
@@ -45,8 +45,8 @@ void MyRectangle::Update()
 
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::m_Instance->GetViewMatrix();
-    cbd->Projection = Camera::m_Instance->GetComponent<Transform>()->GetMatrixTranspose();
+    cbd->View = Camera::GetInstance()->GetViewMatrix();
+    cbd->Projection = Camera::GetInstance()->GetComponent<Transform>()->GetMatrixTranspose();
 
     this->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(cbd);
 }

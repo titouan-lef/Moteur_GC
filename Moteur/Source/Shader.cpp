@@ -23,7 +23,7 @@ ID3D12RootSignature* Shader::CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARA
 
     // Création de la signature racine
     ID3D12RootSignature* rootSignature = nullptr;
-    GFX_THROW_INFO_ONLY(Engine::m_Instance->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
 
     return rootSignature;
 }
@@ -92,5 +92,5 @@ void Shader::CreatePSO()
     psoDesc.SampleDesc.Count = 1;
 
     // Création de la PSO
-    GFX_THROW_INFO_ONLY(Engine::m_Instance->Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
 }

@@ -9,7 +9,7 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-	Engine::m_Instance->Device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeapDesc));
+	Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeapDesc));
 
 
 	// Défini l'emplacement et la taille des données du constant buffer
@@ -18,7 +18,7 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 	cbvDesc.SizeInBytes = m_bufferSize;								// Taille du constant buffer
 
 	// Stockage du constant buffer view dans le tas
-	Engine::m_Instance->Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
+	Engine::GetInstance()->Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
 }
 
 ConstantBuffer::~ConstantBuffer()
@@ -29,7 +29,7 @@ ConstantBuffer::~ConstantBuffer()
 void ConstantBuffer::SetGraphicsRoot()
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvHeapDesc->GetGPUDescriptorHandleForHeapStart();
-	Engine::m_Instance->CmdList->SetGraphicsRootDescriptorTable(0, srv);
+	Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
 }
 
 

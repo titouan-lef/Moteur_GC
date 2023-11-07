@@ -18,7 +18,7 @@ Entity::~Entity()
 
 void Entity::Render()
 {
-	Engine::m_Instance->Render(this);
+	Engine::GetInstance()->Render(this);
 }
 
 void Entity::AddChild(Entity* child)

@@ -32,7 +32,7 @@ ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData, Texture 
     ID3D12Resource* ressource = nullptr;
 
     // Création de la Texture2D
-    Engine::m_Instance->Device->CreateCommittedResource(
+    Engine::GetInstance()->Device->CreateCommittedResource(
         &var1,
         D3D12_HEAP_FLAG_NONE,
         &textureDesc,
@@ -63,11 +63,11 @@ ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData, Texture 
     textureData.SlicePitch = textureData.RowPitch * imageHeight;
     
     
-    UpdateSubresources(Engine::m_Instance->CmdList, ressource, ressource, 0, 0, 1, &textureData);*/
+    UpdateSubresources(Engine::GetInstance()->CmdList, ressource, ressource, 0, 0, 1, &textureData);*/
 
     /*************************/
 
-    Engine::m_Instance->Device->CreateShaderResourceView(ressource, &srvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
+    Engine::GetInstance()->Device->CreateShaderResourceView(ressource, &srvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
 
 }
 
@@ -78,7 +78,7 @@ ConstantBufferSR::~ConstantBufferSR()
 void ConstantBufferSR::SetGraphicsRoot()
 {
     ConstantBuffer::SetGraphicsRoot();
-    Engine::m_Instance->CmdList->SetGraphicsRootConstantBufferView(1, m_buffer->GetGPUVirtualAddress());
+    Engine::GetInstance()->CmdList->SetGraphicsRootConstantBufferView(1, m_buffer->GetGPUVirtualAddress());
 }
 
 void ConstantBufferSR::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
@@ -113,7 +113,7 @@ void ConstantBufferSR::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
     auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
     ID3D12Resource* ressource = nullptr;
-    Engine::m_Instance->Device->CreateCommittedResource(
+    Engine::GetInstance()->Device->CreateCommittedResource(
         &var1,
         D3D12_HEAP_FLAG_NONE,
         &textureDesc,
@@ -127,7 +127,7 @@ void ConstantBufferSR::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
     auto var3 = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 
     // Create the GPU upload buffer.
-    Engine::m_Instance->Device->CreateCommittedResource(
+    Engine::GetInstance()->Device->CreateCommittedResource(
         &var2,
         D3D12_HEAP_FLAG_NONE,
         &var3,

@@ -26,8 +26,8 @@ void MeshRenderer::Update()
 
     ConstantBufferData* cbd = new ConstantBufferData();
     cbd->World = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::GetCamera()->GetTransposedView();
-    cbd->Projection = Camera::GetCamera()->GetTransposedProj();
+    cbd->View = Camera::GetInstance()->GetTransposedView();
+    cbd->Projection = Camera::GetInstance()->GetTransposedProj();
 
     GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(cbd);
 }
