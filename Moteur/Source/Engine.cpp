@@ -1,20 +1,26 @@
 #include "Engine.h"
 #include "MyException.h"
 #include "MeshRenderer.h"
+#include "Camera.h"
 
 Engine* Engine::m_Instance = nullptr;
 
 Engine::Engine()
 {
 	this->m_Instance = this;
-    Factory = CreateDXGIFactory();
-    Device = CreateD3DDevice();
-    CmdAllocator = CreateCommandAllocator();
-    CmdList = CreateCommandList();
 }
 
 Engine::~Engine()
 {
+}
+
+void Engine::Init()
+{
+    Camera* c = new Camera();
+    m_Instance->Factory = m_Instance->CreateDXGIFactory();
+    m_Instance->Device = m_Instance->CreateD3DDevice();
+    m_Instance->CmdAllocator = m_Instance->CreateCommandAllocator();
+    m_Instance->CmdList = m_Instance->CreateCommandList();
 }
 
 IDXGIFactory4* Engine::CreateDXGIFactory()

@@ -8,7 +8,6 @@ public:
 	MyGame();
 	~MyGame();
 
-	void Init() override;
 	void Update() override;
 	void Render() override;
 

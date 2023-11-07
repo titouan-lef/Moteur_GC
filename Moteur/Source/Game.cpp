@@ -23,8 +23,6 @@ Game::~Game()
 
 int Game::Run()
 {
-	Init();
-
 	while (true)
 	{
 		if (Window::ProcessMessages())
@@ -36,9 +34,4 @@ int Game::Run()
 		Render();
 		m_wndManager->PostRender();
 	}
-}
-
-void Game::Render(Entity e)
-{
-
 }

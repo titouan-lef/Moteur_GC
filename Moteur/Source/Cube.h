@@ -8,9 +8,10 @@ public:
 	Cube();
 	~Cube();
 
-    void Update();
-	/*void Init() override;
-	void Update() override;
+    virtual void Init() override;
+    virtual void Update() override;
+	
+    /*void Update() override;
 	void PostUpdate() override;
 	void Render() override;
 	void OnDestroy() override;*/

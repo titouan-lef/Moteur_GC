@@ -69,9 +69,6 @@
     <ClInclude Include="Source\Camera.h">
       <Filter>Public\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\App.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
     <ClInclude Include="Source\dxerr.h">
       <Filter>Private\header\Debug\dxerr</Filter>
     </ClInclude>
@@ -151,9 +148,6 @@
     </ClCompile>
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\App.cpp">
-      <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rectangle.cpp">
       <Filter>Public\cpp</Filter>

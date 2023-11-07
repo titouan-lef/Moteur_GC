@@ -1,10 +1,10 @@
 #include "MyGame.h"
 #include <Engine.h>
-#include <Camera.h>
 
 int main()
 {
-	Engine();
+	Engine* e = new Engine();
+	Engine::Init();
 
 	MyGame myGame = MyGame();
 	return myGame.Run();

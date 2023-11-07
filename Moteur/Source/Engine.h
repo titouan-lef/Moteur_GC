@@ -8,6 +8,8 @@ class Engine
 public:
 	Engine();
 	virtual ~Engine();
+
+	static void Init();
 	
 	static Engine* m_Instance;
 

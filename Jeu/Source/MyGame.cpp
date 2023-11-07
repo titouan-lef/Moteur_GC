@@ -3,23 +3,14 @@
 
 MyGame::MyGame()
 {
-}
-
-MyGame::~MyGame()
-{
-}
-
-void MyGame::Init()
-{
-	c = new Cube();
-
+    c = new Cube();
 
     c->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
     c->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
     c->GetComponent<Transform>()->UpdateMatrix();
     c->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
     c->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
-    
+
     c->AddComponent<Collider>();
     Transform colR1;
     colR1.SetPosition(-0.45f, 0, 1);
@@ -30,6 +21,10 @@ void MyGame::Init()
     c->GetComponent<Collider>()->SetCollider(colR1);
 
     c->Update();
+}
+
+MyGame::~MyGame()
+{
 }
 
 void MyGame::Update()

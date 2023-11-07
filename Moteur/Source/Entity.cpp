@@ -28,16 +28,16 @@ void Entity::AddChild(Entity* child)
 	child->SetParent(this);
 }
 
-void Entity::RealUpdate()
-{
-	Update();
-	PostUpdate();
-	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
-	{
-		if ((*it)->IsActive())
-			(*it)->Update();
-	}
-}
+//void Entity::RealUpdate()
+//{
+//	Update();
+//	PostUpdate();
+//	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+//	{
+//		if ((*it)->IsActive())
+//			(*it)->Update();
+//	}
+//}
 
 bool Entity::CheckAddChild(Entity* child)
 {
