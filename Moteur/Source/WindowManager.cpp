@@ -46,7 +46,7 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     r1->GetComponent<Collider>()->SetCollider(colR1);
 
     r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
-    r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
+    r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 0);
     r2->GetComponent<Transform>()->RotatePitch(45);
     r2->GetComponent<Transform>()->UpdateMatrix();
     r2->GetComponent<Transform>()->SetDirection(-0.001f, 0, 0);
@@ -188,13 +188,12 @@ void WindowManager::OnUpdate()
 
         // // Mettre à jour la rotation
         XMFLOAT3 rotationSpeed2 = transform->GetRotationSpeed();
-        transform->Rotate(rotationSpeed2.x * elapsedTime * 0.01f, rotationSpeed2.y * elapsedTime * 0.1f, rotationSpeed2.z * elapsedTime * 0.1f);
+        //transform->Rotate(rotationSpeed2.x * elapsedTime * 0.01f, rotationSpeed2.y * elapsedTime * 0.1f, 0);
         //transform->RotateRoll(rotationSpeed2.x * elapsedTime * 0.01f);
-       // transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
+        transform->RotatePitch(rotationSpeed2.y * elapsedTime * -0.01f);
         //transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
         entity->Update();
-        m_entityTimer->Mark();
 
 
     }
