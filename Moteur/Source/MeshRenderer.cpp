@@ -24,10 +24,6 @@ void MeshRenderer::Update()
     GetOwner()->GetComponent<Transform>()->UpdateMatrix();
     GetOwner()->GetComponent<Collider>()->GetCollider()->UpdateMatrix();
 
-    ConstantBufferData* cbd = new ConstantBufferData();
-    cbd->World = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::GetInstance()->GetTransposedView();
-    cbd->Projection = Camera::GetInstance()->GetTransposedProj();
-
-    GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(cbd);
+    XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
+    GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
 }

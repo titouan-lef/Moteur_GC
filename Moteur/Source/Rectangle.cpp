@@ -43,12 +43,8 @@ void MyRectangle::Update()
 {
     this->GetComponent<Transform>()->UpdateMatrix();
 
-    ConstantBufferData* cbd = new ConstantBufferData();
-    cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::GetInstance()->GetViewMatrix();
-    cbd->Projection = Camera::GetInstance()->GetComponent<Transform>()->GetMatrixTranspose();
-
-    this->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(cbd);
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+    this->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
 }
 
 //void MyRectangle::PostUpdate()

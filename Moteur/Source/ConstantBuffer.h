@@ -14,6 +14,8 @@ public:
 	ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor = 1);
 	virtual ~ConstantBuffer();
 
+	void UpdateBuffer(XMMATRIX world);
+
 	virtual void SetGraphicsRoot();
 
 public://TO DO : en private ?

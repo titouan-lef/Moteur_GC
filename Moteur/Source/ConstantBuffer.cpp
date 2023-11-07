@@ -1,4 +1,5 @@
 #include "ConstantBuffer.h"
+#include "Camera.h"
 
 ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor) : Buffer((sizeof(ConstantBufferData) + 255) & ~255, constBufferData)
 {
@@ -24,6 +25,16 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 ConstantBuffer::~ConstantBuffer()
 {
 	delete m_cbvHeapDesc;
+}
+
+void ConstantBuffer::UpdateBuffer(XMMATRIX world)
+{
+	ConstantBufferData cbd = ConstantBufferData();
+	cbd.World = world;
+	cbd.View = Camera::GetInstance()->GetTransposedView();
+	cbd.Projection = Camera::GetInstance()->GetTransposedProj();
+
+	Buffer::UpdateBuffer(&cbd);
 }
 
 void ConstantBuffer::SetGraphicsRoot()
