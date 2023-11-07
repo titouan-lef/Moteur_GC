@@ -1,7 +1,7 @@
 #include "Buffer.h"
 #include "MyException.h"
 
-Buffer::Buffer(UINT bufferSize, void* src) : m_bufferSize(bufferSize)
+Buffer::Buffer(UINT bufferSize) : m_bufferSize(bufferSize)
 {
 	auto tmp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	auto tmp2 = CD3DX12_RESOURCE_DESC::Buffer(m_bufferSize);
@@ -12,8 +12,6 @@ Buffer::Buffer(UINT bufferSize, void* src) : m_bufferSize(bufferSize)
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&m_buffer)));
-
-	UpdateBuffer(src);
 }
 
 Buffer::~Buffer()

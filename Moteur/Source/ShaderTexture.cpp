@@ -1,13 +1,13 @@
 #include "ShaderTexture.h"
 #include "MyException.h"
 
-ShaderTexture::ShaderTexture(ConstantBufferData* cbd, Texture texture) : Shader(Type::texture)
+ShaderTexture::ShaderTexture(XMMATRIX world, Texture texture) : Shader(Type::texture)
 {
     m_rootSignature = CreateRootSignature();
     CreatePSO();
 
     // CREATION DU CBV ET DU SRV
-    m_constBuffer = new ConstantBufferSR(cbd, texture);
+    m_constBuffer = new ConstantBufferSR(world, texture);
 
     // CREATION DU SAMPLER
     D3D12_SAMPLER_DESC  sampler = {};

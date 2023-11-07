@@ -1,11 +1,11 @@
 #include "ShaderColor.h"
 
-ShaderColor::ShaderColor(ConstantBufferData* cbd) : Shader(Type::color)
+ShaderColor::ShaderColor(XMMATRIX world) : Shader(Type::color)
 {
     m_rootSignature = CreateRootSignature();
     CreatePSO();
 
-    m_constBuffer = new ConstantBuffer(cbd);
+    m_constBuffer = new ConstantBuffer(world);
 
     m_descriptorHeaps = { m_constBuffer->m_cbvHeapDesc };
 }

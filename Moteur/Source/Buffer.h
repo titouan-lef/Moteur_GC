@@ -5,7 +5,7 @@
 class Buffer
 {
 public:
-	Buffer(UINT bufferSize, void* src);
+	Buffer(UINT bufferSize);
 	virtual ~Buffer();
 
 

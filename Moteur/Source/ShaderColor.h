@@ -4,7 +4,7 @@
 class ShaderColor : public Shader
 {
 public:
-	ShaderColor(ConstantBufferData* cbd);
+	ShaderColor(XMMATRIX world);
 	virtual ~ShaderColor();
 
 	void SetGraphicsRoot();

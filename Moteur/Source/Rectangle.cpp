@@ -22,12 +22,9 @@ MyRectangle::MyRectangle()
     GetComponent<Transform>()->SetScale(0.5f, 1, 0.5f);
    //this->GetComponent<Transform>()->MoveByVector({ -0.5f, 0, 0.5f });
     this->GetComponent<Transform>()->UpdateMatrix();
-    ConstantBufferData* cbd = new ConstantBufferData();
-    cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::GetInstance()->GetViewMatrix();
-    cbd->Projection = Camera::GetInstance()->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(cbd));
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(world));
     //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
 }
 

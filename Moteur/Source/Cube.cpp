@@ -7,12 +7,8 @@
 Cube::Cube() {
     this->AddComponent<Transform>();
 
-    ConstantBufferData* cbd = new ConstantBufferData();
-    cbd->World = this->GetComponent<Transform>()->GetMatrixTranspose();
-    cbd->View = Camera::GetInstance()->GetTransposedView();
-    cbd->Projection = Camera::GetInstance()->GetTransposedProj();
-
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(cbd));
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
 }
 
 Cube::~Cube()

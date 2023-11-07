@@ -1,8 +1,8 @@
 #include "ConstantBufferSR.h"
 #include <wincodec.h>
 
-ConstantBufferSR::ConstantBufferSR(ConstantBufferData* constBufferData, Texture texture)
-    : ConstantBuffer(constBufferData, 2), m_texture(texture)// CREATION DU CBV
+ConstantBufferSR::ConstantBufferSR(XMMATRIX world, Texture texture)
+    : ConstantBuffer(world, 2), m_texture(texture)// CREATION DU CBV
 {
     // CREATION DU SRV
 

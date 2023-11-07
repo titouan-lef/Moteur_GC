@@ -1,7 +1,7 @@
 #include "ConstantBuffer.h"
 #include "Camera.h"
 
-ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor) : Buffer((sizeof(ConstantBufferData) + 255) & ~255, constBufferData)
+ConstantBuffer::ConstantBuffer(XMMATRIX world, UINT nbDescriptor) : Buffer((sizeof(ConstantBufferData) + 255) & ~255)
 {
 	// Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -20,6 +20,8 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 
 	// Stockage du constant buffer view dans le tas
 	Engine::GetInstance()->Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
+
+	UpdateBuffer(world);
 }
 
 ConstantBuffer::~ConstantBuffer()
@@ -29,12 +31,13 @@ ConstantBuffer::~ConstantBuffer()
 
 void ConstantBuffer::UpdateBuffer(XMMATRIX world)
 {
-	ConstantBufferData cbd = ConstantBufferData();
-	cbd.World = world;
-	cbd.View = Camera::GetInstance()->GetTransposedView();
-	cbd.Projection = Camera::GetInstance()->GetTransposedProj();
+	ConstantBufferData* cbd = new ConstantBufferData();
+	cbd->World = world;
+	cbd->View = Camera::GetInstance()->GetTransposedView();
+	cbd->Projection = Camera::GetInstance()->GetTransposedProj();
 
-	Buffer::UpdateBuffer(&cbd);
+	Buffer::UpdateBuffer(cbd);
+	delete cbd;
 }
 
 void ConstantBuffer::SetGraphicsRoot()

@@ -9,7 +9,7 @@ enum Texture
 class ConstantBufferSR : public ConstantBuffer
 {
 public:
-	ConstantBufferSR(ConstantBufferData* constBufferData, Texture texture);
+	ConstantBufferSR(XMMATRIX world, Texture texture);
 	virtual ~ConstantBufferSR();
 
 	virtual void SetGraphicsRoot();
