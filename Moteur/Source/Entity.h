@@ -57,6 +57,8 @@ T* Entity::AddComponent()
 {
 	T* component = new T();
 	if (!CheckAddComponent(component)) return nullptr;
+	dynamic_cast<Component*>(component)->SetOwner(this);
+	dynamic_cast<Component*>(component)->Initialize();
 	m_Components.push_back(dynamic_cast<Component*>(component));
 	return component;
 }

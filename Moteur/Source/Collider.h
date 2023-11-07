@@ -1,15 +1,22 @@
 #pragma once
 #include "Component.h"
-#include "Transform.h"
+
+class Transform;
+
 class Collider : public Component
 {
 public:
 	Collider();
+	virtual ~Collider();
+
+	virtual void Initialize()override;
 	virtual void Update();
 	Transform* GetCollider();
-	void SetCollider(const Transform& colliderTransform);
+
 	bool CheckCollision(Collider& collider1, Collider& collider2);
+	bool IsInGameArea() { return m_isInGameArea; }
 private:
+	bool m_isInGameArea;
 	Transform* m_Collider;
 };
 

@@ -24,13 +24,14 @@ public:
 
 	// Retourne la matrice de transformation
 	XMMATRIX inline GetMatrix() { return XMLoadFloat4x4(&Matrix); }
+	XMFLOAT4X4 inline GetRotMatrix() { return RotationMatrix; }
 	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
 #pragma endregion
 
 	void MoveByVector(XMFLOAT3 vec, float elapsed);	// Déplace la position en fonction d'un vecteur
-	void Identity();					// Réinitialise la transformation à l'identité
-	void FromMatrix(XMMATRIX* matrix);	// Initialise la transformation à partir d'une matrice de transformation
-	void UpdateMatrix();				// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
+	void Identity();								// Réinitialise la transformation à l'identité
+	void FromMatrix(XMMATRIX* matrix);				// Initialise la transformation à partir d'une matrice de transformation
+	void UpdateMatrix();							// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
 
 #pragma region Rotation
 	void Rotate(float yaw, float pitch, float roll);	// Effectue une rotation en utilisant des angles yaw, pitch et roll
@@ -38,7 +39,6 @@ public:
 	void RotatePitch(float angle);						// Effectue une rotation autour de l'axe Y (pitch)
 	void RotateYaw(float angle);	
 	// Effectue une rotation autour de l'axe Z (yaw)
-	bool CheckCollision(Transform& cube1, Transform& cube2);
 	static void ChangeDirection(Transform* transform);
 
 
@@ -65,10 +65,13 @@ private:
 	XMFLOAT3 Scale;
 
 	// Rotation de l'entité
-	XMFLOAT3 Dir;              // Vecteur de direction
-	XMFLOAT3 Right;            // Vecteur de droite
-	XMFLOAT3 Up;               // Vecteur vers le haut
-	XMFLOAT4 RotationQuat;     // Quaternion de rotation
+	XMFLOAT3 Dir;				// Vecteur de direction
+	XMFLOAT3 Right;				// Vecteur de droite
+	XMFLOAT3 Up;				// Vecteur vers le haut
+	XMFLOAT4 RotationQuat;		// Quaternion de rotation
+	XMFLOAT4X4 RotationMatrix;	// Matrice de rotation
+
+	void UpdateRotMatrix();		// Met à jour la matrice de rotation
 
 	XMFLOAT4X4 Matrix;           // Matrice de transformation
 

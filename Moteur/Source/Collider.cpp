@@ -1,4 +1,7 @@
 #include "Collider.h"
+#include "Entity.h"
+#include "Transform.h"
+#include "CollisionManagrer.h"
 
 Collider::Collider()
 {
@@ -6,27 +9,41 @@ Collider::Collider()
 	m_isActive = true;
 	m_name = "Collider";
 	m_owner = nullptr;
-	m_Collider = new Transform();
+}
+
+Collider::~Collider()
+{
+	CollisionManager::RemoveEntity(GetOwner());
+	delete m_Collider;
 }
 
 
+void Collider::Initialize()
+{
+	m_Collider = GetOwner()->GetComponent<Transform>();
+	CollisionManager::AddEntity(GetOwner());
+}
+
 void Collider::Update()
 {
-	m_Collider->Update();
+	// Check si l'entity est dans une zone autour du joueur
+	Transform t = GetOwner()->GetComponent<Transform>();
+	if (m_Collider->GetPosition().x > 100.0f || m_Collider->GetPosition().x < -100.0f ||
+		m_Collider->GetPosition().y > 100.0f || m_Collider->GetPosition().y < -100.0f ||
+		m_Collider->GetPosition().z > 100.0f || m_Collider->GetPosition().z < -100.0f)
+	{
+		m_isActive = false;
+	}
+	else
+	{
+		m_isActive = true;
+	}
 }
 
 Transform* Collider::GetCollider()
 {
 	return m_Collider;
 }
-
-void Collider::SetCollider(const Transform& colliderTransform) {
-	if (m_Collider == nullptr) {
-		m_Collider = new Transform();
-	}
-	*m_Collider = colliderTransform;  // Copie les données de colliderTransform dans m_Collider
-}
-
 
 bool Collider::CheckCollision(Collider& collider1, Collider& collider2) {
 	XMFLOAT3 cube1Scale = collider1.GetCollider()->GetScale();

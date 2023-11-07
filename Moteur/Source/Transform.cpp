@@ -26,8 +26,13 @@ void Transform::Update()
 	if (m_isDirty)
 	{
 		UpdateMatrix();
+		UpdateRotMatrix();
 		m_isDirty = false;
 	}
+	// vector Direction
+	//_31 = Position.x;
+	//_32 = Position.y;
+	//_33 = Position.z;
 }
 
 void Transform::MoveByVector(XMFLOAT3 vec, float elapsed)
@@ -74,6 +79,11 @@ void Transform::ChangeDirection(Transform* transform) {
 	direction.y = -direction.y;
 	direction.z = -direction.z;
 	transform->SetDirection(direction.x, direction.y, direction.z);
+}
+
+void Transform::UpdateRotMatrix()
+{
+	XMStoreFloat4x4(&RotationMatrix, XMMatrixRotationQuaternion(XMLoadFloat4(&RotationQuat)));
 }
 
 void Transform::RotatePitch(float angle)

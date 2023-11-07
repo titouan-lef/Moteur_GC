@@ -43,7 +43,6 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     colR1.SetDirection(0.01f, 0, 0);
     colR1.SetRotationSpeed(45, 35, 90);
     colR1.UpdateMatrix();
-    r1->GetComponent<Collider>()->SetCollider(colR1);
 
     r2->GetComponent<Transform>()->SetScale(0.2f, 0.2f, 0.2f);
     r2->GetComponent<Transform>()->SetPosition(0.45f, 0, 1);
@@ -59,7 +58,6 @@ void WindowManager::OnInit(UINT width, UINT height, HWND hWnd)
     colR2.SetDirection(-0.001f, 0, 0);
     colR2.SetRotationSpeed(-45, 35, -90);
     colR2.UpdateMatrix();
-    r2->GetComponent<Collider>()->SetCollider(colR2);
 
     r1->Update();
     r2->Update();
@@ -172,16 +170,6 @@ void WindowManager::OnUpdate()
     for (auto entityIt = m_entities.begin(); entityIt != m_entities.end(); ++entityIt) {
         auto& entity = *entityIt;
         auto transform = entity->GetComponent<Transform>();
-        auto collider = entity->GetComponent<Collider>();
-
-        // Mettre à jour la position
-        collider->GetCollider()->MoveByVector(XMFLOAT3(collider->GetCollider()->GetDirection()), elapsedTime);
-        //
-       //// //// Mettre à jour la rotation
-        XMFLOAT3 rotationSpeed = collider->GetCollider()->GetRotationSpeed();
-        collider->GetCollider()->RotateRoll(rotationSpeed.x * elapsedTime * 0.1f);
-        collider->GetCollider()->RotatePitch(rotationSpeed.y * elapsedTime * 0.1f);
-        collider->GetCollider()->RotateYaw(rotationSpeed.z * elapsedTime * 0.1f);
 
         // Mettre à jour la position
         transform->MoveByVector(XMFLOAT3(transform->GetDirection()), elapsedTime);
@@ -192,10 +180,9 @@ void WindowManager::OnUpdate()
         transform->RotatePitch(rotationSpeed2.y * elapsedTime * 0.1f);
         transform->RotateYaw(rotationSpeed2.z * elapsedTime * 0.1f);
 
-        entity->Update();
-
-
+        entity->RealUpdate();
     }
+
     for (int i = 0; i < m_entities.size(); ++i) {
         auto& entity1 = m_entities[i];
         auto collider1 = entity1->GetComponent<Collider>();
@@ -211,7 +198,6 @@ void WindowManager::OnUpdate()
                 Transform::ChangeDirection(transform2);
             }
         }
-
     }
 }
 

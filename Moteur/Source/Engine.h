@@ -17,6 +17,8 @@ public:
 
 	static void Draw(Entity e);
 
+	static Entity* GetPlayer() { return m_Instance->m_player; }
+
 	static IDXGIFactory4* Factory;// Permet les interactions DirectX/GPU
 	static ID3D12Device* Device;// Périphérique de rendu DirectX
 
@@ -30,7 +32,7 @@ private:
 		static DxgiInfoManager infoManager;
 	#endif
 
-
+	Entity* m_player;
 
 	static IDXGIFactory4* CreateDXGIFactory();// Création de l'objet qui permet les interactions DirectX/GPU
 	static ID3D12Device* CreateD3DDevice();// Création du périphérique de rendu
