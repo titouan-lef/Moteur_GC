@@ -21,7 +21,7 @@ MyGame::MyGame()
     colR1.UpdateMatrix();
     c->GetComponent<Collider>()->SetCollider(colR1);
 
-    c->Update();
+    c->RealUpdate();
 }
 
 MyGame::~MyGame()

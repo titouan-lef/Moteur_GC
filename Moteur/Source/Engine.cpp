@@ -128,7 +128,7 @@ void Engine::Render(Entity* e)
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pipelineState);// Ajout de la pipeline de rendu
 
-    CmdList->SetDescriptorHeaps(shader->m_descriptorHeaps.size(), shader->m_descriptorHeaps.data());
+    CmdList->SetDescriptorHeaps((UINT)shader->m_descriptorHeaps.size(), shader->m_descriptorHeaps.data());
 
     constBuffer->SetGraphicsRoot();
 

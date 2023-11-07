@@ -13,7 +13,7 @@ public:
 
 	int m_ID;
 
-	virtual void Init() {}
+	//virtual void Init() {}
 	virtual void Update() {}
 	virtual void PostUpdate() {}
 
