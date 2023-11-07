@@ -13,10 +13,9 @@ public:
 
 	int m_ID;
 
-	std::vector<Entity*> m_Children;
-	std::vector<Component*> m_Components;
-
-	virtual void Update() = 0;
+	virtual void Init() {}
+	virtual void Update() {}
+	virtual void PostUpdate() {}
 
 	void AddChild(Entity* child);
 
@@ -26,10 +25,13 @@ public:
 	template <typename T>// = Component>
 	T* GetComponent();
 
-	//void RealUpdate();
+	void RealUpdate();
 
 protected:
 	Entity* m_Parent = nullptr;
+
+	std::vector<Entity*> m_Children;
+	std::vector<Component*> m_Components;
 
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:
@@ -46,6 +48,7 @@ T* Entity::AddComponent()
 	T* component = new T();
 	if (!CheckAddComponent(component)) return nullptr;
 	m_Components.push_back(dynamic_cast<Component*>(component));
+	dynamic_cast<Component*>(component)->SetOwner(this);
 	return component;
 }
 
