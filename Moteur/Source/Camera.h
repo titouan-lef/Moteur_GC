@@ -1,6 +1,5 @@
 #pragma once
-
-class Entity;
+#include "Entity.h"
 
 class Camera : public Entity
 {

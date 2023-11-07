@@ -10,7 +10,7 @@ public:
 	Transform();
 	virtual ~Transform();
 
-	virtual void Update();
+	virtual void Update() override;
 
 #pragma region Getters/Setters
 	XMFLOAT3 inline GetPosition() { return Position; }										// Retourne la position
@@ -54,6 +54,9 @@ public:
 #pragma endregion
 
 private:
+	bool m_isOnScreen = true;
+	void CheckIfOnScreen();
+
 	// Ajoutez ces propriétés à votre classe Transform
 	XMFLOAT3 RotationSpeed;  // Vitesse de rotation (en radians par seconde)
 

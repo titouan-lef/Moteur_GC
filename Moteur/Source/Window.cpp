@@ -2,6 +2,7 @@
 #include "WindowManager.h"
 #include "Window.h"
 #include "MyException.h"
+#include "Engine.h"
 
 WindowManager* Window::m_pWinManager = nullptr;
 
@@ -17,6 +18,7 @@ Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	m_y(y),
 	m_hInstance(GetModuleHandle(nullptr))// (voir readme Windows.h)
 {
+	Engine::SaveWindowSize(width, height);
 	Start();
 }
 

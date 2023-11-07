@@ -1,4 +1,6 @@
 #include "Transform.h"
+#include "Camera.h"
+#include "Engine.h"
 
 Transform::Transform()
 {
@@ -29,6 +31,7 @@ void Transform::Update()
 		UpdateRotMatrix();
 		m_isDirty = false;
 	}
+
 	// vector Direction
 	//_31 = Position.x;
 	//_32 = Position.y;
@@ -79,6 +82,65 @@ void Transform::ChangeDirection(Transform* transform) {
 	direction.y = -direction.y;
 	direction.z = -direction.z;
 	transform->SetDirection(direction.x, direction.y, direction.z);
+}
+
+void Transform::CheckIfOnScreen()
+{
+	// Supposons que gWorld, gView et gProjection sont les matrices World, View et Projection
+	XMMATRIX worldViewProjection = XMMatrixMultiply(GetMatrix(), XMMatrixMultiply(Camera::m_Instance->GetViewMatrix(), Camera::m_Instance->GetProjMatrix()));
+
+	for (int i = 0; i < 8; i++)
+	{
+		// Coordonnées du point en espace local (objet)
+		XMFLOAT3 pointInLocalSpace;
+		switch (i)
+		{
+			case 0:
+				pointInLocalSpace = XMFLOAT3(-1.0f, -1.0f, -1.0f);
+				break;
+			case 1:
+				pointInLocalSpace = XMFLOAT3(1.0f, 1.0f, -1.0f);
+				break;
+			case 2:
+				pointInLocalSpace = XMFLOAT3(1.0f, -1.0f, -1.0f);
+				break;
+			case 3:
+				pointInLocalSpace = XMFLOAT3(-1.0f, 1.0f, -1.0f);
+				break;
+			case 4:
+				pointInLocalSpace = XMFLOAT3(-1.0f, -1.0f, 1.0f);
+				break;
+			case 5:
+				pointInLocalSpace = XMFLOAT3(1.0f, 1.0f, 1.0f);
+				break;
+			case 6:
+				pointInLocalSpace = XMFLOAT3(1.0f, -1.0f, 1.0f);
+				break;
+			case 7:
+				pointInLocalSpace = XMFLOAT3(-1.0f, 1.0f, 1.0f);
+				break;
+			default:
+				break;
+		}
+
+		// Transformez les coordonnées du point en espace écran
+		XMVECTOR pointInScreenSpace = XMVector2TransformCoord(XMLoadFloat3(&pointInLocalSpace), worldViewProjection);
+
+		// Convertissez les coordonnées normalisées en coordonnées écran
+		float xScreen = (pointInScreenSpace.m128_f32[0] + 1.0f) * 0.5f * Engine::GetWindowSize().x;  // screenWidth est la largeur de la fenêtre
+		float yScreen = (1.0f - pointInScreenSpace.m128_f32[1]) * 0.5f * Engine::GetWindowSize().y; // screenHeight est la hauteur de la fenêtre
+
+		// Vérifiez si le point est dans la fenêtre d'affichage
+		if (xScreen >= -1 && xScreen < 1 && yScreen >= -1 && yScreen < 1)
+		{
+			m_isOnScreen = true;
+			return;
+		}
+		else
+		{
+			m_isOnScreen = false;
+		}
+	}
 }
 
 void Transform::UpdateRotMatrix()

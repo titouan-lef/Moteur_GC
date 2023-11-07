@@ -1,5 +1,4 @@
 #include "Transform.h"
-#include "Entity.h"
 #include "Camera.h"
 
 Camera* Camera::m_Instance = nullptr;
