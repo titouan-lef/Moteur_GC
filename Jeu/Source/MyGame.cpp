@@ -5,6 +5,7 @@
 #include "GameScene.h"
 #include <SceneManager.h>
 #include "MyGame.h"
+#include "TestSwitchScene.h"
 
 
 MyGame::MyGame()
@@ -22,6 +23,7 @@ void MyGame::Initialize()
 {
     // All scenes here
     SceneManager::GetInstance()->AddScene<GameScene>();
+    SceneManager::GetInstance()->AddScene<TestSwitchScene>();
 }
 
 //void MyGame::Update()

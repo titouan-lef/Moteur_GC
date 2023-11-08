@@ -1,5 +1,7 @@
 #include "GameScene.h"
 #include <Cube.h>
+#include <SceneManager.h>
+#include "TestSwitchScene.h"
 
 GameScene::GameScene()
 {
@@ -19,5 +21,8 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-
+    test++;
+    if (test == 100) {
+        SceneManager::GetInstance()->GoToScene<TestSwitchScene>();
+	}
 }

@@ -35,7 +35,7 @@ void SceneManager::GoToScene()
 	{
 		if (typeid(*scene) == typeid(T))
 		{
-			m_pCurrentScene = dynamic_cast<Scene*>(scene);
+			m_pCurrentScene = dynamic_cast<Scene*>(new T());
 			return;
 		}
 	}

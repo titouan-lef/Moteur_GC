@@ -2,11 +2,11 @@
 
 #include <Scene.h>
 
-class GameScene : public Scene
+class TestSwitchScene : public Scene
 {
 public:
-	GameScene();
-	~GameScene() {}
+	TestSwitchScene();
+	~TestSwitchScene() {}
 
 	virtual void Init() override;
 	virtual void Update() override;

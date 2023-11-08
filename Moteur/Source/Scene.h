@@ -10,7 +10,7 @@ public:
 	~Scene();
 
 	virtual void Init() {}				// Called when scene is created (Add here your entities)
-	virtual void Update() {}			// Called every frame, for your scene logical event 
+	virtual void Update() {}			// Called every frame after all element's updates, for your scene logical event 
 
 	void RealUpdate();					// Called every frame by the engine, do not override this method
 	void Render();						// Called every frame by the engine, do not override this method
