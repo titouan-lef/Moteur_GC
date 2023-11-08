@@ -8,6 +8,8 @@ public:
 	Cube();
 	~Cube();
 
+    virtual void Update() override;
+
 private:
 	std::vector<Vertex> m_vertices = {
         // Front face

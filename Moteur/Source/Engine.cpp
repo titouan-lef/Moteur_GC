@@ -3,24 +3,24 @@
 #include "Camera.h"
 #include "Engine.h"
 
-Engine* Engine::m_Instance = nullptr;
-
-Engine::Engine()
-{
-    this->m_Instance = this; GetInstance;
-}
-
 Engine::~Engine()
 {
 }
 
 void Engine::Init()
 {
+    Time = new Timer();
     Camera* c = new Camera();
-    m_Instance->Factory = m_Instance->CreateDXGIFactory();
-    m_Instance->Device = m_Instance->CreateD3DDevice();
-    m_Instance->CmdAllocator = m_Instance->CreateCommandAllocator();
-    m_Instance->CmdList = m_Instance->CreateCommandList();
+    GetInstance()->Factory = GetInstance()->CreateDXGIFactory();
+    GetInstance()->Device = GetInstance()->CreateD3DDevice();
+    GetInstance()->CmdAllocator = GetInstance()->CreateCommandAllocator();
+    GetInstance()->CmdList = GetInstance()->CreateCommandList();
+}
+
+Engine* Engine::GetInstance()
+{
+    static Engine engine;
+    return &engine;
 }
 
 IDXGIFactory4* Engine::CreateDXGIFactory()
@@ -109,10 +109,6 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
     return adapter;
 }
 #pragma endregion
-
-
-
-
 
 void Engine::Render(Entity* e)
 {

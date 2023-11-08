@@ -12,14 +12,15 @@ public:
 
 	Scene* GetActiveScene();		// Get the current active scene
 
-	template <typename T>// = Scene>
+	template <typename T = Scene>// = Scene>
 	inline void GoToScene();		// Go to a specific scene
 	template <typename T = Scene>
 	inline void AddScene();			// Add a scene to the scene manager
-	template <typename T>// = Scene>
+	template <typename T = Scene>// = Scene>
 	inline void RemoveScene();		// Remove a scene from the scene manager
 
-	void Update();
+	void CurrentSceneUpdate();		// Update the current scene
+	void CurrentSceneRender();		// Render the current scene
 private:
 	Scene* m_pCurrentScene = nullptr;
 	std::vector<Scene*> m_Scenes;

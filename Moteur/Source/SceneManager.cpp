@@ -28,15 +28,37 @@ Scene* SceneManager::GetActiveScene()
 	}
 }
 
-void SceneManager::Update()
+void SceneManager::CurrentSceneUpdate()
 {
 	if (m_pCurrentScene != nullptr)
 	{
-		m_pCurrentScene->Update();
+		m_pCurrentScene->RealUpdate();
 	}
 	else
 	{
 		std::cout << "No scene active" << std::endl;
+		std::cout << "Scene list size: " << m_Scenes.size() << std::endl;
+		if (m_Scenes.size() > 0)
+		{
+			m_pCurrentScene = m_Scenes[0];
+		}
+	}
+}
+
+void SceneManager::CurrentSceneRender()
+{
+	if (m_pCurrentScene != nullptr)
+	{
+		m_pCurrentScene->Render();
+	}
+	else
+	{
+		std::cout << "No scene active" << std::endl;
+		std::cout << "Scene list size: " << m_Scenes.size() << std::endl;
+		if (m_Scenes.size() > 0)
+		{
+			m_pCurrentScene = m_Scenes[0];
+		}
 	}
 }
 

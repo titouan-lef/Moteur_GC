@@ -12,7 +12,7 @@ Window::Window(const wchar_t* name, UINT width, UINT height, UINT x, UINT y)
 	m_height(height),
 	m_hInstance(GetModuleHandle(nullptr))// GetModuleHandle(nullptr)  : handle vers notre application
 {
-	Engine::SaveWindowSize(width, height);
+	Engine::GetInstance()->SaveWindowSize(width, height);
 	// Création d'une classe de fenêtre
 	WNDCLASS wc = {};
 	wc.lpfnWndProc = WindowProc;

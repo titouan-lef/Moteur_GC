@@ -14,3 +14,8 @@ Cube::Cube() {
 Cube::~Cube()
 {
 }
+
+void Cube::Update()
+{
+	GetComponent<Transform>()->Rotate(10*Engine::GetInstance()->Time->Peek()*0.1f, 10 * Engine::GetInstance()->Time->Peek() * 0.1f, 0);
+}

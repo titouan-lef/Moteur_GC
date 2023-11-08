@@ -1,4 +1,6 @@
 #include "Entity.h"
+#include "Engine.h"
+#include "SceneManager.h"
 #include "Game.h"
 
 Game::Game(const wchar_t* name, UINT width, UINT height, UINT x, UINT y) : m_window(Window(name, width, height, x, y))
@@ -18,10 +20,15 @@ Game::Game() : m_window(Window(L"Game", 800, 600))
 
 Game::~Game()
 {
+	delete m_wndManager;
 }
 
 int Game::Run()
 {
+	// Initialize the game
+	Initialize();
+
+	// Let's play!
 	while (true)
 	{
 		if (Window::ProcessMessages())
@@ -29,8 +36,20 @@ int Game::Run()
 
 		Update();
 
+		Engine::GetInstance()->Time->Mark();
+
 		m_wndManager->PreRender();
 		Render();
 		m_wndManager->PostRender();
 	}
+}
+
+void Game::Update()
+{
+	SceneManager::GetInstance()->CurrentSceneUpdate();
+}
+
+void Game::Render()
+{
+	SceneManager::GetInstance()->CurrentSceneRender();
 }

@@ -3,8 +3,7 @@
 
 int main()
 {
-	Engine* e = new Engine();
-	Engine::Init();
+	Engine::GetInstance()->Init();
 
 	MyGame myGame = MyGame();
 	return myGame.Run();

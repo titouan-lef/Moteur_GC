@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "WindowManager.h"
+#include "../../Jeu/Source/Controller.h"
 
 class Entity;
 
@@ -14,9 +15,11 @@ public:
 
 	int Run();
 
-	virtual void Update() = 0;
-	virtual void Render() = 0;
-
+	virtual void Initialize() = 0; // Called once before the game loop, put your scene here
+	void Update();
+	void Render();
+protected:
+	Controller* m_InputHandler = nullptr;
 private:
 	Window m_window;
 	WindowManager* m_wndManager = nullptr;

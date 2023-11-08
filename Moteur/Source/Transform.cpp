@@ -63,8 +63,9 @@ void Transform::UpdateMatrix()
 
 void Transform::Rotate(float pitch, float yaw, float roll)
 {
-	// Effectue une rotation à partir des angles yaw, pitch et roll
-	XMStoreFloat4(&RotationQuat, XMQuaternionRotationRollPitchYaw(pitch, yaw, roll));
+	// Effectue une rotation à partir des angles yaw, pitch et roll à partir du quaternion actuelle
+	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	XMStoreFloat4(&RotationQuat, XMQuaternionMultiply(XMLoadFloat4(&RotationQuat), XMQuaternionRotationMatrix(rotation)));
 	m_isDirty = true;
 }
 
@@ -127,8 +128,8 @@ void Transform::CheckIfOnScreen()
 		XMVECTOR pointInScreenSpace = XMVector2TransformCoord(XMLoadFloat3(&pointInLocalSpace), worldViewProjection);
 
 		// Convertissez les coordonnées normalisées en coordonnées écran
-		float xScreen = (pointInScreenSpace.m128_f32[0] + 1.0f) * 0.5f * Engine::GetWindowSize().x;  // screenWidth est la largeur de la fenêtre
-		float yScreen = (1.0f - pointInScreenSpace.m128_f32[1]) * 0.5f * Engine::GetWindowSize().y; // screenHeight est la hauteur de la fenêtre
+		float xScreen = (pointInScreenSpace.m128_f32[0] + 1.0f) * 0.5f * Engine::GetInstance()->GetWindowSize().x;  // screenWidth est la largeur de la fenêtre
+		float yScreen = (1.0f - pointInScreenSpace.m128_f32[1]) * 0.5f * Engine::GetInstance()->GetWindowSize().y; // screenHeight est la hauteur de la fenêtre
 
 		// Vérifiez si le point est dans la fenêtre d'affichage
 		if (xScreen >= -1 && xScreen < 1 && yScreen >= -1 && yScreen < 1)

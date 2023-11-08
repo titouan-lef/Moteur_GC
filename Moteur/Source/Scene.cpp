@@ -12,9 +12,22 @@ Scene::~Scene()
 
 void Scene::RealUpdate()
 {
+	if (!m_Initialized)
+	{
+		this->Init();
+		m_Initialized = true;
+	}
+
 	for (auto& entity : m_entities)
 	{
 		entity->RealUpdate();
+	}
+}
+
+void Scene::Render()
+{
+	for (auto& entity : m_entities)
+	{
 		entity->Render();
 	}
 }
