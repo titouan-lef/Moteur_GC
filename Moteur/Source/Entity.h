@@ -11,23 +11,23 @@ public:
 
 	void Born();
 
-	void Render();
 
 	int m_ID;
 
-	virtual void Init() {}
-	virtual void Update() {}
-	virtual void PostUpdate() {}
+	virtual void Init() {}			// Initialize entity and all children, called once
+	virtual void Update() {}		// Update entity called every frame
+	virtual void PostUpdate() {}	// Update entity called every frame after all updates
 
-	void AddChild(Entity* child);
-
-	template <typename T>// = Component>
-	T* AddComponent();
+	void AddChild(Entity* child); // Add child to entity
 
 	template <typename T>// = Component>
-	T* GetComponent();
+	T* AddComponent();		// Add component to entity
 
-	void RealUpdate();
+	template <typename T>// = Component>
+	T* GetComponent();		// Get component from entity
+
+	void RealUpdate();		// Update entity, all children and components
+	void Render();			// Render all children and components33
 
 protected:
 	Entity* m_Parent = nullptr;
