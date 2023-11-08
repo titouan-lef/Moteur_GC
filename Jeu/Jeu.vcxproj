@@ -31,14 +31,12 @@
     <ClInclude Include="Source\GameScene.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\MyGame.h" />
-    <ClInclude Include="Source\TestSwitchScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Controller.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MyGame.cpp" />
-    <ClCompile Include="Source\TestSwitchScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\shaders.hlsl">
