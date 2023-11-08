@@ -6,6 +6,12 @@ CollisionManager::~CollisionManager()
 {
 }
 
+CollisionManager* CollisionManager::GetInstance()
+{
+	static CollisionManager cm;
+	return &cm;
+}
+
 void CollisionManager::AddEntity(Entity* entity)
 {
 	if (entity != nullptr)

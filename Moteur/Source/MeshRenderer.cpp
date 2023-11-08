@@ -26,3 +26,8 @@ void MeshRenderer::Update()
     XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
     GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
 }
+
+void MeshRenderer::Render()
+{
+	Engine::GetInstance()->Render(GetOwner());
+}

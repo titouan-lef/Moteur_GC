@@ -10,7 +10,7 @@ public:
 	CollisionManager() {}
 	~CollisionManager();
 
-	static CollisionManager* GetInstance() { static CollisionManager cm; return &cm; }
+	static CollisionManager* GetInstance();
 
 	static void AddEntity(Entity* entity);
 	static void RemoveEntity(Entity* entity);

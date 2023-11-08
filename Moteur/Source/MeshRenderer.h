@@ -12,6 +12,7 @@ public:
 
 	void Init(Mesh* mesh, Shader* shader);
 	virtual void Update() override;
+	virtual void Render() override;
 
 private:
 	std::string m_shaderPath;

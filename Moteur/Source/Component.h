@@ -18,6 +18,7 @@ public:
 	void inline Deactivate() { m_isActive = false; OnDeactivate(); }
 
 	virtual void Update() {}
+	virtual void Render() {}
 
 	void inline SetOwner(Entity* entity) { m_owner = entity; }
 	Entity* GetOwner() { return m_owner; }

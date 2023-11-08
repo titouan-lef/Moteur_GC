@@ -32,7 +32,15 @@ void Entity::Born()
 
 void Entity::Render()
 {
-	Engine::GetInstance()->Render(this);
+	for (auto it = m_Children.begin(); it != m_Children.end(); ++it)
+	{
+		(*it)->Render();
+	}
+	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+	{
+		if ((*it)->IsActive())
+			(*it)->Render();
+	}
 }
 
 void Entity::AddChild(Entity* child)

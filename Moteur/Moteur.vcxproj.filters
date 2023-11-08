@@ -131,6 +131,12 @@
     <ClInclude Include="Source\CollisionManager.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneManager.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -214,6 +220,12 @@
     <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\CollisionManager.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneManager.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
