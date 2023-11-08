@@ -45,7 +45,7 @@ void MyGame::Update()
     m_controller->Update();
     float elapsedTime = m_time->Peek();
     float elapsedTimeR = m_timeR->Peek();
-    if (elapsedTime > 2) {
+    if (elapsedTime > 0.5) {
         listRock->push_back(CreateRock());
         m_time->Mark();
     }
@@ -54,9 +54,9 @@ void MyGame::Update()
         auto transform = caillou->GetComponent<Transform>();
         transform->MoveByVector(transform->GetDirection(), 1);
         //transform->Rotate(transform->GetRotationSpeed().x, transform->GetRotationSpeed().y, transform->GetRotationSpeed().z);
-        transform->Rotate( elapsedTimeR * transform->GetRotationSpeed().x, 0, 0);
+        //transform->Rotate( elapsedTimeR * transform->GetRotationSpeed().x, 0, 0);
         caillou->RealUpdate();
-        m_player->GetComponent<LifeSystem>()->IsHit(caillou);
+        //m_player->GetComponent<LifeSystem>()->IsHit(caillou);
     }
 
     m_player->Update();

@@ -35,6 +35,7 @@ public:
 	void UpdateMatrix();							// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
 
 #pragma region Rotation
+
 	void Rotate(float yaw, float pitch, float roll);	// Effectue une rotation en utilisant des angles yaw, pitch et roll
 	void RotateRoll(float angle);						// Effectue une rotation autour de l'axe X (roll)
 	void RotatePitch(float angle);						// Effectue une rotation autour de l'axe Y (pitch)
