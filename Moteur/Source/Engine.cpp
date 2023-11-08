@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "MyException.h"
+#include "CollisionManagrer.h"
 
 DxgiInfoManager Engine::infoManager = {};
 
@@ -13,6 +14,7 @@ ID3D12GraphicsCommandList* Engine::CmdList = CreateCommandList();
 Engine::Engine()
 {
 	this->m_Instance = this;
+    CollisionManager* collisionManager = new CollisionManager();
 }
 
 Engine::~Engine()

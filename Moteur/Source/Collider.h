@@ -10,13 +10,11 @@ public:
 	virtual ~Collider();
 
 	virtual void Initialize()override;
-	virtual void Update();
+	virtual void Update() override;
 	Transform* GetCollider();
 
-	bool CheckCollision(Collider& collider1, Collider& collider2);
-	bool IsInGameArea() { return m_isInGameArea; }
+	bool CheckCollision(Collider* collider);
+	virtual void OnCollision(Entity* e);
 private:
-	bool m_isInGameArea;
 	Transform* m_Collider;
 };
-

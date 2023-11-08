@@ -26,18 +26,7 @@ void Collider::Initialize()
 
 void Collider::Update()
 {
-	// Check si l'entity est dans une zone autour du joueur
-	Transform t = GetOwner()->GetComponent<Transform>();
-	if (m_Collider->GetPosition().x > 100.0f || m_Collider->GetPosition().x < -100.0f ||
-		m_Collider->GetPosition().y > 100.0f || m_Collider->GetPosition().y < -100.0f ||
-		m_Collider->GetPosition().z > 100.0f || m_Collider->GetPosition().z < -100.0f)
-	{
-		m_isActive = false;
-	}
-	else
-	{
-		m_isActive = true;
-	}
+	m_isActive = GetOwner()->GetComponent<Transform>()->IsOnScreen();
 }
 
 Transform* Collider::GetCollider()
@@ -45,29 +34,29 @@ Transform* Collider::GetCollider()
 	return m_Collider;
 }
 
-bool Collider::CheckCollision(Collider& collider1, Collider& collider2) {
-	XMFLOAT3 cube1Scale = collider1.GetCollider()->GetScale();
+bool Collider::CheckCollision(Collider* collider) {
+	XMFLOAT3 cube1Scale = GetOwner()->GetComponent<Transform>()->GetScale();
 	XMFLOAT3 cube1Min = {
-		collider1.GetCollider()->GetPosition().x - cube1Scale.x / 2.0f,
-		collider1.GetCollider()->GetPosition().y - cube1Scale.y / 2.0f,
-		collider1.GetCollider()->GetPosition().z - cube1Scale.z / 2.0f
+		GetOwner()->GetComponent<Transform>()->GetPosition().x - cube1Scale.x / 2.0f,
+		GetOwner()->GetComponent<Transform>()->GetPosition().y - cube1Scale.y / 2.0f,
+		GetOwner()->GetComponent<Transform>()->GetPosition().z - cube1Scale.z / 2.0f
 	};
 	XMFLOAT3 cube1Max = {
-		collider1.GetCollider()->GetPosition().x + cube1Scale.x / 2.0f,
-		collider1.GetCollider()->GetPosition().y + cube1Scale.y / 2.0f,
-		collider1.GetCollider()->GetPosition().z + cube1Scale.z / 2.0f
+		GetOwner()->GetComponent<Transform>()->GetPosition().x + cube1Scale.x / 2.0f,
+		GetOwner()->GetComponent<Transform>()->GetPosition().y + cube1Scale.y / 2.0f,
+		GetOwner()->GetComponent<Transform>()->GetPosition().z + cube1Scale.z / 2.0f
 	};
 
-	XMFLOAT3 cube2Scale = collider2.GetCollider()->GetScale();
+	XMFLOAT3 cube2Scale = collider->GetOwner()->GetComponent<Transform>()->GetScale();
 	XMFLOAT3 cube2Min = {
-		collider2.GetCollider()->GetPosition().x - cube2Scale.x / 2.0f,
-		collider2.GetCollider()->GetPosition().y - cube2Scale.y / 2.0f,
-		collider2.GetCollider()->GetPosition().z - cube2Scale.z / 2.0f
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().x - cube2Scale.x / 2.0f,
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().y - cube2Scale.y / 2.0f,
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().z - cube2Scale.z / 2.0f
 	};
 	XMFLOAT3 cube2Max = {
-		collider2.GetCollider()->GetPosition().x + cube2Scale.x / 2.0f,
-		collider2.GetCollider()->GetPosition().y + cube2Scale.y / 2.0f,
-		collider2.GetCollider()->GetPosition().z + cube2Scale.z / 2.0f
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().x + cube2Scale.x / 2.0f,
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().y + cube2Scale.y / 2.0f,
+		collider->GetOwner()->GetComponent<Transform>()->GetPosition().z + cube2Scale.z / 2.0f
 	};
 
 	// Check sur l'axe X
@@ -80,4 +69,9 @@ bool Collider::CheckCollision(Collider& collider1, Collider& collider2) {
 	bool overlapZ = (cube1Min.z <= cube2Max.z && cube1Max.z >= cube2Min.z);
 
 	return overlapX && overlapY && overlapZ;
+}
+
+void Collider::OnCollision(Entity* e)
+{
+	std::cout << "Collision" << std::endl;
 }

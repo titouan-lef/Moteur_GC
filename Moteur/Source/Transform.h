@@ -26,6 +26,7 @@ public:
 	XMMATRIX inline GetMatrix() { return XMLoadFloat4x4(&Matrix); }
 	XMFLOAT4X4 inline GetRotMatrix() { return RotationMatrix; }
 	XMMATRIX inline GetMatrixTranspose() { return XMMatrixTranspose(XMLoadFloat4x4(&Matrix)); }
+	bool inline IsOnScreen() { return m_isOnScreen; }
 #pragma endregion
 
 	void MoveByVector(XMFLOAT3 vec, float elapsed);	// Déplace la position en fonction d'un vecteur
