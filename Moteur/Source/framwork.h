@@ -14,9 +14,6 @@
 #include <DirectXMath.h>
 #include "d3dx12.h"
 
-#include <iostream>
 #include <map>
 #include <vector>
-#include <string>
-#include <wrl.h>
 #include <shellapi.h>

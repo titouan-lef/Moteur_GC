@@ -21,9 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\Camera.h" />
-    <ClInclude Include="Source\App.h" />
     <ClInclude Include="Source\Collider.h" />
-    <ClInclude Include="Source\CollisionManagrer.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\ConstantBuffer.h" />
     <ClInclude Include="Source\Cube.h" />
@@ -34,10 +32,13 @@
     <ClInclude Include="Source\EngineException.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\Icosahedron.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
+    <ClInclude Include="Source\Pyramid.h" />
     <ClInclude Include="Source\Rectangle.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\ShaderColor.h" />
@@ -52,10 +53,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
-    <ClCompile Include="Source\App.cpp" />
     <ClCompile Include="Source\Collider.cpp" />
-    <ClCompile Include="Source\CollisionManager.cpp" />
-    <ClCompile Include="Source\CollisionManagrer.cpp" />
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Cube.cpp" />
@@ -64,11 +62,13 @@
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
-    <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
+    <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\ShaderColor.cpp" />
@@ -81,25 +81,9 @@
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Source\shaders.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Source\DXGetErrorDescription.inl" />
     <None Include="Source\DXGetErrorString.inl" />
     <None Include="Source\DXTrace.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Source\shadersColor.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="Source\shadersTexture.hlsl">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Source\pierre.jfif" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -110,26 +94,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>

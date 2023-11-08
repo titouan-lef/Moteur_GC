@@ -1,13 +1,8 @@
 #include "Shader.h"
 #include "MyException.h"
 
-DxgiInfoManager Shader::infoManager = {};
-
-Shader::Shader(Type type, ID3D12RootSignature* rootSignature) :
-    m_type(type),
-    m_rootSignature(rootSignature)
+Shader::Shader(Type type) : m_type(type)
 {
-    CreatePSO();
 }
 
 Shader::~Shader()
@@ -28,7 +23,7 @@ ID3D12RootSignature* Shader::CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARA
 
     // Création de la signature racine
     ID3D12RootSignature* rootSignature = nullptr;
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
 
     return rootSignature;
 }
@@ -68,7 +63,7 @@ void Shader::CreatePSO()
         break;
     }
 
-    fileName = L"source/shaders" + fileName + L".hlsl";
+    fileName = L"Source/shaders" + fileName + L".hlsl";
 
     GFX_THROW_INFO_ONLY(D3DCompileFromFile(fileName.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
     GFX_THROW_INFO_ONLY(D3DCompileFromFile(fileName.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
@@ -97,5 +92,5 @@ void Shader::CreatePSO()
     psoDesc.SampleDesc.Count = 1;
 
     // Création de la PSO
-    GFX_THROW_INFO_ONLY(Engine::Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
 }

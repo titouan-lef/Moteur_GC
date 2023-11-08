@@ -1,11 +1,11 @@
 #include "ShaderColor.h"
-#include "MyException.h"
 
-ID3D12RootSignature* ShaderColor::s_rootSignature = ShaderColor::CreateRootSignature();
-
-ShaderColor::ShaderColor(ConstantBufferData* cbd) : Shader(Type::color, s_rootSignature)
+ShaderColor::ShaderColor(XMMATRIX world) : Shader(Type::color)
 {
-    m_constBuffer = new ConstantBuffer(cbd);
+    m_rootSignature = CreateRootSignature();
+    CreatePSO();
+
+    m_constBuffer = new ConstantBuffer(world);
 
     m_descriptorHeaps = { m_constBuffer->m_cbvHeapDesc };
 }

@@ -1,5 +1,6 @@
 #include "Component.h"
 #include "Entity.h"
+#include "Engine.h"
 
 Entity::Entity()
 {
@@ -15,6 +16,11 @@ Entity::~Entity()
 	m_Components.clear();
 }
 
+void Entity::Render()
+{
+	Engine::GetInstance()->Render(this);
+}
+
 void Entity::AddChild(Entity* child)
 {
 	if (!CheckAddChild(child)) return;
@@ -25,17 +31,12 @@ void Entity::AddChild(Entity* child)
 void Entity::RealUpdate()
 {
 	Update();
-	PostUpdate();
 	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
 	{
 		if ((*it)->IsActive())
 			(*it)->Update();
 	}
-}
-
-void Entity::Draw()
-{
-
+	PostUpdate();
 }
 
 bool Entity::CheckAddChild(Entity* child)

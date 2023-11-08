@@ -11,8 +11,10 @@ struct ConstantBufferData
 class ConstantBuffer : public Buffer
 {
 public:
-	ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor = 1);
+	ConstantBuffer(XMMATRIX world, UINT nbDescriptor = 1);
 	virtual ~ConstantBuffer();
+
+	void UpdateBuffer(XMMATRIX world);
 
 	virtual void SetGraphicsRoot();
 

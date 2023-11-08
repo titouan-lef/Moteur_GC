@@ -1,6 +1,5 @@
 #include <memory>
 #include "DxgiInfoManager.h"
-#include "Window.h"
 #include "MyException.h"
 
 #pragma comment(lib, "dxguid.lib")
@@ -14,19 +13,19 @@ DxgiInfoManager::DxgiInfoManager()
 
 	// load the dll that contains the function DXGIGetDebugInterface
 	const auto hModDxgiDebug = LoadLibraryEx(MyException::convertCharArrayToLPCWSTR("dxgidebug.dll"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-	if (hModDxgiDebug == nullptr)
+	/*if (hModDxgiDebug == nullptr)
 	{
 		throw EHWND_LAST_EXCEPT();
-	}
+	}*/
 
 	// get address of DXGIGetDebugInterface in dll
 	const auto DxgiGetDebugInterface = reinterpret_cast<DXGIGetDebugInterface>(
 		reinterpret_cast<void*>(GetProcAddress(hModDxgiDebug, "DXGIGetDebugInterface"))
 		);
-	if (DxgiGetDebugInterface == nullptr)
+	/*if (DxgiGetDebugInterface == nullptr)
 	{
 		throw EHWND_LAST_EXCEPT();
-	}
+	}*/
 
 	HRESULT hr;
 	GFX_THROW_NOINFO(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), &pDxgiInfoQueue));

@@ -1,22 +1,19 @@
 #pragma once
+#include "framwork.h"
 #include "DxgiInfoManager.h"
-#include "Cube.h"
-#include "Rectangle.h"// TO DO : A SUPPRIMER
-#include "Timer.h"
+#include "Entity.h"
+//#include "Cube.h"
+//#include "Rectangle.h"// TO DO : A SUPPRIMER
+//#include "Timer.h"
 
 class WindowManager
 {
 public:
-    WindowManager(UINT width, UINT height);
+    WindowManager(UINT width, UINT height, HWND hWnd);
     virtual ~WindowManager();
 
-    void OnInit(UINT width, UINT height, HWND hWnd);
-    void OnUpdate();
-    void OnRender();
-
-    // Gestion des touches
-    virtual void OnKeyDown(UINT8 key) {}// Fonction r�aliser lors de l'appui d'une touche
-    virtual void OnKeyUp(UINT8 key) {}// Fonction r�aliser lors du relachement d'une touche
+    void PreRender();
+    void PostRender();
 
 private:
     // Gestion des erreurs
@@ -28,11 +25,12 @@ private:
     CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fen�tre
     CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui d�finissent la zone o� le rendu sera effectu� pour chaque fen�tre
 
-    std::vector<Entity*> m_entities;
-    Timer* m_entityTimer;
+    /*std::vector<Entity*> m_entities;
+    Timer* m_entityTimer;*/
 
     // Gestion des commandes
     ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes
+    CD3DX12_RESOURCE_BARRIER transition = {};// Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
 
     // Gestion des "surfaces de dessin" (= Render Target)
     static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain g�re pour l'application
@@ -50,8 +48,6 @@ private:
     const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fen�tre
 
 
-    Cube* r1 = nullptr;//TO DO : A supprimer
-    Cube* r2 = nullptr;//TO DO : A supprimer
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
@@ -66,7 +62,7 @@ private:
     void CreateSyncObj();// Cr�ation d'une infrastructure de synchronisation pour assurer que le GPU ait termin� son travail avant de passer � la frame suivante
 
 
-    void PopulateCommandList();// Enregistre les commandes pour le rendu actuel
+    void Render(Entity* e);// Enregistre les commandes pour le rendu actuel
     void WaitForPreviousFrame();// Attend que la frame soit trait�e avant de pouvoir �tre affich�
 };
 

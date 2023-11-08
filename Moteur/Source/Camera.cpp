@@ -2,11 +2,10 @@
 #include "Camera.h"
 
 Camera* Camera::m_Instance = nullptr;
-XMFLOAT4X4 Camera::m_viewMatrix = {};
-XMFLOAT4X4 Camera::m_projMatrix = {};
 
 Camera::Camera()
 {
+	m_Instance = this;
 	m_fov = XM_PIDIV2;
 	m_aspectRatio = 16 / 9.0f;
 	m_nearPlane = 0.1f;
@@ -18,10 +17,6 @@ Camera::Camera()
 }
 
 Camera::~Camera()
-{
-}
-
-void Camera::Init()
 {
 }
 

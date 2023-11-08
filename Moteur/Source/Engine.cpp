@@ -1,15 +1,12 @@
-#include "Engine.h"
 #include "MyException.h"
 #include "CollisionManagrer.h"
+#include "MeshRenderer.h"
+#include "Camera.h"
+#include "Engine.h"
 
 DxgiInfoManager Engine::infoManager = {};
 
 Engine* Engine::m_Instance = nullptr;
-
-IDXGIFactory4* Engine::Factory = CreateDXGIFactory();
-ID3D12Device* Engine::Device = CreateD3DDevice();
-ID3D12CommandAllocator* Engine::CmdAllocator = CreateCommandAllocator();
-ID3D12GraphicsCommandList* Engine::CmdList = CreateCommandList();
 
 Engine::Engine()
 {
@@ -19,6 +16,15 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+}
+
+void Engine::Init()
+{
+    Camera* c = new Camera();
+    m_Instance->Factory = m_Instance->CreateDXGIFactory();
+    m_Instance->Device = m_Instance->CreateD3DDevice();
+    m_Instance->CmdAllocator = m_Instance->CreateCommandAllocator();
+    m_Instance->CmdList = m_Instance->CreateCommandList();
 }
 
 IDXGIFactory4* Engine::CreateDXGIFactory()
@@ -112,10 +118,25 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
 
 
 
-
-
-
-
-void Engine::Draw(Entity e)
+void Engine::Render(Entity* e)
 {
+    // Ajout de l'affichage    
+    // POUR LES TEXTURES
+    //constBuffer->CreateTexture(CmdList);
+    // POUR LES COULEURS
+
+    MeshRenderer* meshRenderer = e->GetComponent<MeshRenderer>();
+    Shader* shader = meshRenderer->m_shader;
+    ConstantBuffer* constBuffer = shader->m_constBuffer;
+
+    CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
+    CmdList->SetPipelineState(shader->m_pipelineState);// Ajout de la pipeline de rendu
+
+    CmdList->SetDescriptorHeaps((UINT)shader->m_descriptorHeaps.size(), shader->m_descriptorHeaps.data());
+
+    constBuffer->SetGraphicsRoot();
+
+    CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
+    CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+    CmdList->DrawIndexedInstanced(meshRenderer->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
 }

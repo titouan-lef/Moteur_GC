@@ -1,6 +1,7 @@
 #include "ConstantBuffer.h"
+#include "Camera.h"
 
-ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescriptor) : Buffer((sizeof(ConstantBufferData) + 255) & ~255, constBufferData)
+ConstantBuffer::ConstantBuffer(XMMATRIX world, UINT nbDescriptor) : Buffer((sizeof(ConstantBufferData) + 255) & ~255)
 {
 	// Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -9,7 +10,7 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	// Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
-	Engine::Device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeapDesc));
+	Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeapDesc));
 
 
 	// Défini l'emplacement et la taille des données du constant buffer
@@ -18,7 +19,9 @@ ConstantBuffer::ConstantBuffer(ConstantBufferData* constBufferData, UINT nbDescr
 	cbvDesc.SizeInBytes = m_bufferSize;								// Taille du constant buffer
 
 	// Stockage du constant buffer view dans le tas
-	Engine::Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
+	Engine::GetInstance()->Device->CreateConstantBufferView(&cbvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());
+
+	UpdateBuffer(world);
 }
 
 ConstantBuffer::~ConstantBuffer()
@@ -26,10 +29,21 @@ ConstantBuffer::~ConstantBuffer()
 	delete m_cbvHeapDesc;
 }
 
+void ConstantBuffer::UpdateBuffer(XMMATRIX world)
+{
+	ConstantBufferData* cbd = new ConstantBufferData();
+	cbd->World = world;
+	cbd->View = Camera::GetInstance()->GetTransposedView();
+	cbd->Projection = Camera::GetInstance()->GetTransposedProj();
+
+	Buffer::UpdateBuffer(cbd);
+	delete cbd;
+}
+
 void ConstantBuffer::SetGraphicsRoot()
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvHeapDesc->GetGPUDescriptorHandleForHeapStart();
-	Engine::CmdList->SetGraphicsRootDescriptorTable(0, srv);
+	Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
 }
 
 
