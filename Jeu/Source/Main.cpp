@@ -6,6 +6,6 @@ int main()
 	Engine* e = new Engine();
 	Engine::Init();
 
-	MyGame myGame = MyGame();
+	MyGame myGame;
 	return myGame.Run();
 }

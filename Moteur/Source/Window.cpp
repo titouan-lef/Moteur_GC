@@ -50,8 +50,8 @@ bool Window::ProcessMessages()
 	MSG msg = {};
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))// Tant qu'un message de fenêtre est disponible (voir readme Windows.h)
 	{
-		if (msg.message == WM_QUIT)// Si le message indique la fermeture de la fenêtre
-			return true;
+		//if (msg.message == WM_QUIT)// Si le message indique la fermeture de la fenêtre
+		//	return true;
 
 		TranslateMessage(&msg);// Convertie le message à clé virtuelle en messages caractères
 		DispatchMessage(&msg);// Transmet le message à une procédure de fenêtre pour réaliser l'action : wc.lpfnWndProc
