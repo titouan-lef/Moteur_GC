@@ -25,8 +25,8 @@ public:
 	virtual void SetGraphicsRoot() = 0;
 
 	// TO DO : en private ?
-	ConstantBuffer* m_constBuffer;
-	std::vector<ID3D12DescriptorHeap*> m_descriptorHeaps;
+	//ConstantBuffer* m_constBuffer;
+	//std::vector<ID3D12DescriptorHeap*> m_descriptorHeaps;
 
 protected:
 	// Gestion des erreurs

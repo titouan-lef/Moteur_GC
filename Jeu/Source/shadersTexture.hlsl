@@ -5,9 +5,21 @@ cbuffer ConstantBufferData : register(b0)
     matrix Projection;
 }
 
+//cbuffer ConstantBufferPass : register(b1)
+//{
+    //matrix World;
+    //matrix View;
+    //matrix Projection;
+//}
+
 Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
+struct VSInput
+{
+    float4 position : POSITION;
+    float2 uv : TEXCOORD;
+};
 
 struct PSInput
 {
@@ -15,7 +27,7 @@ struct PSInput
     float2 uv : TEXCOORD;
 };
 
-PSInput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
+PSInput VSMain(VSInput vsi)
 {
     PSInput result;
     

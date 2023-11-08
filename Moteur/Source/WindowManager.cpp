@@ -81,6 +81,15 @@ void WindowManager::CreateDescriptorHeaps()
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = Engine::GetInstance()->Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+
+    // Propriétés du tas de descripteurs CBV_SRV_UAV (Constant Buffer View - Shader Resource Views - Unordered Access Views) permettant d'accéder à des ressources du shader
+    D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
+    cbvHeapDesc.NumDescriptors = 100;
+    cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    // Création du tas de descripteurs CBV_SRV_UAV dont le shader a besoin pour accéder aux différentes ressources
+    Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeapDesc));
+
 }
 
 
@@ -137,6 +146,8 @@ void WindowManager::PreRender()
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
     Engine::GetInstance()->CmdList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
+
+    Engine::GetInstance()->CmdList->SetDescriptorHeaps((UINT)m_descriptorHeaps.size(), m_descriptorHeaps.data());
 }
 
 void WindowManager::PostRender()

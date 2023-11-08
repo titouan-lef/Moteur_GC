@@ -126,18 +126,20 @@ void Engine::Render(Entity* e)
     Shader* shader = meshRenderer->m_shader;
     //ConstantBuffer* constBuffer = shader->m_constBuffer;
 
-    ConstantBufferSR* constBuffer = (ConstantBufferSR*)shader->m_constBuffer;
+    //ConstantBufferSR* constBuffer = (ConstantBufferSR*)shader->m_constBuffer;
 
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pipelineState);// Ajout de la pipeline de rendu
 
-    CmdList->SetDescriptorHeaps((UINT)shader->m_descriptorHeaps.size(), shader->m_descriptorHeaps.data());
+    CmdList->SetGraphicsRootConstantBufferView(1, e->);
 
-    constBuffer->SetGraphicsRoot();
+    //constBuffer->SetGraphicsRoot();
+ 
+
 
     CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
     CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
 
-    constBuffer->CreateTexture();
+    //constBuffer->CreateTexture();
     CmdList->DrawIndexedInstanced(meshRenderer->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
 }
