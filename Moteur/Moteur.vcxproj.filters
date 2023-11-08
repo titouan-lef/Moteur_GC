@@ -137,6 +137,9 @@
     <ClInclude Include="Source\SceneManager.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Input.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -227,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="Source\SceneManager.cpp">
       <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input.cpp">
+      <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

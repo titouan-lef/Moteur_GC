@@ -27,10 +27,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Controller.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\MyGame.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Controller.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MyGame.cpp" />
   </ItemGroup>
