@@ -1,5 +1,5 @@
 #pragma once
-#include "M_Input.h"
+#include "Input.h"
 #include <map>
 
 
@@ -18,6 +18,6 @@ public:
     bool IsMoving(Direction dir) const;
 
 private:
-    M_Input* m_input;
+    Input* m_input;
     std::map<Direction, bool> m_directionStates;
 };

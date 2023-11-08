@@ -1,5 +1,6 @@
 #include "MyGame.h"
 #include <Collider.h>
+#include <Camera.h>
 #include <iostream>
 #include <random>
 
@@ -8,7 +9,7 @@ MyGame::MyGame()
 {
     m_time = new Timer();
     listRock = new std::list<Entity*>;
-    m_input = new Input();
+    m_controller = new Controller();
      
     /*
     c = new Cube();
@@ -37,7 +38,7 @@ MyGame::~MyGame()
 
 void MyGame::Update()
 {
-
+    m_controller->Update();
     float elapsedTime = m_time->Peek();
     if (elapsedTime > 0.5) {
         listRock->push_back(CreateRock());
@@ -51,6 +52,12 @@ void MyGame::Update()
         //transform->Rotate(transform->GetRotationSpeed().x * elapsedTime * 0.01f, transform->GetRotationSpeed().y, transform->GetRotationSpeed().z);
         caillou->RealUpdate();
     }
+
+    if (m_controller->IsMoving(Controller::Direction::Right)) {
+        // Ajustez la rotation de la caméra vers la droite
+        Camera::GetInstance()->GetComponent<Transform>()->Rotate(45* elapsedTime *0.1f, 0, 0); // Ajoutez la logique de rotation ici
+    }
+    Camera::GetInstance()->RealUpdate();
 }
 
 

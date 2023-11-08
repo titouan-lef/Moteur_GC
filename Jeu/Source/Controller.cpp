@@ -5,7 +5,7 @@
 
 Controller::Controller() {
 
-    m_input = new M_Input();
+    m_input = new Input();
     // Initialise toutes les directions à faux
     for (auto dir : { Direction::Up, Direction::Down, Direction::Left, Direction::Right }) {
         m_directionStates[dir] = false;
