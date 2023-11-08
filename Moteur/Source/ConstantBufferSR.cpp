@@ -9,9 +9,9 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, TextureType texture)
     // Décrit la Texture2D
     D3D12_RESOURCE_DESC textureDesc = {};
     textureDesc.MipLevels = 1;
-    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    textureDesc.Width = imageWidth;
-    textureDesc.Height = imageHeight;
+    textureDesc.Format = DXGI_FORMAT_BC1_UNORM;
+    textureDesc.Width = 472;
+    textureDesc.Height = 472;
     textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
     textureDesc.DepthOrArraySize = 1;
     textureDesc.SampleDesc.Count = 1;
@@ -27,17 +27,17 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, TextureType texture)
     srvDesc.Texture2D.MipLevels = 1;
 
 
-    ID3D12Resource* ressource = nullptr;
-    auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);// Paramètre les propriétés de la Texture2D
+    //ID3D12Resource* ressource = nullptr;
+    //auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);// Paramètre les propriétés de la Texture2D
 
-    // Création de la Texture2D
-    Engine::GetInstance()->Device->CreateCommittedResource(
-        &var1,
-        D3D12_HEAP_FLAG_NONE,
-        &textureDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        nullptr,
-        IID_PPV_ARGS(&ressource));
+    //// Création de la Texture2D
+    //Engine::GetInstance()->Device->CreateCommittedResource(
+    //    &var1,
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &textureDesc,
+    //    D3D12_RESOURCE_STATE_COPY_DEST,
+    //    nullptr,
+    //    IID_PPV_ARGS(&ressource));
 
     /*************************/
 
@@ -54,11 +54,20 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, TextureType texture)
     filePath = L"Source/" + filePath + L".dds";
 
     
-    woodCrateTex->Name = "woodCrateTex";
+	auto woodCrateTex = std::make_unique<Texture>();
+    woodCrateTex->Name = "pierre";
     woodCrateTex->Filename = filePath;
-    woodCrateTex->Resource = ressource;
-    woodCrateTex->UploadHeap = m_cbvHeapDesc;
     
+
+    HRESULT hr = CreateDDSTextureFromFile12(
+        Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
+        woodCrateTex->Filename.c_str(),
+        woodCrateTex->Resource, woodCrateTex->UploadHeap);
+
+
+
+
+    //ressource = (Microsoft::WRL::ComPtr<ID3D12Resource>)woodCrateTex->Resource;
     
 
     //std::vector<UINT8> textureFile = LoadFromFile(filePath);
@@ -71,7 +80,7 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, TextureType texture)
 
     /*************************/
 
-    Engine::GetInstance()->Device->CreateShaderResourceView(ressource, &srvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
+    Engine::GetInstance()->Device->CreateShaderResourceView(woodCrateTex->Resource.Get(), &srvDesc, m_cbvHeapDesc->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
 
 }
 
@@ -87,10 +96,6 @@ void ConstantBufferSR::SetGraphicsRoot()
 
 void ConstantBufferSR::CreateTexture()
 {
-    HRESULT hr = CreateDDSTextureFromFile12(
-        Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
-        woodCrateTex->Filename.c_str(),
-        woodCrateTex->Resource, woodCrateTex->UploadHeap);
     //UpdateSubresources(Engine::GetInstance()->CmdList, m_ressource, m_ressource, 0, 0, 1, &textureData);
 
     //std::wstring filePath = L"";

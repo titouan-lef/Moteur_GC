@@ -37,5 +37,4 @@ private:
 
 	TextureType m_texture;
 
-	std::unique_ptr<Texture> woodCrateTex = std::make_unique<Texture>();
 };

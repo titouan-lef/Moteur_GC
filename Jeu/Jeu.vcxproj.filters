@@ -30,6 +30,9 @@
     <Image Include="Source\pierre.jfif">
       <Filter>Fichiers de ressources\texture</Filter>
     </Image>
+    <Image Include="Source\pierre.dds">
+      <Filter>Ressources\Texture</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\main.h">
