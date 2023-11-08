@@ -33,10 +33,12 @@
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\Icosahedron.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
+    <ClInclude Include="Source\Pyramid.h" />
     <ClInclude Include="Source\Rectangle.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\ShaderColor.h" />
@@ -61,10 +63,12 @@
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />
+    <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\ShaderColor.cpp" />

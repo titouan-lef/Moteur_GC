@@ -1,6 +1,8 @@
 #pragma once
 #include <Game.h>
 #include <Cube.h>
+#include <Pyramid.h>
+#include <Timer.h>
 
 class MyGame : public Game
 {
@@ -12,6 +14,7 @@ public:
 	void Render() override;
 
 private:
-	Cube* c = nullptr;
+	Pyramid* c = nullptr;
+	Timer* m_time;
 };
 

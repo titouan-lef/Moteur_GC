@@ -3,7 +3,8 @@
 
 MyGame::MyGame()
 {
-    c = new Cube();
+    m_time = new Timer();
+    c = new Pyramid();
 
 
     c->GetComponent<Transform>()->SetScale(1.0f, 1.0f,1.0f);
@@ -30,8 +31,9 @@ MyGame::~MyGame()
 
 void MyGame::Update()
 {
+    float elapsedTime = m_time->Peek();
     c->GetComponent<Transform>()->MoveByVector({0, 0, 0.1}, 0.01f);
-    c->GetComponent<Transform>()->Rotate(c->GetComponent<Transform>()->GetRotationSpeed().x, 0.01f, c->GetComponent<Transform>()->GetRotationSpeed().z);
+    c->GetComponent<Transform>()->Rotate(c->GetComponent<Transform>()->GetRotationSpeed().x * elapsedTime *0.01f, 0.01f, c->GetComponent<Transform>()->GetRotationSpeed().z);
     c->RealUpdate();
 }
 
