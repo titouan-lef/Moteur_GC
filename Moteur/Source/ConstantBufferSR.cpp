@@ -1,7 +1,7 @@
 #include "ConstantBufferSR.h"
 #include <wincodec.h>
 
-ConstantBufferSR::ConstantBufferSR(XMMATRIX world, Texture texture)
+ConstantBufferSR::ConstantBufferSR(XMMATRIX world, TextureType texture)
     : ConstantBuffer(world, 2), m_texture(texture)// CREATION DU CBV
 {
     // CREATION DU SRV
@@ -27,9 +27,8 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, Texture texture)
     srvDesc.Texture2D.MipLevels = 1;
 
 
-
-    auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);// Paramètre les propriétés de la Texture2D
     ID3D12Resource* ressource = nullptr;
+    auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);// Paramètre les propriétés de la Texture2D
 
     // Création de la Texture2D
     Engine::GetInstance()->Device->CreateCommittedResource(
@@ -43,7 +42,7 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, Texture texture)
     /*************************/
 
 
-    /*std::wstring filePath = L"";
+    std::wstring filePath = L"";
     switch (m_texture)
     {
     case pierre:
@@ -52,18 +51,23 @@ ConstantBufferSR::ConstantBufferSR(XMMATRIX world, Texture texture)
     default:
         break;
     }
-    filePath = L"Source/" + filePath + L".jfif";
+    filePath = L"Source/" + filePath + L".dds";
 
-    std::vector<UINT8> textureFile = LoadFromFile(filePath);
+    
+    woodCrateTex->Name = "woodCrateTex";
+    woodCrateTex->Filename = filePath;
+    woodCrateTex->Resource = ressource;
+    woodCrateTex->UploadHeap = m_cbvHeapDesc;
+    
+    
+
+    //std::vector<UINT8> textureFile = LoadFromFile(filePath);
 
 
-    D3D12_SUBRESOURCE_DATA textureData = {};
-    textureData.pData = &textureFile[0];
+   
+    /*textureData.pData = &textureFile[0];
     textureData.RowPitch = imageWidth * imagePixelSize;
-    textureData.SlicePitch = textureData.RowPitch * imageHeight;
-    
-    
-    UpdateSubresources(Engine::GetInstance()->CmdList, ressource, ressource, 0, 0, 1, &textureData);*/
+    textureData.SlicePitch = textureData.RowPitch * imageHeight;*/
 
     /*************************/
 
@@ -81,129 +85,137 @@ void ConstantBufferSR::SetGraphicsRoot()
     Engine::GetInstance()->CmdList->SetGraphicsRootConstantBufferView(1, m_buffer->GetGPUVirtualAddress());
 }
 
-void ConstantBufferSR::CreateTexture(ID3D12GraphicsCommandList* m_commandList)
+void ConstantBufferSR::CreateTexture()
 {
-    std::wstring filePath = L"";
-    switch (m_texture)
-    {
-    case pierre:
-        filePath = L"pierre";
-        break;
-    default:
-        break;
-    }
-    filePath = L"Source/" + filePath + L".jfif";
+    HRESULT hr = CreateDDSTextureFromFile12(
+        Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
+        woodCrateTex->Filename.c_str(),
+        woodCrateTex->Resource, woodCrateTex->UploadHeap);
+    //UpdateSubresources(Engine::GetInstance()->CmdList, m_ressource, m_ressource, 0, 0, 1, &textureData);
 
-    std::vector<UINT8> texture = LoadFromFile(filePath);
+    //std::wstring filePath = L"";
+    //switch (m_texture)
+    //{
+    //case pierre:
+    //    filePath = L"pierre";
+    //    break;
+    //default:
+    //    break;
+    //}
+    //filePath = L"Source/" + filePath + L".jfif";
 
-    ID3D12Resource* textureUploadHeap;
+    //std::vector<UINT8> texture = LoadFromFile(filePath);
 
-    // Describe and create a Texture2D.
-    D3D12_RESOURCE_DESC textureDesc = {};
-    textureDesc.MipLevels = 1;
-    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    textureDesc.Width = imageWidth;
-    textureDesc.Height = imageHeight;
-    textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    textureDesc.DepthOrArraySize = 1;
-    textureDesc.SampleDesc.Count = 1;
-    textureDesc.SampleDesc.Quality = 0;
-    textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    //ID3D12Resource* textureUploadHeap;
 
-    auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+    //// Describe and create a Texture2D.
+    //D3D12_RESOURCE_DESC textureDesc = {};
+    //textureDesc.MipLevels = 1;
+    //textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    //textureDesc.Width = imageWidth;
+    //textureDesc.Height = imageHeight;
+    //textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    //textureDesc.DepthOrArraySize = 1;
+    //textureDesc.SampleDesc.Count = 1;
+    //textureDesc.SampleDesc.Quality = 0;
+    //textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
-    ID3D12Resource* ressource = nullptr;
-    Engine::GetInstance()->Device->CreateCommittedResource(
-        &var1,
-        D3D12_HEAP_FLAG_NONE,
-        &textureDesc,
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        nullptr,
-        IID_PPV_ARGS(&ressource));
+    //auto var1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
-    const UINT64 uploadBufferSize = GetRequiredIntermediateSize(ressource, 0, 1);
+    //ID3D12Resource* ressource = nullptr;
+    //Engine::GetInstance()->Device->CreateCommittedResource(
+    //    &var1,
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &textureDesc,
+    //    D3D12_RESOURCE_STATE_COPY_DEST,
+    //    nullptr,
+    //    IID_PPV_ARGS(&ressource));
 
-    auto var2 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    auto var3 = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+    //const UINT64 uploadBufferSize = GetRequiredIntermediateSize(ressource, 0, 1);
 
-    // Create the GPU upload buffer.
-    Engine::GetInstance()->Device->CreateCommittedResource(
-        &var2,
-        D3D12_HEAP_FLAG_NONE,
-        &var3,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&textureUploadHeap));
+    //auto var2 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    //auto var3 = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 
-    //Copy data to the intermediate upload heap and then schedule a copy
-    // from the upload heap to the Texture2D.
+    //// Create the GPU upload buffer.
+    //Engine::GetInstance()->Device->CreateCommittedResource(
+    //    &var2,
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &var3,
+    //    D3D12_RESOURCE_STATE_GENERIC_READ,
+    //    nullptr,
+    //    IID_PPV_ARGS(&textureUploadHeap));
 
-    D3D12_SUBRESOURCE_DATA textureData = {};
-    textureData.pData = &texture[0];
-    textureData.RowPitch = imageWidth * imagePixelSize;
-    textureData.SlicePitch = textureData.RowPitch * imageHeight;
+    ////Copy data to the intermediate upload heap and then schedule a copy
+    //// from the upload heap to the Texture2D.
 
-    UpdateSubresources(m_commandList, ressource, textureUploadHeap, 0, 0, 1, &textureData);
-    auto var4 = CD3DX12_RESOURCE_BARRIER::Transition(ressource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-    m_commandList->ResourceBarrier(1, &var4);
+    //D3D12_SUBRESOURCE_DATA textureData = {};
+    //textureData.pData = &texture[0];
+    //textureData.RowPitch = imageWidth * imagePixelSize;
+    //textureData.SlicePitch = textureData.RowPitch * imageHeight;
+
+    //UpdateSubresources(m_commandList, ressource, textureUploadHeap, 0, 0, 1, &textureData);
+    //auto var4 = CD3DX12_RESOURCE_BARRIER::Transition(ressource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    //m_commandList->ResourceBarrier(1, &var4);
+
+    // Create the depth/stencil buffer and view.
 }
 
 
 
-std::vector<UINT8> ConstantBufferSR::LoadFromFile(const std::wstring& filePath)
-{
-    IWICImagingFactory* wicFactory;
-    CoInitialize(nullptr); // Initialise COM si ce n'est pas deja fait.
+//std::vector<UINT8> ConstantBufferSR::LoadFromFile(const std::wstring& filePath)
+//{
+    //IWICImagingFactory* wicFactory;
+    //CoInitialize(nullptr); // Initialise COM si ce n'est pas deja fait.
 
-    // Cree une instance de l'usine WIC
-    HRESULT hr = CoCreateInstance(
-        CLSID_WICImagingFactory,
-        nullptr,
-        CLSCTX_INPROC_SERVER,
-        IID_PPV_ARGS(&wicFactory)
-    );
+    //// Cree une instance de l'usine WIC
+    //HRESULT hr = CoCreateInstance(
+    //    CLSID_WICImagingFactory,
+    //    nullptr,
+    //    CLSCTX_INPROC_SERVER,
+    //    IID_PPV_ARGS(&wicFactory)
+    //);
 
-    if (SUCCEEDED(hr))
-    {
-        IWICBitmapDecoder* wicDecoder;
+    //if (SUCCEEDED(hr))
+    //{
+    //    IWICBitmapDecoder* wicDecoder;
 
-        // Charge le fichier
-        hr = wicFactory->CreateDecoderFromFilename(
-            filePath.c_str(),
-            nullptr,
-            GENERIC_READ,
-            WICDecodeMetadataCacheOnDemand,
-            &wicDecoder
-        );
+    //    // Charge le fichier
+    //    hr = wicFactory->CreateDecoderFromFilename(
+    //        filePath.c_str(),
+    //        nullptr,
+    //        GENERIC_READ,
+    //        WICDecodeMetadataCacheOnDemand,
+    //        &wicDecoder
+    //    );
 
-        if (SUCCEEDED(hr))
-        {
-            IWICBitmapFrameDecode* wicFrame;
-            hr = wicDecoder->GetFrame(0, &wicFrame);
+    //    if (SUCCEEDED(hr))
+    //    {
+    //        IWICBitmapFrameDecode* wicFrame;
+    //        hr = wicDecoder->GetFrame(0, &wicFrame);
 
-            if (SUCCEEDED(hr))
-            {
+    //        if (SUCCEEDED(hr))
+    //        {
 
-                hr = wicFrame->GetSize(&imageWidth, &imageHeight);
+    //            hr = wicFrame->GetSize(&imageWidth, &imageHeight);
 
-                if (SUCCEEDED(hr))
-                {
-                    // Calcule la taille de l'image en octets
-                    UINT imageSize = imageWidth * imageHeight * imagePixelSize; // 4 octets par pixel (RGBA)
+    //            if (SUCCEEDED(hr))
+    //            {
+    //                // Calcule la taille de l'image en octets
+    //                UINT imageSize = imageWidth * imageHeight * imagePixelSize; // 4 octets par pixel (RGBA)
 
-                    // Cree un std::vector<UINT8> pour stocker les donnees de l'image
-                    std::vector<UINT8> imageData(imageSize);
+    //                // Cree un std::vector<UINT8> pour stocker les donnees de l'image
+    //                std::vector<UINT8> imageData(imageSize);
 
-                    hr = wicFrame->CopyPixels(nullptr, imageWidth * imagePixelSize, imageSize, imageData.data());
+    //                hr = wicFrame->CopyPixels(nullptr, imageWidth * imagePixelSize, imageSize, imageData.data());
 
-                    if (SUCCEEDED(hr))
-                    {
-                        // imageData contient maintenant les donnees de l'image au format std::vector<UINT8>
-                        return imageData;
-                    }
-                }
-            }
-        }
-    }
-    return std::vector<UINT8>();
-}
+    //                if (SUCCEEDED(hr))
+    //                {
+    //                    // imageData contient maintenant les donnees de l'image au format std::vector<UINT8>
+    //                    return imageData;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //return std::vector<UINT8>();
+//}

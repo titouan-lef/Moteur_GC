@@ -2,6 +2,7 @@
 #include "MyException.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
+#include "ConstantBufferSR.h"
 
 Engine* Engine::m_Instance = nullptr;
 
@@ -123,7 +124,9 @@ void Engine::Render(Entity* e)
 
     MeshRenderer* meshRenderer = e->GetComponent<MeshRenderer>();
     Shader* shader = meshRenderer->m_shader;
-    ConstantBuffer* constBuffer = shader->m_constBuffer;
+    //ConstantBuffer* constBuffer = shader->m_constBuffer;
+
+    ConstantBufferSR* constBuffer = (ConstantBufferSR*)shader->m_constBuffer;
 
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pipelineState);// Ajout de la pipeline de rendu
@@ -134,5 +137,7 @@ void Engine::Render(Entity* e)
 
     CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
     CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)
+
+    constBuffer->CreateTexture();
     CmdList->DrawIndexedInstanced(meshRenderer->m_mesh->m_indexBuffer->m_nbVertex, 1, 0, 0, 0);// Affichage (avec toujours une seule instance)
 }

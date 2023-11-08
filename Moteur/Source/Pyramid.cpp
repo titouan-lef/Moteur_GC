@@ -2,15 +2,15 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Collider.h"
-#include "ShaderColor.h"
+#include "ShaderTexture.h"
 #include "Pyramid.h"
 
 std::vector<Vertex> Pyramid::m_vertices = {
     // Base square
-    {{-0.5f, 0.0f, -0.5f}, {1.0f, 0.0f}},  // 0 Left-back
-    {{0.5f, 0.0f, -0.5f}, {1.0f, 0.0f}},   // 1 Right-back
+    {{-0.5f, 0.0f, -0.5f}, {0.0f, 1.0f}},  // 0 Left-back
+    {{0.5f, 0.0f, -0.5f}, {0.0f, 0.0f}},   // 1 Right-back
     {{0.5f, 0.0f, 0.5f}, {1.0f, 0.0f}},    // 2 Right-front
-    {{-0.5f, 0.0f, 0.5f}, {1.0f, 0.0f}},   // 3 Left-front
+    {{-0.5f, 0.0f, 0.5f}, {1.0f, 1.0f}},   // 3 Left-front
 
     // Top point
     {{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}     // 4 Top
@@ -32,7 +32,7 @@ Pyramid::Pyramid() {
 
     XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderTexture(world, pierre));
 }
 
 Pyramid::~Pyramid()

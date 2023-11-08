@@ -1,7 +1,17 @@
 #pragma once
 #include "ConstantBuffer.h"
+#include "DDSTextureLoader.h"
 
-enum Texture
+struct Texture
+{
+	// Unique material name for lookup.
+	std::string Name;
+	std::wstring Filename;
+	Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
+};
+
+enum TextureType
 {
 	pierre
 };
@@ -9,19 +19,23 @@ enum Texture
 class ConstantBufferSR : public ConstantBuffer
 {
 public:
-	ConstantBufferSR(XMMATRIX world, Texture texture);
+	ConstantBufferSR(XMMATRIX world, TextureType texture);
 	virtual ~ConstantBufferSR();
 
 	virtual void SetGraphicsRoot();
 
-	void CreateTexture(ID3D12GraphicsCommandList* m_commandList);
+	void CreateTexture();
+
+
 
 private:
 	UINT imageWidth = 0;
 	UINT imageHeight = 0;
 	UINT imagePixelSize = 4;
 
-	std::vector<UINT8> LoadFromFile(const std::wstring& filePath);
+	//std::vector<UINT8> LoadFromFile(const std::wstring& filePath);
 
-	Texture m_texture;
+	TextureType m_texture;
+
+	std::unique_ptr<Texture> woodCrateTex = std::make_unique<Texture>();
 };

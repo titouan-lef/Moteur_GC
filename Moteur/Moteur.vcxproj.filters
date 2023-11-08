@@ -126,6 +126,11 @@
     <ClInclude Include="Source\Game.h">
       <Filter>Private\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Icosahedron.h" />
+    <ClInclude Include="Source\Pyramid.h" />
+    <ClInclude Include="Source\DDSTextureLoader.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -204,6 +209,11 @@
       <Filter>Public\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game.cpp">
+      <Filter>Private\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Icosahedron.cpp" />
+    <ClCompile Include="Source\Pyramid.cpp" />
+    <ClCompile Include="Source\DDSTextureLoader.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>

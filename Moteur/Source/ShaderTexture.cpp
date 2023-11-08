@@ -1,7 +1,7 @@
 #include "ShaderTexture.h"
 #include "MyException.h"
 
-ShaderTexture::ShaderTexture(XMMATRIX world, Texture texture) : Shader(Type::texture)
+ShaderTexture::ShaderTexture(XMMATRIX world, TextureType texture) : Shader(Type::texture)
 {
     m_rootSignature = CreateRootSignature();
     CreatePSO();

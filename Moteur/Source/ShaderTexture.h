@@ -5,7 +5,7 @@
 class ShaderTexture : public Shader
 {
 public:
-	ShaderTexture(XMMATRIX world, Texture texture);
+	ShaderTexture(XMMATRIX world, TextureType texture);
 	virtual ~ShaderTexture();
 
 	void SetGraphicsRoot();
