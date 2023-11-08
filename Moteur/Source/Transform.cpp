@@ -18,11 +18,6 @@ Transform::Transform()
 	this->UpdateMatrix();
 }
 
-Transform::~Transform()
-{
-	delete m_owner;
-}
-
 void Transform::Update()
 {
 	if (m_isDirty)

@@ -5,6 +5,12 @@
 
 Engine::~Engine()
 {
+    delete Time;
+	delete Camera::GetInstance();
+	delete Factory;
+	delete Device;
+	delete CmdAllocator;
+	delete CmdList;
 }
 
 void Engine::Init()

@@ -4,6 +4,12 @@
 
 SceneManager::~SceneManager()
 {
+	delete m_pCurrentScene;
+	for (Scene* scene : m_Scenes)
+	{
+		delete scene;
+		m_Scenes.erase(m_Scenes.begin());
+	}
 }
 
 SceneManager* SceneManager::GetInstance()

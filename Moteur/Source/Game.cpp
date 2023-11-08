@@ -21,6 +21,7 @@ Game::Game() : m_window(Window(L"Game", 800, 600))
 Game::~Game()
 {
 	delete m_wndManager;
+	delete m_InputHandler;
 }
 
 int Game::Run()

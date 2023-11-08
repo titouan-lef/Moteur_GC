@@ -8,7 +8,7 @@ class Transform : public Component
 {
 public:
 	Transform();
-	virtual ~Transform();
+	virtual ~Transform() {}
 
 	virtual void Update() override;
 

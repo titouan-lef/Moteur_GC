@@ -9,11 +9,16 @@ Entity::Entity()
 
 Entity::~Entity()
 {
-	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+	for (auto it : m_Components)
 	{
-		delete* it;
+		delete it;
+		m_Components.erase(m_Components.begin());
 	}
-	m_Components.clear();
+	for (auto it : m_Children)
+	{
+		delete it;
+		m_Children.erase(m_Children.begin());
+	}
 }
 
 void Entity::Born()
