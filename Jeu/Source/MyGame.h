@@ -1,8 +1,8 @@
 #pragma once
 #include <Game.h>
 #include <Cube.h>
-#include <Pyramid.h>
 #include <Timer.h>
+#include "Input.h"
 
 class MyGame : public Game
 {
@@ -12,9 +12,10 @@ public:
 
 	void Update() override;
 	void Render() override;
-
+	Cube* CreateRock();
 private:
-	Pyramid* c = nullptr;
-	Timer* m_time;
+	Timer* m_time = nullptr;
+	std::list<Entity*>* listRock = nullptr;
+	Input* m_input = nullptr;
 };
 
