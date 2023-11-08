@@ -30,11 +30,13 @@
     <ClInclude Include="Source\Controller.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\MyGame.h" />
+    <ClInclude Include="Source\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Controller.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MyGame.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\shaders.hlsl">

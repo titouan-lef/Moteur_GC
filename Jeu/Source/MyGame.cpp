@@ -1,15 +1,19 @@
 #include "MyGame.h"
 #include <Collider.h>
+#include <LifeSystem.h>
 #include <Camera.h>
 #include <iostream>
 #include <random>
 
 
+
 MyGame::MyGame()
 {
     m_time = new Timer();
+    m_timeR = new Timer();
     listRock = new std::list<Entity*>;
     m_controller = new Controller();
+    m_player = new Player();
      
     /*
     c = new Cube();
@@ -40,7 +44,8 @@ void MyGame::Update()
 {
     m_controller->Update();
     float elapsedTime = m_time->Peek();
-    if (elapsedTime > 0.5) {
+    float elapsedTimeR = m_timeR->Peek();
+    if (elapsedTime > 2) {
         listRock->push_back(CreateRock());
         m_time->Mark();
     }
@@ -48,16 +53,17 @@ void MyGame::Update()
     {
         auto transform = caillou->GetComponent<Transform>();
         transform->MoveByVector(transform->GetDirection(), 1);
-        transform->Rotate(transform->GetRotationSpeed().x, transform->GetRotationSpeed().y, transform->GetRotationSpeed().z);
-        //transform->Rotate(transform->GetRotationSpeed().x * elapsedTime * 0.01f, transform->GetRotationSpeed().y, transform->GetRotationSpeed().z);
+        //transform->Rotate(transform->GetRotationSpeed().x, transform->GetRotationSpeed().y, transform->GetRotationSpeed().z);
+        transform->Rotate( elapsedTimeR * transform->GetRotationSpeed().x, 0, 0);
         caillou->RealUpdate();
+        m_player->GetComponent<LifeSystem>()->IsHit(caillou);
     }
 
-    if (m_controller->IsMoving(Controller::Direction::Right)) {
-        // Ajustez la rotation de la caméra vers la droite
-        Camera::GetInstance()->GetComponent<Transform>()->Rotate(45* elapsedTime *0.1f, 0, 0); // Ajoutez la logique de rotation ici
-    }
-    Camera::GetInstance()->RealUpdate();
+    m_player->Update();
+   
+
+
+    m_timeR->Mark();
 }
 
 
@@ -76,7 +82,7 @@ Cube* MyGame::CreateRock() {
     //c->GetComponent<Transform>()->SetPosition(-0.45f, 0, 1);
     c->GetComponent<Transform>()->SetPosition(x(gen), y(gen), 1);
     c->GetComponent<Transform>()->UpdateMatrix();
-    c->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
+    c->GetComponent<Transform>()->SetRotationSpeed(2, 2, 2);
     //Truc nul pour faire aller l'asteroid sur le joueur
     if (c->GetComponent<Transform>()->GetPosition().x > 0.2) {
         if (c->GetComponent<Transform>()->GetPosition().y > 0.2) {

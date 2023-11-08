@@ -134,6 +134,9 @@
     <ClInclude Include="Source\Input.h">
       <Filter>Public\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\LifeSystem.h">
+      <Filter>Public\cpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -220,6 +223,9 @@
       <Filter>Private\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\Input.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LifeSystem.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>

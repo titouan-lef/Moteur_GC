@@ -63,8 +63,9 @@ void Transform::UpdateMatrix()
 
 void Transform::Rotate(float pitch, float yaw, float roll)
 {
-	// Effectue une rotation à partir des angles yaw, pitch et roll
-	XMStoreFloat4(&RotationQuat, XMQuaternionRotationRollPitchYaw(pitch, yaw, roll));
+	// Effectue une rotation à partir des angles yaw, pitch et roll à partir du quaternion actuelle
+	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	XMStoreFloat4(&RotationQuat, XMQuaternionMultiply(XMLoadFloat4(&RotationQuat), XMQuaternionRotationMatrix(rotation)));
 	m_isDirty = true;
 }
 

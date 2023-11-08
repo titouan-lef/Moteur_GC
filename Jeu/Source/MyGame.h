@@ -3,6 +3,7 @@
 #include <Cube.h>
 #include <Timer.h>
 #include "Controller.h"
+#include "Player.h"
 
 class MyGame : public Game
 {
@@ -15,7 +16,10 @@ public:
 	Cube* CreateRock();
 private:
 	Timer* m_time = nullptr;
+
+	Timer* m_timeR = nullptr;
 	std::list<Entity*>* listRock = nullptr;
 	Controller* m_controller;
+	Player* m_player;
 };
 
