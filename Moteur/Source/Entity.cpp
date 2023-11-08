@@ -16,6 +16,20 @@ Entity::~Entity()
 	m_Components.clear();
 }
 
+void Entity::Born()
+{
+	Init();
+	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+	{
+		(*it)->Initialize();
+	}
+	for (auto it = m_Children.begin(); it != m_Children.end(); ++it)
+	{
+		(*it)->Born();
+	}
+	m_isBorn = true;
+}
+
 void Entity::Render()
 {
 	Engine::GetInstance()->Render(this);

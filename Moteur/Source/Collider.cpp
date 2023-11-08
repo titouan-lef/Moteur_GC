@@ -1,7 +1,7 @@
-#include "Collider.h"
 #include "Entity.h"
 #include "Transform.h"
-#include "CollisionManagrer.h"
+#include "CollisionManager.h"
+#include "Collider.h"
 
 Collider::Collider()
 {
@@ -31,7 +31,8 @@ void Collider::Update()
 
 Transform* Collider::GetCollider()
 {
-	return m_Collider;
+	if (m_Collider != nullptr) 	return m_Collider;
+	else return nullptr;
 }
 
 bool Collider::CheckCollision(Collider* collider) {

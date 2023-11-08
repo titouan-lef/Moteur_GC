@@ -9,11 +9,13 @@ public:
 	Entity();
 	virtual ~Entity();
 
+	void Born();
+
 	void Render();
 
 	int m_ID;
 
-	//virtual void Init() {}
+	virtual void Init() {}
 	virtual void Update() {}
 	virtual void PostUpdate() {}
 
@@ -35,7 +37,8 @@ protected:
 
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:
-
+	// Check if entity is initialized
+	bool m_isBorn = false;
 	// Prevent copying parent/child or nullptr
 	bool CheckAddChild(Entity* child);
 	// Prevent copying components

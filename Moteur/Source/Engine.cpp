@@ -1,17 +1,13 @@
 #include "MyException.h"
-#include "CollisionManagrer.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "Engine.h"
-
-DxgiInfoManager Engine::infoManager = {};
 
 Engine* Engine::m_Instance = nullptr;
 
 Engine::Engine()
 {
-	this->m_Instance = this;
-    CollisionManager* collisionManager = new CollisionManager();
+    this->m_Instance = this; GetInstance;
 }
 
 Engine::~Engine()

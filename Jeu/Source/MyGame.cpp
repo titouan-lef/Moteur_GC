@@ -13,15 +13,6 @@ MyGame::MyGame()
     c->GetComponent<Transform>()->SetDirection(0.01f, 0, 0);
     c->GetComponent<Transform>()->SetRotationSpeed(45, 35, 90);
 
-    c->AddComponent<Collider>();
-    Transform colR1;
-    colR1.SetPosition(-0.45f, 0, 1);
-    colR1.SetScale(0.2f, 0.2f, 0.2f);
-    colR1.SetDirection(0.01f, 0, 0);
-    colR1.SetRotationSpeed(45, 35, 90);
-    colR1.UpdateMatrix();
-    c->GetComponent<Collider>()->SetCollider(colR1);
-
     c->RealUpdate();
 }
 

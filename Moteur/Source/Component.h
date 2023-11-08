@@ -30,7 +30,8 @@ protected:
 	bool m_isDirty;
 	// Sert à savoir si le component est actif ou non
 	bool m_isActive;
-	Entity* m_owner;
+
+	Entity* m_owner = nullptr;
 
 	virtual void OnActivate() {}
 	virtual void OnDeactivate() {}

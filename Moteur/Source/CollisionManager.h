@@ -7,11 +7,10 @@ class Entity;
 class CollisionManager
 {
 public:
-	CollisionManager() { _instance = this; }
-	virtual ~CollisionManager() { delete[] _instance; }
+	CollisionManager() {}
+	~CollisionManager();
 
-	static CollisionManager* _instance;
-	static CollisionManager* GetInstance() { return _instance; }
+	static CollisionManager* GetInstance() { static CollisionManager cm; return &cm; }
 
 	static void AddEntity(Entity* entity);
 	static void RemoveEntity(Entity* entity);

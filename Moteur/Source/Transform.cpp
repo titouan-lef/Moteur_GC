@@ -87,7 +87,7 @@ void Transform::ChangeDirection(Transform* transform) {
 void Transform::CheckIfOnScreen()
 {
 	// Supposons que gWorld, gView et gProjection sont les matrices World, View et Projection
-	XMMATRIX worldViewProjection = XMMatrixMultiply(GetMatrix(), XMMatrixMultiply(Camera::m_Instance->GetViewMatrix(), Camera::m_Instance->GetProjMatrix()));
+	XMMATRIX worldViewProjection = XMMatrixMultiply(GetMatrix(), XMMatrixMultiply(Camera::GetInstance()->GetViewMatrix(), Camera::GetInstance()->GetProjMatrix()));
 
 	for (int i = 0; i < 8; i++)
 	{
