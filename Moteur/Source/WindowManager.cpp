@@ -74,12 +74,20 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height)
 
 void WindowManager::CreateDescriptorHeaps()
 {
+    // Render Target
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = Engine::GetInstance()->Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+
+    // Shader Ressource
+    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+    cbvSrvUavHeapDesc.NumDescriptors = 100;
+    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap)));
 }
 
 
@@ -136,6 +144,9 @@ void WindowManager::PreRender()
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
     Engine::GetInstance()->CmdList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
+
+    ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvSrvUavHeap };
+    Engine::GetInstance()->CmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 }
 
 void WindowManager::PostRender()

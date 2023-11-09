@@ -2,9 +2,6 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Entity.h"
-//#include "Cube.h"
-//#include "Rectangle.h"// TO DO : A SUPPRIMER
-//#include "Timer.h"
 
 class WindowManager
 {
@@ -36,6 +33,7 @@ private:
     static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain g�re pour l'application
     ID3D12Resource* m_renderTargets[FrameCount] = {};// Tableau contenant les "surfaces de dessin"
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements pr�vu pour les "surfaces de dessin"
+    ID3D12DescriptorHeap* m_cbvSrvUavHeap = nullptr;
     UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements pr�vu pour les "surfaces de dessin"
     IDXGISwapChain3* m_swapChain = nullptr;// Permet l'�change des "surfaces de dessin" dans les buffers
     
