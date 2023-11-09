@@ -54,14 +54,14 @@ void Scene::RemoveEntity(Entity* entity)
 
 void Scene::KillThemAll()
 {
-	for (auto& entity : m_entities)
+	for (auto it = m_entities.begin(); it != m_entities.end(); ++it)
 	{
-		if (entity->IsDead())
+		if ((*it)->IsDead())
 		{
 			m_entities.erase(m_entities.begin());
-			if (entity->GetComponent<Collider>() != nullptr)
-				CollisionManager::GetInstance()->RemoveEntity(entity);
-			delete entity;
+			if ((*it)->GetComponent<Collider>() != nullptr)
+				CollisionManager::GetInstance()->RemoveEntity((*it));
+			delete (*it);
 		}
 	}
 }

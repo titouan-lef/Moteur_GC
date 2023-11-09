@@ -27,7 +27,7 @@ protected:
 	float m_nearPlane = -1;
 	float m_farPlane = -1;
 
-	BoundingFrustum* m_frustum;
+	BoundingFrustum* m_frustum = nullptr;
 
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projMatrix;
