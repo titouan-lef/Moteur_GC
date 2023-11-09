@@ -13,10 +13,8 @@ public:
 
 	virtual void Init() override;
 	virtual void Update() override;
-	static bool TestBulletDeath(Bullet& b);
-	static bool TestRockDeath(Asteroid& b);
 private:
 
-	POINT coordMouse;
+	float respawnTime = 2.0;
 	Timer m_time;
 };

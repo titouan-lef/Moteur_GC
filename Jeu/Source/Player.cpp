@@ -3,6 +3,8 @@
 #include <LifeSystem.h>
 #include <Engine.h>
 #include "Player.h"
+#include "Bullet.h"
+#include <DirectXMath.h>
 
 Player::Player()
 {
@@ -52,8 +54,12 @@ void Player::Update()
         //Ajustez la rotation de la caméra vers la droit
         Camera::GetInstance()->GetComponent<Transform>()->Rotate(elapsedTime * 2, 0, 0); // Ajoutez la logique de rotation ici
     }
+    if (m_controller->IsMoving(Controller::Direction::LeftClick)) {
+        Shoot();
+    }
     Camera::GetInstance()->RealUpdate();
     m_time->Mark();
+    IsDead();
 }
 
 void Player::OnCollision(Entity* e)
@@ -64,4 +70,35 @@ void Player::OnCollision(Entity* e)
 	}
 }
 
+void Player::IsHit(std::list<Entity*>* listRock)
+{
+    for (auto caillou : *listRock)
+    {
+        auto collider = caillou->GetComponent<Collider>();
+        if (collider->CheckCollision(this->GetComponent<Collider>())) {
+            if (m_lifePoint - 1 <= 0) {
+                m_isDead = true;
+            }
+            else {
+                m_lifePoint--;
+            };
+        }
+    }
+    IsDead();
+}
 
+void Player::IsDead()
+{
+    if (m_isDead) {
+        std::wstring message = std::to_wstring((m_controller->m_coordMouse.y)) + L"\n";
+
+        OutputDebugString(message.c_str());
+        system("pause");
+    }
+}
+
+void Player::Shoot() {
+
+    Bullet* bullet = new Bullet(m_controller->m_coordMouse.x, m_controller->m_coordMouse.y);
+    this->AddChild(bullet);
+}
