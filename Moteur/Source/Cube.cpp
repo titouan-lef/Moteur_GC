@@ -1,12 +1,12 @@
 #include "Cube.h"
 #include "MeshRenderer.h"
 #include "Collider.h"
-#include "ShaderTexture.h"
+#include "ShaderColor.h"
 
 Cube::Cube()
 {
     this->AddComponent<Transform>();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance());
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
 }
 
 Cube::~Cube()

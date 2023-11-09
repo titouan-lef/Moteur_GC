@@ -29,7 +29,7 @@ ShaderTexture::ShaderTexture() : Shader()
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
-    Shader::Init(rootParameters, samplers, L"Texture", inputElementDescs);
+    Shader::Init(rootParameters, samplers, L"Texture", inputElementDescs, texture);
 }
 
 

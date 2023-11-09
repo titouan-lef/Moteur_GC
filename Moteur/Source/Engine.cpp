@@ -126,10 +126,15 @@ void Engine::Render(Entity* e)
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pso);// Ajout de la pipeline de rendu
 
-    CmdList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
+    if (shader->IsTexture())
+    {
+        CmdList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
 
-    D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();// TO Do enlever
-    Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
+        D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();// TO Do enlever
+        Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
+    }
+    else
+        CmdList->SetGraphicsRootConstantBufferView(0, constBuffer->m_buffer->GetGPUVirtualAddress());
 
     CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
     CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)

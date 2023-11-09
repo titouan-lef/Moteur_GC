@@ -13,10 +13,16 @@ Shader::~Shader()
     //delete m_rootSignature;
 }
 
-void Shader::Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs)
+void Shader::Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs, ShaderType shaderType)
 {
+    m_shaderType = shaderType;
     CreateRootSignature(rootParameters, samplers);
     CreatePSO(fileName, inputElementDescs);
+}
+
+bool Shader::IsTexture()
+{
+    return m_shaderType == texture;
 }
 
 void Shader::CreateRootSignature(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers)

@@ -2,12 +2,18 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 
+enum ShaderType
+{
+	texture, color
+};
+
 class Shader
 {
 public:
 	Shader();
 	virtual ~Shader();
-	void Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs);
+	void Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs, ShaderType shaderType);
+	bool IsTexture();
 
 private:
 	void CreateRootSignature(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers);
@@ -18,6 +24,9 @@ private:
 	#ifndef  NDEBUG
 		DxgiInfoManager infoManager;
 	#endif
+
+	ShaderType m_shaderType;
+
 
 		//TO DO en private
 public:

@@ -120,7 +120,6 @@ void WindowManager::CreateSyncObj()
 void WindowManager::LoadTexture()
 {
     woodCrateTex = new Texture;
-    woodCrateTex->Name = "pierre";
     woodCrateTex->Filename = L"Source/pierre.dds";
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE gpu(m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
