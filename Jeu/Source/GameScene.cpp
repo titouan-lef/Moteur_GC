@@ -1,5 +1,4 @@
-﻿#include <Cube.h>
-#include <SceneManager.h>
+﻿#include <SceneManager.h>
 #include <iostream>
 #include <random>
 #include "GameScene.h"

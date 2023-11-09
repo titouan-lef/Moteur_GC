@@ -1,6 +1,5 @@
 #pragma once
 #include <Timer.h>
-#include "Pyramid.h"
 #include "Timer.h"
 #include "Entity.h"
 #include "Mesh.h"

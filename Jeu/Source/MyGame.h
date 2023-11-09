@@ -1,6 +1,5 @@
 #pragma once
 #include <Game.h>
-#include <Cube.h>
 #include <Timer.h>
 #include "Controller.h"
 #include "Player.h"
