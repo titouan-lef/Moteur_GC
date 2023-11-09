@@ -27,8 +27,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\asteroid.h" />
-    <ClInclude Include="Source\asteroidBizarre.h" />
     <ClInclude Include="Source\asteroidCube.h" />
     <ClInclude Include="Source\Bullet.h" />
     <ClInclude Include="Source\Controller.h" />
@@ -38,8 +36,6 @@
     <ClInclude Include="Source\Player.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\asteroid.cpp" />
-    <ClCompile Include="Source\asteroidBizarre.cpp" />
     <ClCompile Include="Source\asteroidCube.cpp" />
     <ClCompile Include="Source\Bullet.cpp" />
     <ClCompile Include="Source\Controller.cpp" />

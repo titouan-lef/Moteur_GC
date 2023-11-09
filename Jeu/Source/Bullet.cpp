@@ -52,7 +52,7 @@ Bullet::~Bullet() {
 
 void Bullet::Update() {
     auto transform = this->GetComponent<Transform>();
-    transform->MoveByVector(transform->GetDirection(),1);
+    transform->MoveByVector(transform->GetDirection(), 1);
 }
 
 bool Bullet::isDead() {

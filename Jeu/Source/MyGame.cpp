@@ -11,7 +11,10 @@
 
 MyGame::MyGame()
 {
-
+    m_time = new Timer();
+    m_timeR = new Timer();
+    listRock = new std::list<Entity*>;
+    m_controller = new Controller();
 }
 
 MyGame::~MyGame()

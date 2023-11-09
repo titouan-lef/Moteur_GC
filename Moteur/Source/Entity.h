@@ -10,7 +10,7 @@ public:
 	virtual ~Entity();
 
 	void Born();
-	bool IsDead() { return m_isDead; }
+
 
 	int m_ID;
 
@@ -18,21 +18,18 @@ public:
 	virtual void Update() {}		// Update entity called every frame
 	virtual void PostUpdate() {}	// Update entity called every frame after all updates
 
-	void AddChild(Entity* child);	// Add child to entity
+	void AddChild(Entity* child); // Add child to entity
 
-	template <typename T = Component>
+	template <typename T>// = Component>
 	T* AddComponent();		// Add component to entity
 
-	template <typename T = Component>
+	template <typename T>// = Component>
 	T* GetComponent();		// Get component from entity
 
 	void RealUpdate();		// Update entity, all children and components
-	void Render();			// Render all children and components
-
-	void Destroy();			// Destroy entity and all children
+	void Render();			// Render all children and components33
 
 protected:
-
 	Entity* m_Parent = nullptr;
 
 	std::vector<Entity*> m_Children;
@@ -40,8 +37,6 @@ protected:
 
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:
-	// Check if entity is destroyed
-	bool m_isDead = false;
 	// Check if entity is initialized
 	bool m_isBorn = false;
 	// Prevent copying parent/child or nullptr

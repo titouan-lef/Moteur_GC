@@ -17,8 +17,6 @@ public:
 
 	void AddEntity(Entity* entity);		// Add entity to scene
 	void RemoveEntity(Entity* entity);	// Remove entity from scene
-
-	void KillThemAll();					// Destroy all entities in scene
 private:
 	bool m_Initialized = false;			// Is scene initialized
 protected:

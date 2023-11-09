@@ -29,6 +29,5 @@ void MeshRenderer::Update()
 
 void MeshRenderer::Render()
 {
-	if (GetOwner()->GetComponent<Transform>()->IsOnScreen())
-		Engine::GetInstance()->Render(GetOwner());
+	Engine::GetInstance()->Render(GetOwner());
 }
