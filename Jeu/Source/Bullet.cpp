@@ -17,26 +17,26 @@ Bullet::Bullet(int x, int y) {
     transform->SetScale(0.05f, 0.05f, 0.05f);
     
     if (x >= 600) {
-        newX = (x - 600) / 1000.0;
+        newX = (x - 600) / 1000.0f;
         if (y >= 500) {
-            newY = (y - 500) / 1000.0;
-            transform->SetPosition(newX, -newY, 0.15);
+            newY = (y - 500) / 1000.0f;
+            transform->SetPosition(newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 500) / 1000.0;
-            transform->SetPosition(newX, newY, 0.15);
+            newY = (-y + 500) / 1000.0f;
+            transform->SetPosition(newX, newY, 0.15f);
         }        
     }
     
     else {
-        newX = (-x + 600) / 1000.0;
+        newX = (-x + 600) / 1000.0f;
         if (y >= 500) {
-            newY = (y - 500) / 1000.0;
-            transform->SetPosition(-newX, -newY, 0.15);
+            newY = (y - 500) / 1000.0f;
+            transform->SetPosition(-newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 500) / 1000.0;
-            transform->SetPosition(-newX, newY, 0.15);
+            newY = (-y + 500) / 1000.0f;
+            transform->SetPosition(-newX, newY, 0.15f);
         }
     }
 
