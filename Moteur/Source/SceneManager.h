@@ -21,6 +21,8 @@ public:
 
 	void CurrentSceneUpdate();		// Update the current scene
 	void CurrentSceneRender();		// Render the current scene
+
+	void FrameEnd();				// Called at the end of a frame
 private:
 	Scene* m_pCurrentScene = nullptr;
 	std::vector<Scene*> m_Scenes;

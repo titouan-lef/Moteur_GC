@@ -38,6 +38,7 @@ void CollisionManager::Update()
 {
 	for (int i = 0; i < _entityList.size(); i++)
 	{
+		//if (_entityList[i]->) continue;
 		Collider* collider1 = _entityList[i]->GetComponent<Collider>();
 		if (!collider1->IsActive()) continue;
 		for (int j = i + 1; j < _entityList.size(); j++)

@@ -42,6 +42,8 @@ int Game::Run()
 		m_wndManager->PreRender();
 		Render();
 		m_wndManager->PostRender();
+
+		SceneManager::GetInstance()->FrameEnd();
 	}
 }
 
