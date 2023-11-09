@@ -21,4 +21,3 @@ public:
 public://TO DO : en private ?
 	ID3D12DescriptorHeap* m_cbvHeapDesc = nullptr;// Tas de descripteurs dont le shader a besoin pour accéder aux différentes ressources (il est de type cbv ou cbv-srv
 };
-

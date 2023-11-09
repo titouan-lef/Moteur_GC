@@ -126,8 +126,6 @@
     <ClInclude Include="Source\Game.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Icosahedron.h" />
-    <ClInclude Include="Source\Pyramid.h" />
     <ClInclude Include="Source\CollisionManager.h">
       <Filter>Private\header</Filter>
     </ClInclude>
@@ -141,7 +139,13 @@
       <Filter>Public\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\LifeSystem.h">
-      <Filter>Public\cpp</Filter>
+      <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Icosahedron.h">
+      <Filter>Public\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pyramid.h">
+      <Filter>Public\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,8 +227,6 @@
     <ClCompile Include="Source\Game.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Icosahedron.cpp" />
-    <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\CollisionManager.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
@@ -238,6 +240,12 @@
       <Filter>Public\cpp</Filter>
     </ClCompile>
     <ClCompile Include="Source\LifeSystem.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Icosahedron.cpp">
+      <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pyramid.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
   </ItemGroup>

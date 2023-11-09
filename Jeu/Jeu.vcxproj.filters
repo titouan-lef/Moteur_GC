@@ -22,6 +22,12 @@
     <ClCompile Include="Source\Bullet.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
+    <ClCompile Include="Source\asteroidBizarre.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\asteroid.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Controller.h">
@@ -43,6 +49,12 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Bullet.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\asteroidBizarre.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\asteroid.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>

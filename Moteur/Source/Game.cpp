@@ -13,9 +13,9 @@ Game::Game(const wchar_t* name, UINT width, UINT height) : m_window(Window(name,
 	m_wndManager = new WindowManager(width, height, m_window.GethWnd());
 }
 
-Game::Game() : m_window(Window(L"Game", 800, 600))
+Game::Game() : m_window(Window(L"Game", 1280, 720))
 {
-	m_wndManager = new WindowManager(800, 600, m_window.GethWnd());
+	m_wndManager = new WindowManager(1280, 720, m_window.GethWnd());
 }
 
 Game::~Game()
@@ -42,6 +42,8 @@ int Game::Run()
 		m_wndManager->PreRender();
 		Render();
 		m_wndManager->PostRender();
+
+		SceneManager::GetInstance()->FrameEnd();
 	}
 }
 

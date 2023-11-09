@@ -3,38 +3,38 @@
 #include "Timer.h"
 #include "Entity.h"
 #include "Mesh.h"
+#include "asteroid.h"
 
-class Asteroid : public Entity{
+
+class AsteroidCube : public Asteroid {
 public:
     Timer time;
     bool isDead = false;
 
-    Asteroid();
-    ~Asteroid();
+    AsteroidCube();
+    ~AsteroidCube();
 
-    void Update();
-    void isTouch(Collider* collider);
-    bool isDeadByTime();
 private:
     std::vector<Vertex> m_vertices = {
         // Front face
-        {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},  // 0
-        {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},   // 1
-        {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},    // 2
-        {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},   // 3
+        {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}},  // 0
+        {{0.5f, -0.5f, -0.5f}, {0.5f, 1.0f}},   // 1
+        {{0.5f, 0.5f, -0.5f}, {0.5f, 0.0f}},    // 2
+        {{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f}},   // 3
 
         // Back face
-        {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f}},   // 4
+        {{-0.5f, -0.5f, 0.5f}, {0.5f, 1.0f}},   // 4
         {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f}},    // 5
-        {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},     // 6
-        {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},    // 7
+        {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},     // 6
+        {{-0.5f, 0.5f, 0.5f}, {0.5f, 0.0f}},    // 7
     };
+
     std::vector<UINT16> m_indices = {
         // Front face
-        0, 3, 2, 2, 1, 0,
+        0, 3, 2, 2, 1,0,
 
         // Back face
-        4, 7, 6, 6, 5, 4,
+        4, 5, 6, 6, 7, 4,
 
         // Left face
         0, 4, 7, 7, 3, 0,
