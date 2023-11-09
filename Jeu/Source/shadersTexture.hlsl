@@ -3,30 +3,39 @@ cbuffer ConstantBufferData : register(b0)
     matrix World;
     matrix View;
     matrix Projection;
-}
+};
 
 Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
 
-struct PSInput
+struct VertexIn
+{
+    float3 position : POSITION;
+    float2 uv : TEXCOORD;
+};
+
+struct VertexOut
 {
     float4 position : SV_POSITION;
     float2 uv : TEXCOORD;
 };
 
-PSInput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
+VertexOut VSMain(VertexIn vIn)
 {
-    PSInput result;
+    VertexOut vOut;
     
-    result.position = mul(mul(mul(position, World), View), Projection);
+    float4 position = { vIn.position.x, vIn.position.y, vIn.position.z, 1 };
+    
+    vOut.position = mul(mul(mul(position, World), View), Projection);
     //result.position = position;
-    result.uv = uv;
+    vOut.uv = vIn.uv;
 
-    return result;
+    return vOut;
 }
 
-float4 PSMain(PSInput input) : SV_TARGET
+float4 PSMain(VertexOut vOut) : SV_TARGET
 {
-    return g_texture.Sample(g_sampler, input.uv);
+   // return float4(vOut.uv.xxx, 1);
+   return g_texture.Sample(g_sampler, vOut.uv);
 }

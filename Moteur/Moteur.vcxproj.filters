@@ -1,253 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Private">
-      <UniqueIdentifier>{d97b63b6-a6d7-4811-9f2c-17586111d81a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\header">
-      <UniqueIdentifier>{3d798e22-5df4-42dc-b202-7c43a10fde42}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\cpp">
-      <UniqueIdentifier>{2be0e938-ea2f-4984-91b2-db38235e1a8a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public">
-      <UniqueIdentifier>{220c69e5-24a6-4533-9d1a-4ad2ff80887b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\header">
-      <UniqueIdentifier>{fa6e2033-2e9a-4745-b469-34b5aa16611d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\cpp">
-      <UniqueIdentifier>{6257e815-027b-45a9-8487-f48263ac60ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\cpp\Buffer">
-      <UniqueIdentifier>{7943c5a7-2dea-4b84-a7f2-72e685c5a1f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\header\Buffer">
-      <UniqueIdentifier>{ffbce20b-c659-4d2e-ac94-29aacf15af79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\header\Debug">
-      <UniqueIdentifier>{a16f91f0-82ed-40a9-8a7e-9b66dc38ee9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\header\Debug\dxerr">
-      <UniqueIdentifier>{1d0c965c-4254-49fc-adeb-d5ea5ad16052}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\cpp\Debug">
-      <UniqueIdentifier>{4af2406d-62bc-48a4-8d0a-807660112268}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\cpp\Shader">
-      <UniqueIdentifier>{69129452-508e-4419-964d-80b5fc561eaa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Private\header\Shader">
-      <UniqueIdentifier>{1c22acd4-2027-4c61-9d29-591c46c5b28f}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\Component.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\d3dx12.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Entity.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\framwork.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Window.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WindowManager.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Transform.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MeshRenderer.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Camera.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\dxerr.h">
-      <Filter>Private\header\Debug\dxerr</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Rectangle.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mesh.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Buffer.h">
-      <Filter>Private\header\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ConstantBuffer.h">
-      <Filter>Private\header\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\IndexBuffer.h">
-      <Filter>Private\header\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\VertexBuffer.h">
-      <Filter>Private\header\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DxgiInfoManager.h">
-      <Filter>Private\header\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MyException.h">
-      <Filter>Private\header\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EngineException.h">
-      <Filter>Private\header\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Shader.h">
-      <Filter>Private\header\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ShaderColor.h">
-      <Filter>Private\header\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ConstantBufferSR.h">
-      <Filter>Private\header\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ShaderTexture.h">
-      <Filter>Private\header\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Cube.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Collider.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Timer.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Pyramid.h" />
-    <ClInclude Include="Source\CollisionManager.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneManager.h">
-      <Filter>Private\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Input.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LifeSystem.h">
-      <Filter>Public\header</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\Component.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Entity.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Window.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WindowManager.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Transform.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MeshRenderer.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Camera.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Rectangle.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mesh.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Buffer.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VertexBuffer.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IndexBuffer.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ConstantBuffer.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\dxerr.cpp">
-      <Filter>Private\cpp\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DxgiInfoManager.cpp">
-      <Filter>Private\cpp\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EngineException.cpp">
-      <Filter>Private\cpp\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MyException.cpp">
-      <Filter>Private\cpp\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Shader.cpp">
-      <Filter>Private\cpp\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ShaderColor.cpp">
-      <Filter>Private\cpp\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ConstantBufferSR.cpp">
-      <Filter>Private\cpp\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ShaderTexture.cpp">
-      <Filter>Private\cpp\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Timer.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Collider.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cube.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\Buffer.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\Collider.cpp" />
+    <ClCompile Include="Source\CollisionManager.cpp" />
+    <ClCompile Include="Source\Component.cpp" />
+    <ClCompile Include="Source\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Cube.cpp" />
+    <ClCompile Include="Source\DDSTextureLoader.cpp" />
+    <ClCompile Include="Source\dxerr.cpp" />
+    <ClCompile Include="Source\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\Engine.cpp" />
+    <ClCompile Include="Source\EngineException.cpp" />
+    <ClCompile Include="Source\Entity.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\LifeSystem.cpp" />
+    <ClCompile Include="Source\Mesh.cpp" />
+    <ClCompile Include="Source\MeshRenderer.cpp" />
+    <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Pyramid.cpp" />
-    <ClCompile Include="Source\CollisionManager.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneManager.cpp">
-      <Filter>Private\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Input.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LifeSystem.cpp">
-      <Filter>Public\cpp</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\Rectangle.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
+    <ClCompile Include="Source\Shader.cpp" />
+    <ClCompile Include="Source\ShaderColor.cpp" />
+    <ClCompile Include="Source\ShaderTexture.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
+    <ClCompile Include="Source\Transform.cpp" />
+    <ClCompile Include="Source\ConstantBufferSR.cpp" />
+    <ClCompile Include="Source\VertexBuffer.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\WindowManager.cpp" />
+    <ClCompile Include="Source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Source\DXGetErrorDescription.inl">
-      <Filter>Private\header\Debug\dxerr</Filter>
-    </None>
-    <None Include="Source\DXGetErrorString.inl">
-      <Filter>Private\header\Debug\dxerr</Filter>
-    </None>
-    <None Include="Source\DXTrace.inl">
-      <Filter>Private\header\Debug\dxerr</Filter>
-    </None>
+    <ClInclude Include="Source\Buffer.h" />
+    <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\Collider.h" />
+    <ClInclude Include="Source\CollisionManager.h" />
+    <ClInclude Include="Source\Component.h" />
+    <ClInclude Include="Source\ConstantBuffer.h" />
+    <ClInclude Include="Source\Cube.h" />
+    <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\DDSTextureLoader.h" />
+    <ClInclude Include="Source\dxerr.h" />
+    <ClInclude Include="Source\DxgiInfoManager.h" />
+    <ClInclude Include="Source\Engine.h" />
+    <ClInclude Include="Source\EngineException.h" />
+    <ClInclude Include="Source\Entity.h" />
+    <ClInclude Include="Source\framwork.h" />
+    <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\IndexBuffer.h" />
+    <ClInclude Include="Source\Input.h" />
+    <ClInclude Include="Source\LifeSystem.h" />
+    <ClInclude Include="Source\Mesh.h" />
+    <ClInclude Include="Source\MeshRenderer.h" />
+    <ClInclude Include="Source\MyException.h" />
+    <ClInclude Include="Source\Pyramid.h" />
+    <ClInclude Include="Source\Rectangle.h" />
+    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\SceneManager.h" />
+    <ClInclude Include="Source\Shader.h" />
+    <ClInclude Include="Source\ShaderColor.h" />
+    <ClInclude Include="Source\ShaderTexture.h" />
+    <ClInclude Include="Source\Timer.h" />
+    <ClInclude Include="Source\Transform.h" />
+    <ClInclude Include="Source\ConstantBufferSR.h" />
+    <ClInclude Include="Source\VertexBuffer.h" />
+    <ClInclude Include="Source\Window.h" />
+    <ClInclude Include="Source\WindowManager.h" />
+    <ClInclude Include="Source\Texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\DXGetErrorDescription.inl" />
+    <None Include="Source\DXGetErrorString.inl" />
+    <None Include="Source\DXTrace.inl" />
   </ItemGroup>
 </Project>
