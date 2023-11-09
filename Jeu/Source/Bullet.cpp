@@ -13,29 +13,31 @@ Bullet::Bullet(int x, int y) {
 
     float newX;
     float newY;
+    int demitailleWindowX = 750;
+    int demitailleWindowY = 400;
 
     transform->SetScale(0.05f, 0.05f, 0.05f);
 
-    if (x >= 750) {
-        newX = (x - 750) / 2000.0f;
-        if (y >= 400) {
-            newY = (y - 400) / 2000.0f;
+    if (x >= demitailleWindowX) {
+        newX = (x - demitailleWindowX) / 2000.0f;
+        if (y >= demitailleWindowY){
+            newY = (y - demitailleWindowY) / 2000.0f;
             transform->SetPosition(newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 400) / 2000.0f;
+            newY = (-y + demitailleWindowY) / 2000.0f;
             transform->SetPosition(newX, newY, 0.15f);
         }        
     }
     
     else {
-        newX = (-x + 750) / 2000.0f;
-        if (y >= 400) {
-            newY = (y - 400) / 2000.0f;
+        newX = (-x + demitailleWindowX) / 2000.0f;
+        if (y >= demitailleWindowY) {
+            newY = (y - demitailleWindowY) / 2000.0f;
             transform->SetPosition(-newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 400) / 2000.0f;
+            newY = (-y + demitailleWindowY) / 2000.0f;
             transform->SetPosition(-newX, newY, 0.15f);
         }
     }
