@@ -23,10 +23,10 @@ public:
 private:
     std::vector<Vertex> m_vertices = {
         // Base square
-        {{-0.5f, 0.0f, -0.5f}, {1.0f, 0.0f}},  // 0 Left-back
-        {{0.5f, 0.0f, -0.5f}, {1.0f, 0.0f}},   // 1 Right-back
-        {{0.5f, 0.0f, 0.5f}, {1.0f, 0.0f}},    // 2 Right-front
-        {{-0.5f, 0.0f, 0.5f}, {1.0f, 0.0f}},   // 3 Left-front
+        {{-0.5f, 0.0f, -0.5f}, {0.0f, 1.0f}},  // 0 Left-back
+        {{0.5f, 0.0f, -0.5f}, {1.0f, 1.0f}},   // 1 Right-back
+        {{0.5f, 0.0f, 0.5f}, {1.0, 0.0f}},    // 2 Right-front
+        {{-0.5f, 0.0f, 0.5f}, {0.0f, 0.0f}},   // 3 Left-front
 
         // Top point
         {{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}     // 4 Top

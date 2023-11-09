@@ -102,7 +102,7 @@ void Entity::RealUpdate()
 void Entity::MurderChildren()
 {
 	if (m_Children.empty()) return;
-	for (int i = m_Children.size()-1; i > 0; i--)
+	for (int i = (int)m_Children.size()-1; i > 0; i--)
 	{
 		if (m_Children[i] == nullptr) continue;
 		if (!m_Children[i]->IsDead()) continue;

@@ -84,5 +84,8 @@
     <Image Include="Source\pierre.dds">
       <Filter>ressource\texture</Filter>
     </Image>
+    <Image Include="Source\sol.dds">
+      <Filter>ressource\texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

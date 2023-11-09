@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "MyException.h"
 #include "DDSTextureLoader.h"
+#include <wincodec.h>
 
 
 Texture::Texture()
@@ -12,20 +13,22 @@ Texture::~Texture()
 {
 }
 
-void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap* cbvSrvUavHeap, UINT rtvDescriptorSize)
+void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap* cbvSrvUavHeap, UINT m_cbvSrvUavDescriptorSize)
 {
     m_id = id;
     m_fileName = L"Source/" + fileName + L".dds";
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE gpu(cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
-    gpu.Offset(id, rtvDescriptorSize);
+    CD3DX12_GPU_DESCRIPTOR_HANDLE gpu(cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());// Rï¿½cupï¿½ration de l'emplacement prï¿½vu pour la "surface de dessin" (= render target) 0
+    gpu.Offset(id, m_cbvSrvUavDescriptorSize);
 
-    // Décrit la Texture2D
+    GetSizeImg();    
+
+    // Dï¿½crit la Texture2D
     D3D12_RESOURCE_DESC textureDesc = {};
     textureDesc.MipLevels = 1;
     textureDesc.Format = DXGI_FORMAT_BC1_UNORM;
-    textureDesc.Width = 472;
-    textureDesc.Height = 472;
+    textureDesc.Width = m_width;
+    textureDesc.Height = m_height;
     textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
     textureDesc.DepthOrArraySize = 1;
     textureDesc.SampleDesc.Count = 1;
@@ -38,9 +41,6 @@ void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap
     m_srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     m_srvDesc.Texture2D.MipLevels = 1;
 
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
-
     DirectX::CreateDDSTextureFromFile12(
         Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
         m_fileName.c_str(),
@@ -49,7 +49,38 @@ void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap
     m_gpu = gpu;
 }
 
-void Texture::CreateShaderResourceView()
+void Texture::CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap, UINT m_cbvSrvUavDescriptorSize)
 {
-    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, m_gpu);// Créez le SRV
+    CD3DX12_CPU_DESCRIPTOR_HANDLE cpu(cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+    cpu.Offset(m_id, m_cbvSrvUavDescriptorSize);
+    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, cpu);// Crï¿½ez le SRV
+}
+
+void Texture::GetSizeImg()
+{
+    IWICImagingFactory* wicFactory;
+    CoInitialize(nullptr); // Initialise COM si ce n'est pas deja fait.
+
+    // Cree une instance de l'usine WIC
+    HRESULT hr = CoCreateInstance(
+        CLSID_WICImagingFactory,
+        nullptr,
+        CLSCTX_INPROC_SERVER,
+        IID_PPV_ARGS(&wicFactory)
+    );
+
+    IWICBitmapDecoder* wicDecoder;
+
+    // Charge le fichier
+    wicFactory->CreateDecoderFromFilename(
+        m_fileName.c_str(),
+        nullptr,
+        GENERIC_READ,
+        WICDecodeMetadataCacheOnDemand,
+        &wicDecoder
+    );
+
+    IWICBitmapFrameDecode* wicFrame;
+    hr = wicDecoder->GetFrame(0, &wicFrame);
+    hr = wicFrame->GetSize(&m_width, &m_height);
 }

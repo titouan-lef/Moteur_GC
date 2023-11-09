@@ -85,8 +85,7 @@ void WindowManager::CreateDescriptorHeaps()
     cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap)));
-
-    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
+    m_cbvSrvUavDescriptorSize = Engine::GetInstance()->Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);// Récupération de la taille d'un descripteur
 }
 
 
@@ -118,25 +117,32 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::LoadTextures()
 {
-    Texture* pTexture = new Texture();
-    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
-    m_listTexure.push_back(pTexture);
-    ExecuteCmdList();
-    pTexture->CreateShaderResourceView();
+    ResetCmdList();
 
-    /*pTexture = new Texture();
-    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    Texture* pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
     m_listTexure.push_back(pTexture);
+
     ExecuteCmdList();
-    pTexture->CreateShaderResourceView();*/
+    ResetCmdList();
+
+    pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"sol", m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
+    m_listTexure.push_back(pTexture);
+
+    ExecuteCmdList();
+
+    for (int i = 0; i < m_listTexure.size(); ++i)
+        m_listTexure[i]->CreateShaderResourceView(m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
+
+    Engine::GetInstance()->SetListTexture(m_listTexure);
 }
 #pragma endregion
 
 void WindowManager::PreRender()
 {
     // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
+    ResetCmdList();
 
     // Paramètre l'affichage pour fonctionner avec une liste de triangle
     Engine::GetInstance()->CmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -171,9 +177,16 @@ void WindowManager::PostRender()
 
     ExecuteCmdList();
 
+    // Affichage de la frame.
     GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+}
+
+void WindowManager::ResetCmdList()
+{
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
 }
 
 void WindowManager::ExecuteCmdList()
@@ -185,30 +198,22 @@ void WindowManager::ExecuteCmdList()
     ID3D12CommandList* ppCommandLists[1] = { Engine::GetInstance()->CmdList };
     m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
 
-    // Affichage de la frame.
-
     WaitForPreviousFrame();
-
 }
 
 void WindowManager::WaitForPreviousFrame()
 {
-    // Indique que les commandes dans le file doivent être terminées avant de continuer
-    const UINT64 fence = m_fenceId;
-    GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, fence));
-
-    if (m_fence->GetCompletedValue() < fence)// Si la frame précédente n'a pas fini d'être traité
-    {
-        HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);// Signale la fin du rendu d'une frame
-
-        if (fenceEvent != nullptr)// Vérifie que la création de l'événement s'est déroulée avec succès
-        {
-            GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(fence, fenceEvent));// Créer un évènement qui indique si la frame précédente est traité
-            WaitForSingleObject(fenceEvent, INFINITE);// Tant que la frame précédente n'est pas traité, le programme est suspendu
-            CloseHandle(fenceEvent);// Supprime l'évènement de fin de rendu d'une frame
-        }
-    }
-
-   
     m_fenceId++;// On passe à la prochaine frame
-}
+
+    // Indique que les commandes dans le file doivent être terminées avant de continuer
+    GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, m_fenceId));
+
+    if (m_fence->GetCompletedValue() < m_fenceId)// Si la frame précédente n'a pas fini d'être traité
+    {
+        HANDLE fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);// Signale la fin du rendu d'une frame
+        
+        GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(m_fenceId, fenceEvent));// Créer un évènement qui indique si la frame précédente est traité
+        WaitForSingleObject(fenceEvent, INFINITE);// Tant que la frame précédente n'est pas traité, le programme est suspendu
+        CloseHandle(fenceEvent);// Supprime l'évènement de fin de rendu d'une frame
+    }
+} 

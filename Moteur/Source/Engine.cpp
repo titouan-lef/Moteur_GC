@@ -118,8 +118,6 @@ void Engine::Render(Entity* e)
     Shader* shader = meshRenderer->m_shader;
     ConstantBuffer* constBuffer = e->GetComponent<MeshRenderer>()->m_constBuffer;
 
-
-
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pso);// Ajout de la pipeline de rendu
 
@@ -127,8 +125,8 @@ void Engine::Render(Entity* e)
     {
         CmdList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
 
-        D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();// TO Do enlever
-        Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(meshRenderer->m_numTexture, srv);
+        UINT idTexture = meshRenderer->m_numTexture;
+        Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, m_listTexure[idTexture]->GetGPU());
     }
     else
         CmdList->SetGraphicsRootConstantBufferView(0, constBuffer->m_buffer->GetGPUVirtualAddress());
