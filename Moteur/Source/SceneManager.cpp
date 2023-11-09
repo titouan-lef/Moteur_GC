@@ -77,6 +77,10 @@ bool SceneManager::CkeckIfSceneExists(Scene* s)
 			return true;
 		}
 	}
-
 	return false;
+}
+
+void SceneManager::FrameEnd()
+{
+	m_pCurrentScene->KillThemAll();
 }

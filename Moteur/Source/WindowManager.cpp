@@ -1,10 +1,7 @@
-
 #include "MyException.h"
 #include "Engine.h"
 #include "WindowManager.h"
-#include "Camera.h"// TO DO : A supprimer
 #include "Shader.h"
-#include "MeshRenderer.h"
 #include "Collider.h"
 
 
@@ -74,12 +71,22 @@ void WindowManager::CreateSwapChain(HWND hWnd, UINT width, UINT height)
 
 void WindowManager::CreateDescriptorHeaps()
 {
+    // Render Target
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
     rtvHeapDesc.NumDescriptors = FrameCount;
     rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
     m_rtvDescriptorSize = Engine::GetInstance()->Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);// Récupération de la taille d'un descripteur
+
+    // Shader Ressource
+    D3D12_DESCRIPTOR_HEAP_DESC cbvSrvUavHeapDesc = {};
+    cbvSrvUavHeapDesc.NumDescriptors = 100;
+    cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap)));
+
+    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
 }
 
 
@@ -99,6 +106,7 @@ void WindowManager::CreateFrameResources()
 void WindowManager::LoadAssets()
 {
     CreateSyncObj();
+    LoadTextures();
 }
 
 #pragma region LoadAssetsFunction
@@ -106,6 +114,21 @@ void WindowManager::LoadAssets()
 void WindowManager::CreateSyncObj()
 {
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
+}
+
+void WindowManager::LoadTextures()
+{
+    Texture* pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    m_listTexure.push_back(pTexture);
+    ExecuteCmdList();
+    pTexture->CreateShaderResourceView();
+
+    /*pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    m_listTexure.push_back(pTexture);
+    ExecuteCmdList();
+    pTexture->CreateShaderResourceView();*/
 }
 #pragma endregion
 
@@ -136,6 +159,9 @@ void WindowManager::PreRender()
 
     // Ajout de clearColor au premier plan pour effacer l'arrière plan par réécriture
     Engine::GetInstance()->CmdList->ClearRenderTargetView(renderTarget, m_clearColor, 1, &m_scissorRect);// Ajout de clearColor aux "surfaces de dessin" (ici 1 seule)
+
+    ID3D12DescriptorHeap* descriptorHeaps[] = { m_cbvSrvUavHeap };
+    Engine::GetInstance()->CmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 }
 
 void WindowManager::PostRender()
@@ -144,6 +170,15 @@ void WindowManager::PostRender()
     transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     Engine::GetInstance()->CmdList->ResourceBarrier(1, &transition);
 
+    ExecuteCmdList();
+
+    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
+
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+}
+
+void WindowManager::ExecuteCmdList()
+{
     // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Close());
 
@@ -152,9 +187,9 @@ void WindowManager::PostRender()
     m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
 
     // Affichage de la frame.
-    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     WaitForPreviousFrame();
+
 }
 
 void WindowManager::WaitForPreviousFrame()
@@ -175,6 +210,6 @@ void WindowManager::WaitForPreviousFrame()
         }
     }
 
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+   
     m_fenceId++;// On passe à la prochaine frame
 }

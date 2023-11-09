@@ -1,6 +1,5 @@
 ﻿#include "Icosahedron.h"
 #include "MeshRenderer.h"
-#include "Camera.h"
 #include "Collider.h"
 #include "ShaderColor.h"
 #include <vector>
@@ -10,10 +9,9 @@ Icosahedron::Icosahedron()
 {
     CreateVertices();
     CreateIndices();
-    this->AddComponent<Transform>();
-    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
+    this->AddComponent<Transform>();
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
 }
 
 void Icosahedron::CreateVertices() {

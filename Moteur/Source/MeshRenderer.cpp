@@ -9,14 +9,15 @@ MeshRenderer::MeshRenderer()
 
 MeshRenderer::~MeshRenderer()
 {
-	delete m_shader;
-	delete m_mesh;
 }
 
-void MeshRenderer::Init(Mesh* mesh, Shader* shader)
+void MeshRenderer::Init(Mesh* mesh, Shader* shader, UINT numTexture)
 {
 	m_mesh = mesh;
 	m_shader = shader;
+	m_numTexture = numTexture;
+	XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
+	m_constBuffer = new ConstantBuffer(world);
 }
 
 void MeshRenderer::Update()
@@ -24,10 +25,11 @@ void MeshRenderer::Update()
     GetOwner()->GetComponent<Transform>()->UpdateMatrix();
 
     XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
-    GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
+    GetOwner()->GetComponent<MeshRenderer>()->m_constBuffer->UpdateBuffer(world);
 }
 
 void MeshRenderer::Render()
 {
-	Engine::GetInstance()->Render(GetOwner());
+	if (GetOwner()->GetComponent<Transform>()->IsOnScreen())
+		Engine::GetInstance()->Render(GetOwner());
 }

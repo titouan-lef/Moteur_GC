@@ -27,6 +27,7 @@
     <ClInclude Include="Source\ConstantBuffer.h" />
     <ClInclude Include="Source\Cube.h" />
     <ClInclude Include="Source\d3dx12.h" />
+    <ClInclude Include="Source\DDSTextureLoader.h" />
     <ClInclude Include="Source\dxerr.h" />
     <ClInclude Include="Source\DxgiInfoManager.h" />
     <ClInclude Include="Source\Engine.h" />
@@ -34,7 +35,6 @@
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\framwork.h" />
     <ClInclude Include="Source\Game.h" />
-    <ClInclude Include="Source\Icosahedron.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\LifeSystem.h" />
@@ -48,6 +48,7 @@
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\ShaderColor.h" />
     <ClInclude Include="Source\ShaderTexture.h" />
+    <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\ConstantBufferSR.h" />
@@ -63,13 +64,13 @@
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Cube.cpp" />
+    <ClCompile Include="Source\DDSTextureLoader.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />
     <ClCompile Include="Source\DxgiInfoManager.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\EngineException.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\LifeSystem.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\ShaderColor.cpp" />
     <ClCompile Include="Source\ShaderTexture.cpp" />
+    <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\ConstantBufferSR.cpp" />

@@ -1,9 +1,10 @@
 #include "asteroidCube.h"
 #include "MeshRenderer.h"
-#include "Camera.h"
-#include "ShaderColor.h"
+#include "ShaderTexture.h"
 #include <iostream>
 #include <random>
+#include <LifeSystem.h>
+#include <Texture.h>
 
 Asteroid::Asteroid() {
     std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
@@ -11,24 +12,26 @@ Asteroid::Asteroid() {
 
     std::uniform_real_distribution<float> y(-1.0f, 1.0f);
     std::uniform_real_distribution<float> x(-1.0f, 1.0f);
-    std::uniform_real_distribution<float> z(-1.0f, 0.0f);
+    std::uniform_real_distribution<float> z(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> speed_y(-2.5f, 1.5f);
+    std::uniform_real_distribution<float> speed_x(-1.3f, 2.0f);
+    std::uniform_real_distribution<float> speed_z(-1.7f, 2.3f);
 
-    this->AddComponent<Transform>();
-    auto transform = this->GetComponent<Transform>();
-
-    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
+  
+    Transform* transform = this->AddComponent<Transform>();
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance(), 0);
 
     transform->SetScale(0.2f, 0.2f, 0.2f);
 
     transform->SetPosition(x(gen), y(gen), 1);
     transform->UpdateMatrix();
-    transform->SetRotationSpeed(45, 35, 90);
+    transform->SetRotationSpeed(speed_x(gen), speed_y(gen), speed_z(gen));
 
     auto pos = transform->GetPosition();
-    transform->SetDirection((- pos.x / 1000), (- pos.y / 1000), (- pos.z / 1000));
+    transform->SetDirection((-pos.x / 100), (-pos.y / 100), (-pos.z / 100));
 
     this->AddComponent<Collider>();
+    this->AddComponent<LifeSystem>();
 }
 
 Asteroid::~Asteroid() {
@@ -38,6 +41,11 @@ Asteroid::~Asteroid() {
 void Asteroid::Update() {
     auto transform = this->GetComponent<Transform>();
     transform->MoveByVector(transform->GetDirection(), 1);
+    GetComponent<Transform>()->Rotate(
+        this->GetComponent<Transform>()->GetRotationSpeed().x * Engine::GetInstance()->Time->Peek(),
+        this->GetComponent<Transform>()->GetRotationSpeed().y * Engine::GetInstance()->Time->Peek(),
+        this->GetComponent<Transform>()->GetRotationSpeed().z * Engine::GetInstance()->Time->Peek()
+    );
 }
 
 bool Asteroid::isDeadByTime() {
