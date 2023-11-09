@@ -1,7 +1,7 @@
 #include "asteroidCube.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
-#include "ShaderTexture.h"
+#include "ShaderColor.h"
 #include <iostream>
 #include <random>
 #include <LifeSystem.h>
@@ -17,9 +17,11 @@ AsteroidCube::AsteroidCube() {
     std::uniform_real_distribution<float> speed_x(-1.3f, 2.0f);
     std::uniform_real_distribution<float> speed_z(-1.7f, 2.3f);
 
-  
-    Transform* transform = this->AddComponent<Transform>();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance());
+    this->AddComponent<Transform>();
+    auto transform = this->GetComponent<Transform>();
+
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
 
     transform->SetScale(0.2f, 0.2f, 0.2f);
 
@@ -32,6 +34,7 @@ AsteroidCube::AsteroidCube() {
 
     this->AddComponent<Collider>();
     this->AddComponent<LifeSystem>();
+
 }
 
 AsteroidCube::~AsteroidCube() {

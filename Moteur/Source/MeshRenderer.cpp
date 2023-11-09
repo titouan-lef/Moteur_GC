@@ -9,15 +9,14 @@ MeshRenderer::MeshRenderer()
 
 MeshRenderer::~MeshRenderer()
 {
+	delete m_shader;
+	delete m_mesh;
 }
 
 void MeshRenderer::Init(Mesh* mesh, Shader* shader)
 {
 	m_mesh = mesh;
 	m_shader = shader;
-
-	XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
-	m_constBuffer = new ConstantBuffer(world);
 }
 
 void MeshRenderer::Update()
@@ -25,7 +24,7 @@ void MeshRenderer::Update()
     GetOwner()->GetComponent<Transform>()->UpdateMatrix();
 
     XMMATRIX world = GetOwner()->GetComponent<Transform>()->GetMatrixTranspose();
-    GetOwner()->GetComponent<MeshRenderer>()->m_constBuffer->UpdateBuffer(world);
+    GetOwner()->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
 }
 
 void MeshRenderer::Render()

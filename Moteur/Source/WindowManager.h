@@ -2,14 +2,9 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Entity.h"
-
-struct Texture
-{
-    // Unique material name for lookup.
-    std::wstring Filename;
-    Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
-};
+//#include "Cube.h"
+//#include "Rectangle.h"// TO DO : A SUPPRIMER
+//#include "Timer.h"
 
 class WindowManager
 {
@@ -41,7 +36,6 @@ private:
     static const UINT FrameCount = 2;// Nombre de "surfaces de dessin" que la Swap Chain g�re pour l'application
     ID3D12Resource* m_renderTargets[FrameCount] = {};// Tableau contenant les "surfaces de dessin"
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements pr�vu pour les "surfaces de dessin"
-    ID3D12DescriptorHeap* m_cbvSrvUavHeap = nullptr;
     UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements pr�vu pour les "surfaces de dessin"
     IDXGISwapChain3* m_swapChain = nullptr;// Permet l'�change des "surfaces de dessin" dans les buffers
     
@@ -53,8 +47,7 @@ private:
 
     const float m_clearColor[4] = { 0.015f, 0.023f, 0.121f, 1.0f };// Couleur du fond de la fen�tre
 
-    Texture* woodCrateTex;
-    D3D12_CPU_DESCRIPTOR_HANDLE m_gpu;
+
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
@@ -67,9 +60,9 @@ private:
     void LoadAssets();// Chargement des ressources n�cessaire pour le rendu
 
     void CreateSyncObj();// Cr�ation d'une infrastructure de synchronisation pour assurer que le GPU ait termin� son travail avant de passer � la frame suivante
-    void LoadTexture();
 
-    void ExecuteCmdList();
+
+    void Render(Entity* e);// Enregistre les commandes pour le rendu actuel
     void WaitForPreviousFrame();// Attend que la frame soit trait�e avant de pouvoir �tre affich�
 };
 

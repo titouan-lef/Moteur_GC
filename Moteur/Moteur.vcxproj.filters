@@ -138,8 +138,6 @@
     <ClInclude Include="Source\Input.h">
       <Filter>Public\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DDSTextureLoader.h">
-      <Filter>Private\header</Filter>
     <ClInclude Include="Source\LifeSystem.h">
       <Filter>Public\header</Filter>
     </ClInclude>
@@ -241,8 +239,6 @@
     <ClCompile Include="Source\Input.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DDSTextureLoader.cpp">
-      <Filter>Private\cpp</Filter>
     <ClCompile Include="Source\LifeSystem.cpp">
       <Filter>Public\cpp</Filter>
     </ClCompile>

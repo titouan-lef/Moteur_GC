@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Source\pierre.dds" />
     <Image Include="Source\pierre.jfif" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 #pragma once
 #include "Mesh.h"
 #include "Shader.h"
-#include "ConstantBuffer.h"
 
 class Component;
 
@@ -21,5 +20,4 @@ private:
 public://TO DO : a mettre en private ?
 	Mesh* m_mesh = nullptr;
 	Shader* m_shader = nullptr;
-	ConstantBuffer* m_constBuffer = nullptr;
 };

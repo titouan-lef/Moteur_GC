@@ -1,12 +1,14 @@
 #include "Cube.h"
 #include "MeshRenderer.h"
+#include "Camera.h"
 #include "Collider.h"
 #include "ShaderColor.h"
 
-Cube::Cube()
-{
+Cube::Cube() {
     this->AddComponent<Transform>();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
+
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
 }
 
 Cube::~Cube()

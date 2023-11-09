@@ -4,32 +4,12 @@
 class ShaderColor : public Shader
 {
 public:
-	ShaderColor();
+	ShaderColor(XMMATRIX world);
 	virtual ~ShaderColor();
 
-	void Init();
+	void SetGraphicsRoot();
 
-	static ShaderColor* GetInstance();
-
-
-
-
-
-
-
-
-
-
-
-
-
-//public:
-//	ShaderColor(XMMATRIX world);
-//	virtual ~ShaderColor();
-//
-//	void SetGraphicsRoot();
-//
-//private:
-//	ID3D12RootSignature* CreateRootSignature();
+private:
+	ID3D12RootSignature* CreateRootSignature();
 };
 

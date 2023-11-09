@@ -1,45 +1,32 @@
 #include "Shader.h"
 #include "MyException.h"
-#include "Engine.h"
 
-
-Shader::Shader()
+Shader::Shader(Type type) : m_type(type)
 {
 }
 
 Shader::~Shader()
 {
-    //delete m_pso;
-    //delete m_rootSignature;
 }
 
-void Shader::Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs, ShaderType shaderType)
-{
-    m_shaderType = shaderType;
-    CreateRootSignature(rootParameters, samplers);
-    CreatePSO(fileName, inputElementDescs);
-}
-
-bool Shader::IsTexture()
-{
-    return m_shaderType == texture;
-}
-
-void Shader::CreateRootSignature(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers)
+ID3D12RootSignature* Shader::CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[])
 {
     // Description de la disposition de la signature racine
-    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc((UINT)rootParameters.size(), rootParameters.data(), (UINT)samplers.size(), samplers.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(nbParam, rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     // Transformation de la description en une structure de données qui peut être utilisée pour créer la signature racine
     ID3DBlob* serializedRootSig = nullptr;
     D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, nullptr);
 
     // Création de la signature racine
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
+    ID3D12RootSignature* rootSignature = nullptr;
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
+
+    return rootSignature;
 }
     
 
-void Shader::CreatePSO(std::wstring& fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs)
+void Shader::CreatePSO()
 {
     #if defined(_DEBUG) 
         UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -50,15 +37,44 @@ void Shader::CreatePSO(std::wstring& fileName, std::vector<D3D12_INPUT_ELEMENT_D
     // Récupération des shaders compilés
     ID3DBlob* vertexShader = nullptr;
     ID3DBlob* pixelShader = nullptr;
+    std::wstring fileName;
+    LPCSTR inputName;
+    DXGI_FORMAT dxgiFormat;
+
+    switch (m_type)
+    {
+    case texture:
+        fileName = L"Texture";
+        inputName = "TEXCOORD";
+        dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+        break;
+    case color:
+        fileName = L"Color";
+        inputName = "COLOR";
+        dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        break;
+    default:
+        fileName = L"ErreurNomShader";
+        inputName = "ErreurInputName";
+        dxgiFormat = DXGI_FORMAT::DXGI_FORMAT_YUY2;
+        break;
+    }
 
     fileName = L"Source/shaders" + fileName + L".hlsl";
 
     GFX_THROW_INFO_ONLY(D3DCompileFromFile(fileName.c_str(), nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vertexShader, nullptr));
     GFX_THROW_INFO_ONLY(D3DCompileFromFile(fileName.c_str(), nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pixelShader, nullptr));
 
+    // Définition du vertex input layout
+    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { inputName, 0, dxgiFormat, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+    };
+
     // Paramétrage de la pipeline state object (PSO).
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-    psoDesc.InputLayout = { inputElementDescs.data(), (UINT)inputElementDescs.size()};
+    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
     psoDesc.pRootSignature = m_rootSignature;
     psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShader);
     psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShader);
@@ -73,5 +89,5 @@ void Shader::CreatePSO(std::wstring& fileName, std::vector<D3D12_INPUT_ELEMENT_D
     psoDesc.SampleDesc.Count = 1;
 
     // Création de la PSO
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pso)));
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pipelineState)));
 }

@@ -90,8 +90,5 @@
     <Image Include="Source\pierre.jfif">
       <Filter>ressource\texture</Filter>
     </Image>
-    <Image Include="Source\pierre.dds">
-      <Filter>Ressources\Texture</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 ﻿#include "Rectangle.h"
 #include "MeshRenderer.h"
+#include "Camera.h"//TO DO : A supprimer
 #include "Mesh.h"
 #include "ShaderColor.h"
 //#include "ShaderColor.h"
@@ -23,7 +24,7 @@ MyRectangle::MyRectangle()
     this->GetComponent<Transform>()->UpdateMatrix();
 
     XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
-    this->AddComponent<MeshRenderer>()->Init(m_mesh, ShaderColor::GetInstance());
+    this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderColor(world));
     //this->AddComponent<MeshRenderer>()->Init(m_mesh, new ShaderTexture(cbd, pierre));
 }
 
@@ -40,7 +41,7 @@ void MyRectangle::Update()
     this->GetComponent<Transform>()->UpdateMatrix();
 
     XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
-    this->GetComponent<MeshRenderer>()->m_constBuffer->UpdateBuffer(world);
+    this->GetComponent<MeshRenderer>()->m_shader->m_constBuffer->UpdateBuffer(world);
 }
 
 //void MyRectangle::PostUpdate()

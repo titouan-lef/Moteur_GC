@@ -4,10 +4,13 @@
 #include "ShaderColor.h"
 #include <Collider.h>
 
-Bullet::Bullet(int x, int y) {
-    Transform* transform = this->AddComponent<Transform>();
+Bullet::Bullet(int x, int y){
+    this->AddComponent<Transform>();
+    auto transform = this->GetComponent<Transform>();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
 
     float newX;
     float newY;
@@ -48,8 +51,8 @@ Bullet::~Bullet() {
 }
 
 void Bullet::Update() {
-    Transform* transform = this->GetComponent<Transform>();
-    transform->MoveByVector(transform->GetDirection(), 1);
+    auto transform = this->GetComponent<Transform>();
+    transform->MoveByVector(transform->GetDirection(),1);
 }
 
 bool Bullet::isDead() {

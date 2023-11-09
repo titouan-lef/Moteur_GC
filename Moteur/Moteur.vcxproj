@@ -27,7 +27,6 @@
     <ClInclude Include="Source\ConstantBuffer.h" />
     <ClInclude Include="Source\Cube.h" />
     <ClInclude Include="Source\d3dx12.h" />
-    <ClInclude Include="Source\DDSTextureLoader.h" />
     <ClInclude Include="Source\dxerr.h" />
     <ClInclude Include="Source\DxgiInfoManager.h" />
     <ClInclude Include="Source\Engine.h" />
@@ -64,7 +63,6 @@
     <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Cube.cpp" />
-    <ClCompile Include="Source\DDSTextureLoader.cpp" />
     <ClCompile Include="Source\dxerr.cpp" />
     <ClCompile Include="Source\DxgiInfoManager.cpp" />
     <ClCompile Include="Source\Engine.cpp" />

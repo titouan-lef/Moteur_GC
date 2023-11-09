@@ -29,7 +29,10 @@ std::vector<UINT16> Pyramid::m_indices = {
 };
 Pyramid::Pyramid() {
     this->AddComponent<Transform>();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
+
+    XMMATRIX world = this->GetComponent<Transform>()->GetMatrixTranspose();
+
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), new ShaderColor(world));
 }
 
 Pyramid::~Pyramid()
