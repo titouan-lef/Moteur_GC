@@ -29,8 +29,8 @@ Asteroid::Asteroid() {
     transform->SetDirection((-pos.x / 100), (-pos.y / 100), (-pos.z / 100));
 
     this->AddComponent<Collider>();
+    GetComponent<Collider>()->SetTag("Asteroid");
     this->AddComponent<LifeSystem>();
-
 }
 
 Asteroid::~Asteroid() {

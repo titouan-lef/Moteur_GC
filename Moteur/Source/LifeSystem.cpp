@@ -1,48 +1,49 @@
 #include "Collider.h"
 #include "Entity.h"
-
 #include "LifeSystem.h"
 
 LifeSystem::LifeSystem()
 {
     m_isDead = false;
     m_lifePoint = 3;
+	m_maxLifePoint = 3;
 }
 
 LifeSystem::~LifeSystem()
 {
 }
 
-
-void LifeSystem::IsHit(Entity* e)
+void LifeSystem::Initialize()
 {
-    //for (auto caillou : *listRock)
-    //{
-    //    auto collider = caillou->GetComponent<Collider>();
-    //    if (collider->CheckCollision(this->GetOwner()->GetComponent<Collider>())) {
-    //        if (m_lifePoint - 1 <= 0) {
-    //            m_isDead = true;
-    //        }
-    //        else {
-    //            m_lifePoint--;
-    //        };
-    //    }
-    //}
-    if (e->GetComponent<Collider>()->CheckCollision(this->GetOwner()->GetComponent<Collider>())) {
-        if (m_lifePoint - 1 <= 0) {
-            m_isDead = true;
-        }
-        else {
-            m_lifePoint--;
-        };
-    }
-    IsDead();
 }
 
-void LifeSystem::IsDead()
+void LifeSystem::Update()
 {
     if (m_isDead) {
-        std::cout << "Tu es mort !!";
-        system("pause");
-    }
+		this->GetOwner()->Destroy();
+	}
+}
+
+void LifeSystem::Damage(float damage)
+{
+    if (m_lifePoint - damage <= 0)
+    {
+		m_isDead = true;
+	}
+    else 
+    {
+		m_lifePoint -= damage;
+	}
+}
+
+void LifeSystem::Heal(float heal)
+{
+    if (m_lifePoint + heal >= m_maxLifePoint)
+    {
+		m_lifePoint = m_maxLifePoint;
+	}
+	else
+	{
+		m_lifePoint += heal;
+	}
 }

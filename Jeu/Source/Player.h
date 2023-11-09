@@ -7,14 +7,13 @@ class Player : public Entity
 public:
 	Player();
 	~Player();
-	void Init();
-	void Update();
 
+	virtual void Init() override;
+	virtual void Update() override;
 
+	void OnCollision(Entity* e);
 private:
 	Timer* m_time;
 	Controller* m_controller;
-
-
 };
 

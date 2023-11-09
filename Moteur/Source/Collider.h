@@ -13,7 +13,10 @@ public:
 
 	virtual void Initialize()override;
 	virtual void Update() override;
+
 	Transform* GetCollider();
+	void SetTag(std::string tag) { m_tag = tag; }
+	std::string GetTag() { return m_tag; }
 
 	bool CheckCollision(Collider* collider);	// Check if the collider is colliding with another collider
 
@@ -21,6 +24,7 @@ public:
 	void triggerEvent(Entity* e);				//Trigger all the functions in the callback list	
 private:
 	Transform* m_Collider;
+	std::string m_tag;
 
 	std::vector<EventCallback> m_callbacks;
 };

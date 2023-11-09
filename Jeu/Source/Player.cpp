@@ -13,6 +13,7 @@ Player::Player()
     this->GetComponent<Transform>()->SetPosition(0, 0, 0.1);
     this->GetComponent<Transform>()->UpdateMatrix();
     this->AddComponent<Collider>();
+    GetComponent<Collider>()->SetTag("Player");
     this->AddComponent<LifeSystem>();
 }
 
@@ -23,6 +24,8 @@ Player::~Player()
 
 void Player::Init()
 {
+    GetComponent<Collider>()->addListener(std::bind(&Player::OnCollision, 
+        this, std::placeholders::_1));
 }
 
 void Player::Update()
@@ -49,6 +52,14 @@ void Player::Update()
     }
     Camera::GetInstance()->RealUpdate();
     m_time->Mark();
+}
+
+void Player::OnCollision(Entity* e)
+{
+    if (e->GetComponent<Collider>()->GetTag() == "Asteroid")
+    {
+		this->GetComponent<LifeSystem>()->Damage(1);
+	}
 }
 
 
