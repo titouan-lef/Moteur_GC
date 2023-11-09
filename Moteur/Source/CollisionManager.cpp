@@ -48,8 +48,8 @@ void CollisionManager::Update()
 			{
 				if (collider1->CheckCollision(collider2))
 				{
-					collider1->OnCollision(_entityList[j]);
-					collider2->OnCollision(_entityList[i]);
+					collider1->triggerEvent(_entityList[j]);
+					collider2->triggerEvent(_entityList[i]);
 				}
 			}
 		}
