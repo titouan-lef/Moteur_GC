@@ -3,25 +3,33 @@ cbuffer ConstantBufferData : register(b0)
     matrix World;
     matrix View;
     matrix Projection;
-}
+};
 
-struct PSInput
+struct VertexIn
+{
+    float3 position : POSITION;
+    float4 color : COLOR;
+};
+
+struct VertexOut
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
 };
 
-PSInput VSMain(float4 position : POSITION, float4 color : COLOR)
+VertexOut VSMain(VertexIn vIn)
 {
-    PSInput result;
+    VertexOut vOut;
     
-    result.position = mul(mul(mul(position, World), View), Projection);
-    result.color = color;
+    float4 position = { vIn.position.x, vIn.position.y, vIn.position.z, 1 };
     
-    return result;
+    vOut.position = mul(mul(mul(position, World), View), Projection);
+    vOut.color = vIn.color;
+    
+    return vOut;
 }
 
-float4 PSMain(PSInput input) : SV_TARGET
+float4 PSMain(VertexOut vOut) : SV_TARGET
 {
-    return input.color;
+    return vOut.color;
 }
