@@ -76,6 +76,7 @@ void Entity::RealUpdate()
 		if ((*it)->IsActive())
 			(*it)->Update();
 	}
+
 	PostUpdate();
 }
 
