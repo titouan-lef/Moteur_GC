@@ -9,5 +9,4 @@ Component::Component()
 
 Component::~Component()
 {
-	delete m_owner;
 }

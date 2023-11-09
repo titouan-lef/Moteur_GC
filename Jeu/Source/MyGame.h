@@ -11,8 +11,10 @@ public:
 	MyGame();
 	~MyGame();
 
-	void Update() override;
-	void Render() override;
+	virtual void Initialize() override;
+
+	void Update();
+	void Render();
 	Cube* CreateRock();
 private:
 	Timer* m_time = nullptr;

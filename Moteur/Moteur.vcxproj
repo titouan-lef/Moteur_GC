@@ -43,6 +43,8 @@
     <ClInclude Include="Source\MyException.h" />
     <ClInclude Include="Source\Pyramid.h" />
     <ClInclude Include="Source\Rectangle.h" />
+    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\ShaderColor.h" />
     <ClInclude Include="Source\ShaderTexture.h" />
@@ -76,6 +78,8 @@
     <ClCompile Include="Source\MyException.cpp" />
     <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\Rectangle.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\ShaderColor.cpp" />
     <ClCompile Include="Source\ShaderTexture.cpp" />

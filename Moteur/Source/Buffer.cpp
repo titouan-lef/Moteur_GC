@@ -16,7 +16,6 @@ Buffer::Buffer(UINT bufferSize) : m_bufferSize(bufferSize)
 
 Buffer::~Buffer()
 {
-	delete m_buffer;
 }
 
 void Buffer::UpdateBuffer(const void* src)

@@ -1,25 +1,31 @@
 #pragma once
+
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Entity.h"
+#include "Timer.h"
+
+class Entity;
 
 class Engine 
 {
 public:
-	Engine();
+	Engine() {}
 	virtual ~Engine();
 
-	static void Init();
+	void Init();
 
 	//Get the instance of the engine
-	static Engine* GetInstance() { return m_Instance; }
+	static Engine* GetInstance();
 
-	static Entity* GetPlayer() { return m_Instance->m_player; }
+	Entity* GetPlayer() { return GetInstance()->m_player; }
 
-	static void SaveWindowSize(float w, float h) { m_Instance->m_windowSize = XMFLOAT2(w,h); }
-	static XMFLOAT2 GetWindowSize() { return m_Instance->m_windowSize; }
+	void SaveWindowSize(float w, float h) { GetInstance()->m_windowSize = XMFLOAT2(w,h); }
+	XMFLOAT2 GetWindowSize() { return GetInstance()->m_windowSize; }
 
 	void Render(Entity* e);
+
+	Timer* Time = nullptr;
 
 	IDXGIFactory4* Factory = nullptr;// Permet les interactions DirectX/GPU
 	ID3D12Device* Device = nullptr;// Périphérique de rendu DirectX
@@ -29,14 +35,12 @@ public:
 	ID3D12CommandAllocator* CmdAllocator = nullptr;// Allocations de stockage pour les commandes du GPU
 
 private:
-	static Engine* m_Instance;
-
 	// Gestion des erreurs
 	#ifndef  NDEBUG
 		DxgiInfoManager infoManager;
 	#endif
 	
-	Entity* m_player;
+	Entity* m_player = nullptr;
 
 	XMFLOAT2 m_windowSize;
 

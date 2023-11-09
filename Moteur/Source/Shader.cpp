@@ -7,9 +7,6 @@ Shader::Shader(Type type) : m_type(type)
 
 Shader::~Shader()
 {
-    delete m_rootSignature;
-    delete m_pipelineState;
-    delete m_constBuffer;
 }
 
 ID3D12RootSignature* Shader::CreateRootSignature(UINT nbParam, CD3DX12_ROOT_PARAMETER rootParameters[])

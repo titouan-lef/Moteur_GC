@@ -1,11 +1,8 @@
 #include "Transform.h"
 #include "Camera.h"
 
-Camera* Camera::m_Instance = nullptr;
-
 Camera::Camera()
 {
-	m_Instance = this;
 	m_fov = XM_PIDIV2;
 	m_aspectRatio = 16 / 9.0f;
 	m_nearPlane = 0.1f;
@@ -26,4 +23,10 @@ void Camera::Update()
 	{
 		XMStoreFloat4x4(&m_viewMatrix, this->GetComponent<Transform>()->GetMatrixTranspose());
 	}
+}
+
+Camera* Camera::GetInstance()
+{
+	static Camera instance;
+	return &instance;
 }
