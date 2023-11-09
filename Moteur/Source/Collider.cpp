@@ -14,7 +14,7 @@ Collider::Collider()
 Collider::~Collider()
 {
 	CollisionManager::RemoveEntity(GetOwner());
-	delete m_Collider;
+	
 }
 
 

@@ -12,12 +12,12 @@ Entity::~Entity()
 	for (auto it : m_Components)
 	{
 		delete it;
-		m_Components.erase(m_Components.begin());
+		
 	}
 	for (auto it : m_Children)
 	{
 		delete it;
-		m_Children.erase(m_Children.begin());
+		
 	}
 }
 
