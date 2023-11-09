@@ -1,13 +1,13 @@
 #include "Bullet.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
-#include "ShaderColor.h"
+#include "ShaderTexture.h"
 #include <Collider.h>
 
 Bullet::Bullet(int x, int y) {
     Transform* transform = this->AddComponent<Transform>();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance(), 1);
 
     float newX;
     float newY;

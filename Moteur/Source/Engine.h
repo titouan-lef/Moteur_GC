@@ -4,6 +4,7 @@
 #include "DxgiInfoManager.h"
 #include "Entity.h"
 #include "Timer.h"
+#include "Texture.h"
 
 class Entity;
 
@@ -23,7 +24,7 @@ public:
 	void SaveWindowSize(float w, float h) { GetInstance()->m_windowSize = XMFLOAT2(w,h); }
 	XMFLOAT2 GetWindowSize() { return GetInstance()->m_windowSize; }
 
-	void SetcbvSrvUavHeap(ID3D12DescriptorHeap* cbvSrvUavHeap) { m_cbvSrvUavHeap = cbvSrvUavHeap; }
+	void SetListTexture(std::vector<Texture*> listTexure) { m_listTexure = listTexure; }
 
 	void Render(Entity* e);
 
@@ -52,7 +53,7 @@ private:
 	ID3D12GraphicsCommandList* CreateCommandList();// Création de la liste de commandes
 	ID3D12CommandAllocator* CreateCommandAllocator();// Création des allocations de stockage pour les commandes du GPU
 
-	ID3D12DescriptorHeap* m_cbvSrvUavHeap = nullptr;
+	std::vector<Texture*> m_listTexure = {};
 
 	// Recherche d'un adaptateur (ou une carte graphique) compatible avec DirectX 12
 	bool IsValidAdapter(IDXGIAdapter1* adapter);

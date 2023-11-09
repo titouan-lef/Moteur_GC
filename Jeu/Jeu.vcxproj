@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Source\pierre.dds" />
-    <Image Include="Source\pierre.jfif" />
+    <Image Include="Source\sol.dds" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Moteur\Moteur.vcxproj">

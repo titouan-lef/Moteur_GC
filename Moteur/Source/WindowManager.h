@@ -33,6 +33,7 @@ private:
     ID3D12DescriptorHeap* m_rtvHeap = nullptr;// Tas contenant les emplacements pr�vu pour les "surfaces de dessin"
     ID3D12DescriptorHeap* m_cbvSrvUavHeap = nullptr;
     UINT m_rtvDescriptorSize = 0;// Taille d'un emplacements pr�vu pour les "surfaces de dessin"
+    UINT m_cbvSrvUavDescriptorSize = 0;
     IDXGISwapChain3* m_swapChain = nullptr;// Permet l'�change des "surfaces de dessin" dans les buffers
     
 
@@ -58,6 +59,7 @@ private:
     void CreateSyncObj();// Cr�ation d'une infrastructure de synchronisation pour assurer que le GPU ait termin� son travail avant de passer � la frame suivante
     void LoadTextures();
 
+    void ResetCmdList();
     void ExecuteCmdList();
     void WaitForPreviousFrame();// Attend que la frame soit trait�e avant de pouvoir �tre affich�
 };

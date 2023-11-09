@@ -12,13 +12,13 @@ Texture::~Texture()
 {
 }
 
-void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap* cbvSrvUavHeap, UINT rtvDescriptorSize)
+void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap* cbvSrvUavHeap, UINT m_cbvSrvUavDescriptorSize)
 {
     m_id = id;
     m_fileName = L"Source/" + fileName + L".dds";
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE gpu(cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
-    gpu.Offset(id, rtvDescriptorSize);
+    CD3DX12_GPU_DESCRIPTOR_HANDLE gpu(cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
+    gpu.Offset(id, m_cbvSrvUavDescriptorSize);
 
     // Décrit la Texture2D
     D3D12_RESOURCE_DESC textureDesc = {};
@@ -38,9 +38,6 @@ void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap
     m_srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     m_srvDesc.Texture2D.MipLevels = 1;
 
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
-
     DirectX::CreateDDSTextureFromFile12(
         Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
         m_fileName.c_str(),
@@ -49,7 +46,7 @@ void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap
     m_gpu = gpu;
 }
 
-void Texture::CreateShaderResourceView()
+void Texture::CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap)
 {
-    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, m_gpu);// Créez le SRV
+    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
 }

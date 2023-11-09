@@ -85,8 +85,7 @@ void WindowManager::CreateDescriptorHeaps()
     cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap)));
-
-    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
+    m_cbvSrvUavDescriptorSize = Engine::GetInstance()->Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);// Récupération de la taille d'un descripteur
 }
 
 
@@ -118,17 +117,25 @@ void WindowManager::CreateSyncObj()
 
 void WindowManager::LoadTextures()
 {
-    Texture* pTexture = new Texture();
-    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
-    m_listTexure.push_back(pTexture);
-    ExecuteCmdList();
-    pTexture->CreateShaderResourceView();
+    ResetCmdList();
 
-    /*pTexture = new Texture();
-    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    Texture* pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
     m_listTexure.push_back(pTexture);
+
     ExecuteCmdList();
-    pTexture->CreateShaderResourceView();*/
+    ResetCmdList();
+
+    pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"sol", m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
+    m_listTexure.push_back(pTexture);
+
+    ExecuteCmdList();
+
+    for (int i = 0; i < m_listTexure.size(); ++i)
+        m_listTexure[i]->CreateShaderResourceView(m_cbvSrvUavHeap);
+
+    Engine::GetInstance()->SetListTexture(m_listTexure);
 }
 #pragma endregion
 
@@ -136,8 +143,7 @@ void WindowManager::LoadTextures()
 void WindowManager::PreRender()
 {
     // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
+    ResetCmdList();
 
     // Paramètre l'affichage pour fonctionner avec une liste de triangle
     Engine::GetInstance()->CmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -175,6 +181,12 @@ void WindowManager::PostRender()
     GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+}
+
+void WindowManager::ResetCmdList()
+{
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
 }
 
 void WindowManager::ExecuteCmdList()
