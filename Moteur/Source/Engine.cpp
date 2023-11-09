@@ -2,9 +2,11 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "Engine.h"
+#include "Texture.h"
 
 Engine::~Engine()
 {
+    delete Time;
 }
 
 void Engine::Init()

@@ -12,9 +12,14 @@ public:
     Asteroid();
     ~Asteroid();
 
-    void Update();
+    virtual void Init() override;
+    virtual void Update() override;
+
+    void OnCollision(Entity* other);
+
     void isTouch(Collider* collider);
     bool isDeadByTime();
+
 private:
     std::vector<Vertex> m_vertices = {
         // Front face

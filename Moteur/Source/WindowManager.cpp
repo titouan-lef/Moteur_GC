@@ -131,6 +131,7 @@ void WindowManager::LoadTextures()
     m_listTexure.push_back(pTexture);
 
     ExecuteCmdList();
+    pTexture->CreateShaderResourceView();
 
     for (int i = 0; i < m_listTexure.size(); ++i)
         m_listTexure[i]->CreateShaderResourceView(m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
@@ -138,7 +139,6 @@ void WindowManager::LoadTextures()
     Engine::GetInstance()->SetListTexture(m_listTexure);
 }
 #pragma endregion
-
 
 void WindowManager::PreRender()
 {

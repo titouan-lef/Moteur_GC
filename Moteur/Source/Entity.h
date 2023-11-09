@@ -19,6 +19,7 @@ public:
 	virtual void PostUpdate() {}	// Update entity called every frame after all updates
 
 	void AddChild(Entity* child);	// Add child to entity
+	void RemoveChild(Entity* child);// Remove child from entity
 
 	template <typename T = Component>
 	T* AddComponent();		// Add component to entity
@@ -38,12 +39,15 @@ protected:
 	std::vector<Entity*> m_Children;
 	std::vector<Component*> m_Components;
 
+	Entity* GetParent() { return m_Parent; }
 	void SetParent(Entity* parent) { m_Parent = parent; }
 private:
 	// Check if entity is destroyed
 	bool m_isDead = false;
 	// Check if entity is initialized
 	bool m_isBorn = false;
+
+	void MurderChildren();		// Destroy all children
 	// Prevent copying parent/child or nullptr
 	bool CheckAddChild(Entity* child);
 	// Prevent copying components

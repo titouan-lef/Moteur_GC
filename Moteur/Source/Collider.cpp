@@ -9,6 +9,7 @@ Collider::Collider()
 	m_isActive = true;
 	m_name = "Collider";
 	m_owner = nullptr;
+	m_tag = "Default";
 }
 
 Collider::~Collider()
@@ -36,40 +37,21 @@ Transform* Collider::GetCollider()
 }
 
 bool Collider::CheckCollision(Collider* collider) {
-	XMFLOAT3 cube1Scale = GetOwner()->GetComponent<Transform>()->GetScale();
-	XMFLOAT3 cube1Min = {
-		GetOwner()->GetComponent<Transform>()->GetPosition().x - cube1Scale.x / 2.0f,
-		GetOwner()->GetComponent<Transform>()->GetPosition().y - cube1Scale.y / 2.0f,
-		GetOwner()->GetComponent<Transform>()->GetPosition().z - cube1Scale.z / 2.0f
-	};
-	XMFLOAT3 cube1Max = {
-		GetOwner()->GetComponent<Transform>()->GetPosition().x + cube1Scale.x / 2.0f,
-		GetOwner()->GetComponent<Transform>()->GetPosition().y + cube1Scale.y / 2.0f,
-		GetOwner()->GetComponent<Transform>()->GetPosition().z + cube1Scale.z / 2.0f
-	};
+	XMFLOAT3 pos1 = *GetOwner()->GetComponent<Transform>()->GetPosition();
+	float radius1 = GetOwner()->GetComponent<Transform>()->GetScale()->x;
+	XMFLOAT3 pos2 = *collider->GetOwner()->GetComponent<Transform>()->GetPosition();
+	float radius2 = collider->GetOwner()->GetComponent<Transform>()->GetScale()->x;
 
-	XMFLOAT3 cube2Scale = collider->GetOwner()->GetComponent<Transform>()->GetScale();
-	XMFLOAT3 cube2Min = {
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().x - cube2Scale.x / 2.0f,
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().y - cube2Scale.y / 2.0f,
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().z - cube2Scale.z / 2.0f
-	};
-	XMFLOAT3 cube2Max = {
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().x + cube2Scale.x / 2.0f,
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().y + cube2Scale.y / 2.0f,
-		collider->GetOwner()->GetComponent<Transform>()->GetPosition().z + cube2Scale.z / 2.0f
-	};
+	// Création de sphères avec les paramètres fournis
+	BoundingSphere sphere1;
+	sphere1.Center = pos1;
+	sphere1.Radius = radius1;
+	BoundingSphere sphere2;
+	sphere2.Center = pos2;
+	sphere2.Radius = radius2;
 
-	// Check sur l'axe X
-	bool overlapX = (cube1Min.x <= cube2Max.x && cube1Max.x >= cube2Min.x);
-
-	// Check sur l'axe Y
-	bool overlapY = (cube1Min.y <= cube2Max.y && cube1Max.y >= cube2Min.y);
-
-	// Check sur l'axe Z
-	bool overlapZ = (cube1Min.z <= cube2Max.z && cube1Max.z >= cube2Min.z);
-
-	return overlapX && overlapY && overlapZ;
+	// Utilisation de la fonction Intersects de DirectXCollision pour détecter la collision
+	return sphere1.Intersects(sphere2);
 }
 
 void Collider::addListener(EventCallback callback)

@@ -13,10 +13,10 @@ public:
 	virtual void Update() override;
 
 #pragma region Getters/Setters
-	XMFLOAT3 inline GetPosition() { return Position; }										// Retourne la position
-	XMFLOAT3 inline GetScale() { return Scale; }											// Retourne l'echelle
-	bool inline IsDirty() { return m_isDirty; }												// Retourne si l'entite est en mouvement
-	void inline SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }	// Change la position
+	XMFLOAT3* GetPosition() { return &Position; }										// Retourne la position
+	XMFLOAT3* GetScale() { return &Scale; }											// Retourne l'echelle
+	bool IsDirty() { return m_isDirty; }												// Retourne si l'entite est en mouvement
+	void SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }	// Change la position
 
 	// Change l'echelle
 	void inline SetScale(float x, float y, float z) { Scale = XMFLOAT3(x, y, z); }
@@ -30,7 +30,6 @@ public:
 #pragma endregion
 
 	void MoveByVector(XMFLOAT3 vec, float elapsed);	// Déplace la position en fonction d'un vecteur
-	void Identity();								// Réinitialise la transformation à l'identité
 	void FromMatrix(XMMATRIX* matrix);				// Initialise la transformation à partir d'une matrice de transformation
 	void UpdateMatrix();							// Met à jour la matrice de transformation en fonction de la position, de l'échelle et de la rotation
 
@@ -43,12 +42,6 @@ public:
 	// Effectue une rotation autour de l'axe Z (yaw)
 	static void ChangeDirection(Transform* transform);
 
-
-	// Ajoutez ces méthodes à votre classe Transform
-	void SetRotationSpeed(float yawSpeed, float pitchSpeed, float rollSpeed) {
-		RotationSpeed = XMFLOAT3(yawSpeed, pitchSpeed, rollSpeed);
-	}// Effectue une rotation autour de l'axe Z (yaw)
-	XMFLOAT3 GetRotationSpeed() { return RotationSpeed; };
 	XMFLOAT3 GetDirection() { return m_Direction; }
 	void SetDirection(float x, float y, float z) {
 		m_Direction = XMFLOAT3(x, y, z);
@@ -59,9 +52,7 @@ private:
 	bool m_isOnScreen = true;
 	void CheckIfOnScreen();
 
-	// Ajoutez ces propriétés à votre classe Transform
-	XMFLOAT3 RotationSpeed;  // Vitesse de rotation (en radians par seconde)
-
+	// Direction de l'entité
 	XMFLOAT3 m_Direction;
 	// Position de l'entité
 	XMFLOAT3 Position;

@@ -20,6 +20,8 @@ void Scene::RealUpdate()
 		m_Initialized = true;
 	}
 
+	CollisionManager::GetInstance()->Update();
+
 	for (auto& entity : m_entities)
 	{
 		entity->RealUpdate();
@@ -54,14 +56,16 @@ void Scene::RemoveEntity(Entity* entity)
 
 void Scene::KillThemAll()
 {
-	for (auto& entity : m_entities)
+	///faire avec int i = 0; i < m_entities.size(); i++ et delete m_entities[i]
+	if (m_entities.empty()) return;
+	
+	for (int i = m_entities.size() - 1; i >= 0; i--)
 	{
-		if (entity->IsDead())
-		{
-			m_entities.erase(m_entities.begin());
-			if (entity->GetComponent<Collider>() != nullptr)
-				CollisionManager::GetInstance()->RemoveEntity(entity);
-			delete entity;
-		}
+		if (m_entities[i] == nullptr) continue;
+		if (!m_entities[i]->IsDead()) continue;
+		if (m_entities[i]->GetComponent<Collider>() != nullptr)
+			CollisionManager::GetInstance()->RemoveEntity(m_entities[i]);
+		delete m_entities[i];
+		m_entities.erase(m_entities.begin() + i);
 	}
 }

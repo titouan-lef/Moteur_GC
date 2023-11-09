@@ -37,10 +37,6 @@ void Transform::MoveByVector(XMFLOAT3 vec, float elapsed)
 	Position.z += vec.z * elapsed;
 	m_isDirty = true;
 }
-void Transform::Identity()
-{
-	XMStoreFloat4x4(&Matrix, XMMatrixIdentity());
-}
 
 void Transform::FromMatrix(XMMATRIX* matrix)
 {
@@ -64,10 +60,26 @@ void Transform::Rotate(float pitch, float yaw, float roll)
 void Transform::RotateYaw(float angle)
 {
 	// Effectue une rotation autour de l'axe Z
-	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Dir), angle));
+	XMMATRIX rotation = XMMatrixRotationAxis(XMLoadFloat3(&Up), angle);
+	XMStoreFloat4(&RotationQuat, XMQuaternionMultiply(XMLoadFloat4(&RotationQuat), XMQuaternionRotationMatrix(rotation)));
 	m_isDirty = true;
 }
 
+void Transform::RotatePitch(float angle)
+{
+	// Effectue une rotation autour de l'axe Y
+	XMMATRIX rotation = XMMatrixRotationAxis(XMLoadFloat3(&Right), angle);
+	XMStoreFloat4(&RotationQuat, XMQuaternionMultiply(XMLoadFloat4(&RotationQuat), XMQuaternionRotationMatrix(rotation)));
+	m_isDirty = true;
+}
+
+void Transform::RotateRoll(float angle)
+{
+	// Effectue une rotation autour de l'axe X
+	XMMATRIX rotation = XMMatrixRotationAxis(XMLoadFloat3(&Dir), angle);
+	XMStoreFloat4(&RotationQuat, XMQuaternionMultiply(XMLoadFloat4(&RotationQuat), XMQuaternionRotationMatrix(rotation)));
+	m_isDirty = true;
+}
 
 void Transform::ChangeDirection(Transform* transform) {
 	XMFLOAT3 direction = transform->GetDirection();
@@ -79,7 +91,9 @@ void Transform::ChangeDirection(Transform* transform) {
 
 void Transform::CheckIfOnScreen()
 {
-	/*const XMMATRIX view = Camera::GetInstance()->GetViewMatrix();
+	Camera::GetInstance()->CreateFrustum();
+
+	const XMMATRIX view = Camera::GetInstance()->GetViewMatrix();
 	const XMMATRIX invView = XMMatrixInverse(nullptr, view);
 
 	BoundingSphere sphere;
@@ -100,24 +114,10 @@ void Transform::CheckIfOnScreen()
 	if (frustum.Contains(sphere) == DirectX::DISJOINT)
 		m_isOnScreen = false;
 	else
-		m_isOnScreen = true;*/
+		m_isOnScreen = true;
 }
 
 void Transform::UpdateRotMatrix()
 {
 	XMStoreFloat4x4(&RotationMatrix, XMMatrixRotationQuaternion(XMLoadFloat4(&RotationQuat)));
-}
-
-void Transform::RotatePitch(float angle)
-{
-	// Effectue une rotation autour de l'axe Y
-	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Right), angle));
-	m_isDirty = true;
-}
-
-void Transform::RotateRoll(float angle)
-{
-	// Effectue une rotation autour de l'axe X
-	XMStoreFloat4(&RotationQuat, XMQuaternionRotationAxis(XMLoadFloat3(&Up), angle));
-	m_isDirty = true;
 }
