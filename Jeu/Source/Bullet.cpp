@@ -50,6 +50,12 @@ Bullet::~Bullet() {
 
 }
 
+void Bullet::Init()
+{
+    GetComponent<Collider>()->addListener(std::bind(&Bullet::OnCollision,
+        		this, std::placeholders::_1));
+}
+
 void Bullet::Update() {
     Transform* transform = this->GetComponent<Transform>();
     transform->MoveByVector(transform->GetDirection(), 1);
@@ -61,4 +67,12 @@ void Bullet::Update() {
 
 bool Bullet::isDead() {
     return time->Peek() > lifeTime;
+}
+
+void Bullet::OnCollision(Entity* other)
+{
+    if (other->GetComponent<Collider>()->GetTag() == "Asteroid") {
+        std::cout << "Asteroid" << std::endl;
+		this->Destroy();
+	}
 }

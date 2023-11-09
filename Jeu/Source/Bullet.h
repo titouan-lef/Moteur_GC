@@ -14,8 +14,11 @@ public:
     Bullet(int x, int y);
     ~Bullet();
 
+    virtual void Init() override;
     virtual void Update() override;
     bool isDead();
+
+    void OnCollision(Entity* other);
 
 private:
     std::vector<Vertex> m_vertices = {

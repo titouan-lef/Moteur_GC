@@ -35,6 +35,13 @@ Asteroid::~Asteroid() {
 
 }
 
+void Asteroid::Init()
+{
+	GetComponent<Collider>()->addListener(std::bind(&Asteroid::OnCollision,
+        		this, std::placeholders::_1));
+
+}
+
 void Asteroid::Update() {
     auto transform = this->GetComponent<Transform>();
     transform->MoveByVector(transform->GetDirection(), 1);
@@ -43,14 +50,22 @@ void Asteroid::Update() {
         1 * Engine::GetInstance()->Time->Peek(),
         1 * Engine::GetInstance()->Time->Peek()
     );
+    if (isDeadByTime()) {
+		this->Destroy();
+	}
+}
+
+void Asteroid::OnCollision(Entity* other)
+{
+    if (other->GetComponent<Collider>()->GetTag() == "Bullet") {
+		this->Destroy();
+	}
+
+    if (other->GetComponent<Collider>()->GetTag() == "Player") {
+		this->Destroy();
+	}
 }
 
 bool Asteroid::isDeadByTime() {
     return time.Peek() > 20;
-}
-
-void Asteroid::isTouch(Collider* collider) {
-    if (this->GetComponent<Collider>()->CheckCollision(collider)) {
-        isDead = true;
-    }
 }
