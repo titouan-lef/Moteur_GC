@@ -15,27 +15,27 @@ Bullet::Bullet(int x, int y) {
     float newY;
 
     transform->SetScale(0.05f, 0.05f, 0.05f);
-    
-    if (x >= 600) {
-        newX = (x - 600) / 1000.0f;
-        if (y >= 500) {
-            newY = (y - 500) / 1000.0f;
+
+    if (x >= 750) {
+        newX = (x - 750) / 2000.0f;
+        if (y >= 400) {
+            newY = (y - 400) / 2000.0f;
             transform->SetPosition(newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 500) / 1000.0f;
+            newY = (-y + 400) / 2000.0f;
             transform->SetPosition(newX, newY, 0.15f);
         }        
     }
     
     else {
-        newX = (-x + 600) / 1000.0f;
-        if (y >= 500) {
-            newY = (y - 500) / 1000.0f;
+        newX = (-x + 750) / 2000.0f;
+        if (y >= 400) {
+            newY = (y - 400) / 2000.0f;
             transform->SetPosition(-newX, -newY, 0.15f);
         }
         else {
-            newY = (-y + 500) / 1000.0f;
+            newY = (-y + 400) / 2000.0f;
             transform->SetPosition(-newX, newY, 0.15f);
         }
     }
