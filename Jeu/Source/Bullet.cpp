@@ -1,6 +1,6 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
-#include "ShaderTexture.h"
+#include "ShaderColor.h"
 #include <Collider.h>
 #include "Bullet.h"
 #include <CollisionManager.h>
@@ -9,7 +9,7 @@ Bullet::Bullet(int x, int y) {
     time = new Timer();
     Transform* transform = this->AddComponent<Transform>();
 
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance(), 1);
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
 
     float newX;
     float newY;
