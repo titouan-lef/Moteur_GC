@@ -1,6 +1,4 @@
-
 #include <Camera.h>
-
 #include <Collider.h>
 #include <LifeSystem.h>
 #include "Player.h"

@@ -9,7 +9,7 @@ Transform::Transform()
 	Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	Position = XMFLOAT3(0.0f, 0.0f, -1.0f);
 	Matrix = XMFLOAT4X4();
 	m_isDirty = true;
 	m_isActive = true;
