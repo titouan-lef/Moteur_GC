@@ -8,7 +8,7 @@ public:
 	Texture();
 	~Texture();
 	void CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap* cbvSrvUavHeap, UINT rtvDescriptorSize);
-	void CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap);
+	void CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap, UINT m_cbvSrvUavDescriptorSize);
 
 	UINT GetTextureId() { return m_id; }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPU() { return m_gpu; }

@@ -46,7 +46,9 @@ void Texture::CreateTexture(UINT id, std::wstring fileName, ID3D12DescriptorHeap
     m_gpu = gpu;
 }
 
-void Texture::CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap)
+void Texture::CreateShaderResourceView(ID3D12DescriptorHeap* cbvSrvUavHeap, UINT m_cbvSrvUavDescriptorSize)
 {
-    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
+    CD3DX12_CPU_DESCRIPTOR_HANDLE cpu(cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());
+    cpu.Offset(m_id, m_cbvSrvUavDescriptorSize);
+    Engine::GetInstance()->Device->CreateShaderResourceView(m_resource.Get(), &m_srvDesc, cpu);// Créez le SRV
 }

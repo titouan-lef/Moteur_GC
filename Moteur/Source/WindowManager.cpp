@@ -133,7 +133,7 @@ void WindowManager::LoadTextures()
     ExecuteCmdList();
 
     for (int i = 0; i < m_listTexure.size(); ++i)
-        m_listTexure[i]->CreateShaderResourceView(m_cbvSrvUavHeap);
+        m_listTexure[i]->CreateShaderResourceView(m_cbvSrvUavHeap, m_cbvSrvUavDescriptorSize);
 
     Engine::GetInstance()->SetListTexture(m_listTexure);
 }
@@ -178,6 +178,7 @@ void WindowManager::PostRender()
 
     ExecuteCmdList();
 
+    // Affichage de la frame.
     GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
@@ -198,30 +199,22 @@ void WindowManager::ExecuteCmdList()
     ID3D12CommandList* ppCommandLists[1] = { Engine::GetInstance()->CmdList };
     m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
 
-    // Affichage de la frame.
-
     WaitForPreviousFrame();
-
 }
 
 void WindowManager::WaitForPreviousFrame()
 {
-    // Indique que les commandes dans le file doivent être terminées avant de continuer
-    const UINT64 fence = m_fenceId;
-    GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, fence));
-
-    if (m_fence->GetCompletedValue() < fence)// Si la frame précédente n'a pas fini d'être traité
-    {
-        HANDLE fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);// Signale la fin du rendu d'une frame
-
-        if (fenceEvent != nullptr)// Vérifie que la création de l'événement s'est déroulée avec succès
-        {
-            GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(fence, fenceEvent));// Créer un évènement qui indique si la frame précédente est traité
-            WaitForSingleObject(fenceEvent, INFINITE);// Tant que la frame précédente n'est pas traité, le programme est suspendu
-            CloseHandle(fenceEvent);// Supprime l'évènement de fin de rendu d'une frame
-        }
-    }
-
-   
     m_fenceId++;// On passe à la prochaine frame
-}
+
+    // Indique que les commandes dans le file doivent être terminées avant de continuer
+    GFX_THROW_INFO_ONLY(m_commandQueue->Signal(m_fence, m_fenceId));
+
+    if (m_fence->GetCompletedValue() < m_fenceId)// Si la frame précédente n'a pas fini d'être traité
+    {
+        HANDLE fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);// Signale la fin du rendu d'une frame
+        
+        GFX_THROW_INFO_ONLY(m_fence->SetEventOnCompletion(m_fenceId, fenceEvent));// Créer un évènement qui indique si la frame précédente est traité
+        WaitForSingleObject(fenceEvent, INFINITE);// Tant que la frame précédente n'est pas traité, le programme est suspendu
+        CloseHandle(fenceEvent);// Supprime l'évènement de fin de rendu d'une frame
+    }
+} 
