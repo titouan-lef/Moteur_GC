@@ -140,6 +140,9 @@
     <ClInclude Include="Source\Input.h">
       <Filter>Public\header</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DDSTextureLoader.h">
+      <Filter>Private\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Component.cpp">
@@ -233,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="Source\Input.cpp">
       <Filter>Public\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DDSTextureLoader.cpp">
+      <Filter>Private\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,15 @@
 #include "DxgiInfoManager.h"
 #include "Entity.h"
 
+struct Texture
+{
+    // Unique material name for lookup.
+    std::string Name;
+    std::wstring Filename;
+    Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
+};
+
 class WindowManager
 {
 public:
@@ -45,7 +54,8 @@ private:
 
     const float m_clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };// Couleur du fond de la fen�tre
 
-
+    Texture* woodCrateTex;
+    D3D12_CPU_DESCRIPTOR_HANDLE m_gpu;
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
@@ -58,9 +68,9 @@ private:
     void LoadAssets();// Chargement des ressources n�cessaire pour le rendu
 
     void CreateSyncObj();// Cr�ation d'une infrastructure de synchronisation pour assurer que le GPU ait termin� son travail avant de passer � la frame suivante
+    void LoadTexture();
 
-
-    void Render(Entity* e);// Enregistre les commandes pour le rendu actuel
+    void ExecuteCmdList();
     void WaitForPreviousFrame();// Attend que la frame soit trait�e avant de pouvoir �tre affich�
 };
 

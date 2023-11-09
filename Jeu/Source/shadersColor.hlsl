@@ -7,7 +7,7 @@ cbuffer ConstantBufferData : register(b0)
 
 struct VertexIn
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
     float4 color : COLOR;
 };
 
@@ -21,7 +21,9 @@ VertexOut VSMain(VertexIn vIn)
 {
     VertexOut vOut;
     
-    vOut.position = mul(mul(mul(vIn.position, World), View), Projection);
+    float4 position = { vIn.position.x, vIn.position.y, vIn.position.z, 1 };
+    
+    vOut.position = mul(mul(mul(position, World), View), Projection);
     vOut.color = vIn.color;
     
     return vOut;

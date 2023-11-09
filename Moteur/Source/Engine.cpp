@@ -5,12 +5,6 @@
 
 Engine::~Engine()
 {
-    delete Time;
-	delete Camera::GetInstance();
-	delete Factory;
-	delete Device;
-	delete CmdAllocator;
-	delete CmdList;
 }
 
 void Engine::Init()
@@ -125,11 +119,17 @@ void Engine::Render(Entity* e)
 
     MeshRenderer* meshRenderer = e->GetComponent<MeshRenderer>();
     Shader* shader = meshRenderer->m_shader;
+    ConstantBuffer* constBuffer = e->GetComponent<MeshRenderer>()->m_constBuffer;
+
+
 
     CmdList->SetGraphicsRootSignature(shader->m_rootSignature);// Ajout de la Root Signature
     CmdList->SetPipelineState(shader->m_pso);// Ajout de la pipeline de rendu
 
-    CmdList->SetGraphicsRootConstantBufferView(1, e->GetComponent<MeshRenderer>()->m_constBuffer->m_buffer->GetGPUVirtualAddress());
+    CmdList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
+
+    D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();// TO Do enlever
+    Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
 
     CmdList->IASetVertexBuffers(0, 1, &meshRenderer->m_mesh->m_vertexBuffer->m_vertexBufferView);// Ajout des vertex buffer (ici 1 seul)
     CmdList->IASetIndexBuffer(&meshRenderer->m_mesh->m_indexBuffer->m_indexBufferView);// Ajout des index buffer (ici 1 seul)

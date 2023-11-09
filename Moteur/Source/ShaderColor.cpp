@@ -8,7 +8,10 @@ ShaderColor::ShaderColor() : Shader()
     * * b : nombre de descripteur
     * * c : regsitre du shader
     */
-    std::vector<CD3DX12_ROOT_PARAMETER> rootParameters = {};
+    std::vector<CD3DX12_ROOT_PARAMETER> rootParameters = {
+        CD3DX12_ROOT_PARAMETER()
+    };
+    rootParameters[0].InitAsConstantBufferView(0);
 
     // CREATION DU SAMPLER
     std::vector<D3D12_STATIC_SAMPLER_DESC> samplers = {};

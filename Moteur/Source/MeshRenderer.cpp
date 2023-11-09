@@ -9,8 +9,6 @@ MeshRenderer::MeshRenderer()
 
 MeshRenderer::~MeshRenderer()
 {
-	delete m_shader;
-	delete m_mesh;
 }
 
 void MeshRenderer::Init(Mesh* mesh, Shader* shader)

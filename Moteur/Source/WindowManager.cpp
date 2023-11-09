@@ -2,10 +2,10 @@
 #include "MyException.h"
 #include "Engine.h"
 #include "WindowManager.h"
-#include "Camera.h"// TO DO : A supprimer
 #include "Shader.h"
 #include "MeshRenderer.h"
 #include "Collider.h"
+#include "DDSTextureLoader.h"
 
 
 WindowManager::WindowManager(UINT width, UINT height, HWND hWnd)
@@ -107,6 +107,7 @@ void WindowManager::CreateFrameResources()
 void WindowManager::LoadAssets()
 {
     CreateSyncObj();
+    LoadTexture();
 }
 
 #pragma region LoadAssetsFunction
@@ -114,6 +115,51 @@ void WindowManager::LoadAssets()
 void WindowManager::CreateSyncObj()
 {
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
+}
+
+void WindowManager::LoadTexture()
+{
+    woodCrateTex = new Texture;
+    woodCrateTex->Name = "pierre";
+    woodCrateTex->Filename = L"Source/pierre.dds";
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE gpu(m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
+    gpu.Offset(1, m_rtvDescriptorSize);// 1 à remplacer par le nombre de texture
+    m_gpu = gpu;
+
+    // Décrit la Texture2D
+    D3D12_RESOURCE_DESC textureDesc = {};
+    textureDesc.MipLevels = 1;
+    textureDesc.Format = DXGI_FORMAT_BC1_UNORM;
+    textureDesc.Width = 472;
+    textureDesc.Height = 472;
+    textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    textureDesc.DepthOrArraySize = 1;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+
+    // Describe and create a SRV for the texture.
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
+    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
+
+    HRESULT hr = DirectX::CreateDDSTextureFromFile12(
+        Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
+        woodCrateTex->Filename.c_str(),
+        woodCrateTex->Resource, woodCrateTex->UploadHeap);
+
+    ExecuteCmdList();
+
+    Engine::GetInstance()->Device->CreateShaderResourceView(woodCrateTex->Resource.Get(), &srvDesc, m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
+
+    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
 }
 #pragma endregion
 
@@ -155,6 +201,15 @@ void WindowManager::PostRender()
     transition = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     Engine::GetInstance()->CmdList->ResourceBarrier(1, &transition);
 
+    ExecuteCmdList();
+
+    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
+
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+}
+
+void WindowManager::ExecuteCmdList()
+{
     // Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Close());
 
@@ -163,9 +218,9 @@ void WindowManager::PostRender()
     m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
 
     // Affichage de la frame.
-    GFX_THROW_INFO_ONLY(m_swapChain->Present(1, 0));
 
     WaitForPreviousFrame();
+
 }
 
 void WindowManager::WaitForPreviousFrame()
@@ -186,6 +241,6 @@ void WindowManager::WaitForPreviousFrame()
         }
     }
 
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();// Indique quel est le back buffer actuel (l'indice varie ici de 0 à 1 car on utilise 2 buffers : le back et front buffer)
+   
     m_fenceId++;// On passe à la prochaine frame
 }

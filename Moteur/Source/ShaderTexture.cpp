@@ -12,9 +12,12 @@ ShaderTexture::ShaderTexture() : Shader()
     */
     auto tmp1 = CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
     std::vector<CD3DX12_ROOT_PARAMETER> rootParameters = {
-       CD3DX12_ROOT_PARAMETER() // registre "t0" dans le shader
+       CD3DX12_ROOT_PARAMETER(), // registre "t0" dans le shader
+       CD3DX12_ROOT_PARAMETER() // registre "b0" dans le shader
     };
     rootParameters[0].InitAsDescriptorTable(1, &tmp1);
+    rootParameters[1].InitAsConstantBufferView(0);
+
 
     // CREATION DU SAMPLER
     std::vector<D3D12_STATIC_SAMPLER_DESC> samplers = {
