@@ -37,6 +37,7 @@
     <ClInclude Include="Source\Icosahedron.h" />
     <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Input.h" />
+    <ClInclude Include="Source\LifeSystem.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshRenderer.h" />
     <ClInclude Include="Source\MyException.h" />
@@ -71,6 +72,7 @@
     <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\LifeSystem.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\MyException.cpp" />

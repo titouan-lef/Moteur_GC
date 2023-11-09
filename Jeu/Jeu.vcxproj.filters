@@ -41,6 +41,7 @@
     <ClInclude Include="Source\Controller.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Player.h">
     <ClInclude Include="Source\GameScene.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -55,6 +56,7 @@
     <ClCompile Include="Source\Controller.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
     <ClCompile Include="Source\GameScene.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
