@@ -2,6 +2,7 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "Engine.h"
+#include "Texture.h"
 
 Engine::~Engine()
 {
@@ -112,11 +113,6 @@ IDXGIAdapter1* Engine::GetHardwareAdapter(IDXGIFactory1* pFactory, bool requestH
 
 void Engine::Render(Entity* e)
 {
-    // Ajout de l'affichage    
-    // POUR LES TEXTURES
-    //constBuffer->CreateTexture(CmdList);
-    // POUR LES COULEURS
-
     MeshRenderer* meshRenderer = e->GetComponent<MeshRenderer>();
     Shader* shader = meshRenderer->m_shader;
     ConstantBuffer* constBuffer = e->GetComponent<MeshRenderer>()->m_constBuffer;
@@ -131,7 +127,7 @@ void Engine::Render(Entity* e)
         CmdList->SetGraphicsRootConstantBufferView(1, constBuffer->m_buffer->GetGPUVirtualAddress());
 
         D3D12_GPU_DESCRIPTOR_HANDLE srv = m_cbvSrvUavHeap->GetGPUDescriptorHandleForHeapStart();// TO Do enlever
-        Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(0, srv);
+        Engine::GetInstance()->CmdList->SetGraphicsRootDescriptorTable(meshRenderer->m_numTexture, srv);
     }
     else
         CmdList->SetGraphicsRootConstantBufferView(0, constBuffer->m_buffer->GetGPUVirtualAddress());

@@ -1,10 +1,10 @@
 #include "asteroidCube.h"
 #include "MeshRenderer.h"
-#include "Camera.h"
 #include "ShaderTexture.h"
 #include <iostream>
 #include <random>
 #include <LifeSystem.h>
+#include <Texture.h>
 
 Asteroid::Asteroid() {
     std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
@@ -19,7 +19,7 @@ Asteroid::Asteroid() {
 
   
     Transform* transform = this->AddComponent<Transform>();
-    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance());
+    this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderTexture::GetInstance(), 0);
 
     transform->SetScale(0.2f, 0.2f, 0.2f);
 

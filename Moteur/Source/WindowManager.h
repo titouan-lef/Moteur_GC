@@ -2,14 +2,7 @@
 #include "framwork.h"
 #include "DxgiInfoManager.h"
 #include "Entity.h"
-
-struct Texture
-{
-    // Unique material name for lookup.
-    std::wstring Filename;
-    Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
-};
+#include "Texture.h"
 
 class WindowManager
 {
@@ -30,9 +23,6 @@ private:
     CD3DX12_VIEWPORT m_viewport = {};// Tableau contenant les dimensions de chaque fen�tre
     CD3DX12_RECT m_scissorRect = {};// Tableau contenant les rectangles qui d�finissent la zone o� le rendu sera effectu� pour chaque fen�tre
 
-    /*std::vector<Entity*> m_entities;
-    Timer* m_entityTimer;*/
-
     // Gestion des commandes
     ID3D12CommandQueue* m_commandQueue = nullptr;// File d'attente de commandes
     CD3DX12_RESOURCE_BARRIER transition = {};// Indique que m_renderTargets[m_backBufferIndex] est prête à être utilisée comme "surfaces de dessin"
@@ -51,10 +41,9 @@ private:
     UINT64 m_fenceId = 0;// Id de la frame actuelle
     ID3D12Fence* m_fence = {};// M�canisme de synchronisation utilis� pour attendre la fin d'une s�rie de commandes graphiques avant d'en ex�cuter d'autres
 
-    const float m_clearColor[4] = { 0.015f, 0.023f, 0.121f, 1.0f };// Couleur du fond de la fen�tre
+    std::vector<Texture*> m_listTexure = {};
 
-    Texture* woodCrateTex;
-    D3D12_CPU_DESCRIPTOR_HANDLE m_gpu;
+    const float m_clearColor[4] = { 0.015f, 0.023f, 0.121f, 1.0f };// Couleur du fond de la fen�tre
 
     void LoadPipeline(UINT width, UINT height, HWND hWnd);// Configuration de l'infrastructure de rendu
 
@@ -67,7 +56,7 @@ private:
     void LoadAssets();// Chargement des ressources n�cessaire pour le rendu
 
     void CreateSyncObj();// Cr�ation d'une infrastructure de synchronisation pour assurer que le GPU ait termin� son travail avant de passer � la frame suivante
-    void LoadTexture();
+    void LoadTextures();
 
     void ExecuteCmdList();
     void WaitForPreviousFrame();// Attend que la frame soit trait�e avant de pouvoir �tre affich�

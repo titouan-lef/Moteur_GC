@@ -1,11 +1,8 @@
-
 #include "MyException.h"
 #include "Engine.h"
 #include "WindowManager.h"
 #include "Shader.h"
-#include "MeshRenderer.h"
 #include "Collider.h"
-#include "DDSTextureLoader.h"
 
 
 WindowManager::WindowManager(UINT width, UINT height, HWND hWnd)
@@ -88,6 +85,8 @@ void WindowManager::CreateDescriptorHeaps()
     cbvSrvUavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvSrvUavHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateDescriptorHeap(&cbvSrvUavHeapDesc, IID_PPV_ARGS(&m_cbvSrvUavHeap)));
+
+    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
 }
 
 
@@ -107,7 +106,7 @@ void WindowManager::CreateFrameResources()
 void WindowManager::LoadAssets()
 {
     CreateSyncObj();
-    LoadTexture();
+    LoadTextures();
 }
 
 #pragma region LoadAssetsFunction
@@ -117,48 +116,19 @@ void WindowManager::CreateSyncObj()
     GFX_THROW_INFO_ONLY(Engine::GetInstance()->Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));// Initialisation de m_fence
 }
 
-void WindowManager::LoadTexture()
+void WindowManager::LoadTextures()
 {
-    woodCrateTex = new Texture;
-    woodCrateTex->Filename = L"Source/pierre.dds";
-
-    CD3DX12_CPU_DESCRIPTOR_HANDLE gpu(m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Récupération de l'emplacement prévu pour la "surface de dessin" (= render target) 0
-    gpu.Offset(1, m_rtvDescriptorSize);// 1 à remplacer par le nombre de texture
-    m_gpu = gpu;
-
-    // Décrit la Texture2D
-    D3D12_RESOURCE_DESC textureDesc = {};
-    textureDesc.MipLevels = 1;
-    textureDesc.Format = DXGI_FORMAT_BC1_UNORM;
-    textureDesc.Width = 472;
-    textureDesc.Height = 472;
-    textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    textureDesc.DepthOrArraySize = 1;
-    textureDesc.SampleDesc.Count = 1;
-    textureDesc.SampleDesc.Quality = 0;
-    textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-
-
-    // Describe and create a SRV for the texture.
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.Format = textureDesc.Format;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = 1;
-
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdAllocator->Reset());
-    GFX_THROW_INFO_ONLY(Engine::GetInstance()->CmdList->Reset(Engine::GetInstance()->CmdAllocator, nullptr));
-
-    HRESULT hr = DirectX::CreateDDSTextureFromFile12(
-        Engine::GetInstance()->Device, Engine::GetInstance()->CmdList,
-        woodCrateTex->Filename.c_str(),
-        woodCrateTex->Resource, woodCrateTex->UploadHeap);
-
+    Texture* pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    m_listTexure.push_back(pTexture);
     ExecuteCmdList();
+    pTexture->CreateShaderResourceView();
 
-    Engine::GetInstance()->Device->CreateShaderResourceView(woodCrateTex->Resource.Get(), &srvDesc, m_cbvSrvUavHeap->GetCPUDescriptorHandleForHeapStart());// Créez le SRV
-
-    Engine::GetInstance()->SetcbvSrvUavHeap(m_cbvSrvUavHeap);
+    /*pTexture = new Texture();
+    pTexture->CreateTexture((UINT)m_listTexure.size(), L"pierre", m_cbvSrvUavHeap, m_rtvDescriptorSize);
+    m_listTexure.push_back(pTexture);
+    ExecuteCmdList();
+    pTexture->CreateShaderResourceView();*/
 }
 #pragma endregion
 

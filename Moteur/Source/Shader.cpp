@@ -9,8 +9,6 @@ Shader::Shader()
 
 Shader::~Shader()
 {
-    //delete m_pso;
-    //delete m_rootSignature;
 }
 
 void Shader::Init(std::vector<CD3DX12_ROOT_PARAMETER> rootParameters, std::vector<D3D12_STATIC_SAMPLER_DESC> samplers, std::wstring fileName, std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs, ShaderType shaderType)
