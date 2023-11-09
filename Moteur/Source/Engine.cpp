@@ -6,6 +6,7 @@
 
 Engine::~Engine()
 {
+    delete Time;
 }
 
 void Engine::Init()

@@ -1,7 +1,6 @@
 #pragma once
 #include <Timer.h>
 #include "Pyramid.h"
-#include "Collider.h"
 #include "Timer.h"
 #include "Entity.h"
 #include "Mesh.h"
@@ -9,13 +8,13 @@
 class Bullet : public Entity
 {
 public:
-    Timer time;
-    int lifeTime = 15;
+    Timer* time;
+    int lifeTime = 5;
 
     Bullet(int x, int y);
     ~Bullet();
 
-    void Update();
+    virtual void Update() override;
     bool isDead();
 
 private:

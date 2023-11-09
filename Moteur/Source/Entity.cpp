@@ -1,6 +1,9 @@
 #include "Component.h"
 #include "Engine.h"
 #include "Entity.h"
+#include "Collider.h"
+#include "Scene.h"
+#include "CollisionManager.h"
 
 Entity::Entity()
 {
@@ -63,6 +66,18 @@ void Entity::AddChild(Entity* child)
 	child->SetParent(this);
 }
 
+void Entity::RemoveChild(Entity* child)
+{
+	for (auto it = m_Children.begin(); it != m_Children.end(); ++it)
+	{
+		if (*it == child)
+		{
+			m_Children.erase(it);
+			return;
+		}
+	}
+}
+
 void Entity::RealUpdate()
 {
 	if (!m_isBorn)
@@ -81,6 +96,21 @@ void Entity::RealUpdate()
 		(*it)->RealUpdate();
 	}
 	PostUpdate();
+	MurderChildren();
+}
+
+void Entity::MurderChildren()
+{
+	if (m_Children.empty()) return;
+	for (int i = m_Children.size()-1; i > 0; i--)
+	{
+		if (m_Children[i] == nullptr) continue;
+		if (!m_Children[i]->IsDead()) continue;
+		if (m_Children[i]->GetComponent<Collider>() != nullptr)
+			CollisionManager::GetInstance()->RemoveEntity(m_Children[i]);
+		delete m_Children[i];
+		m_Children.erase(m_Children.begin() + i);
+	}
 }
 
 bool Entity::CheckAddChild(Entity* child)

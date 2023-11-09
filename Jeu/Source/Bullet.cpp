@@ -1,10 +1,12 @@
-#include "Bullet.h"
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "ShaderColor.h"
 #include <Collider.h>
+#include "Bullet.h"
+#include <CollisionManager.h>
 
 Bullet::Bullet(int x, int y) {
+    time = new Timer();
     Transform* transform = this->AddComponent<Transform>();
 
     this->AddComponent<MeshRenderer>()->Init(new Mesh(m_vertices, m_indices), ShaderColor::GetInstance());
@@ -41,6 +43,7 @@ Bullet::Bullet(int x, int y) {
     transform->UpdateMatrix();
     transform->SetDirection(0.0f, 0.0f, 0.002f);
     this->AddComponent<Collider>();
+    GetComponent<Collider>()->SetTag("Bullet");
 }
 
 Bullet::~Bullet() {
@@ -50,8 +53,12 @@ Bullet::~Bullet() {
 void Bullet::Update() {
     Transform* transform = this->GetComponent<Transform>();
     transform->MoveByVector(transform->GetDirection(), 1);
+
+    if (isDead()) {
+        this->Destroy();
+    }
 }
 
 bool Bullet::isDead() {
-    return time.Peek() > lifeTime;
+    return time->Peek() > lifeTime;
 }
