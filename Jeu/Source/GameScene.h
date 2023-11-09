@@ -17,4 +17,5 @@ public:
 	static bool TestRockDeath(Asteroid& b);
 private:
 	Timer m_time;
+	float respawnTime = 0.5;
 };

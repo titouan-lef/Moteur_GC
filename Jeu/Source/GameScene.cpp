@@ -16,7 +16,7 @@ void GameScene::Init()
 void GameScene::Update()
 {
     float elapsedTime = m_time.Peek();
-    if (elapsedTime > 0.2) {
+    if (elapsedTime > respawnTime) {
         Asteroid* asteroid = new Asteroid();
         this->AddEntity(asteroid);
         m_time.Mark();
