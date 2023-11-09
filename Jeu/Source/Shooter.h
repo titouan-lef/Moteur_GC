@@ -19,5 +19,5 @@ public:
 private:
 	Timer *timer = nullptr;
 	Controller *controller = nullptr;
-	float cooldown = 1.5f;
+	float cooldown = 0.5f;
 };
