@@ -13,9 +13,7 @@ public:
 
 	virtual void Initialize() override;
 
-	void Update();
-	void Render();
-	Cube* CreateRock();
+
 private:
 	Timer* m_time = nullptr;
 
