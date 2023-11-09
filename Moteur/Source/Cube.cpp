@@ -17,5 +17,9 @@ Cube::~Cube()
 
 void Cube::Update()
 {
-	GetComponent<Transform>()->Rotate(0.5 * Engine::GetInstance()->Time->Peek(), 0.5* Engine::GetInstance()->Time->Peek(), 0.5 * Engine::GetInstance()->Time->Peek());
+	GetComponent<Transform>()->Rotate(
+        this->GetComponent<Transform>()->GetRotationSpeed().x * Engine::GetInstance()->Time->Peek(), 
+        this->GetComponent<Transform>()->GetRotationSpeed().y * Engine::GetInstance()->Time->Peek(),
+        this->GetComponent<Transform>()->GetRotationSpeed().z * Engine::GetInstance()->Time->Peek()
+    );
 }
