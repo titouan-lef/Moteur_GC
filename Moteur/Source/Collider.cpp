@@ -9,6 +9,7 @@ Collider::Collider()
 	m_isActive = true;
 	m_name = "Collider";
 	m_owner = nullptr;
+	m_tag = "Default";
 }
 
 Collider::~Collider()

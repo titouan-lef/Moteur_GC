@@ -6,6 +6,8 @@ using EventCallback = std::function<void(Entity* e)>;
 class Transform;
 
 // This component is add to an entity to make it collidable
+// You can add a callback function to the collider that will be triggered on collision with other colliders
+// please 
 class Collider : public Component
 {
 public:
@@ -16,7 +18,9 @@ public:
 	virtual void Update() override;
 
 	Transform* GetCollider();
+	// Set the tag of the collider for collision filtering
 	void SetTag(std::string tag) { m_tag = tag; }
+	// Get the tag of the collider, it's "Default" by default
 	std::string GetTag() { return m_tag; }
 
 	bool CheckCollision(Collider* collider);	// Check if the collider is colliding with another collider
