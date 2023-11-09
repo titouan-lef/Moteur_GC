@@ -16,7 +16,5 @@ public:
 	static bool TestBulletDeath(Bullet& b);
 	static bool TestRockDeath(Asteroid& b);
 private:
-
-	POINT coordMouse;
 	Timer m_time;
 };

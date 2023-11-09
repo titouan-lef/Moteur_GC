@@ -5,11 +5,13 @@
 
 class Controller {
 public:
+    POINT m_coordMouse;
     enum class Direction {
         Up,
         Down,
         Left,
-        Right
+        Right,
+        LeftClick
     };
 
     Controller();

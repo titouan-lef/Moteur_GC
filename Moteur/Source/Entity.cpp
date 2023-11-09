@@ -63,6 +63,11 @@ void Entity::RealUpdate()
 		if ((*it)->IsActive())
 			(*it)->Update();
 	}
+	for (auto it = m_Children.begin(); it != m_Children.end(); ++it)
+	{
+		(*it)->RealUpdate();
+	}
+
 	PostUpdate();
 }
 

@@ -11,7 +11,7 @@ public:
 	void Update();
 	void IsHit(std::list<Entity*>* listRock);
 	void IsDead();
-
+	void Shoot();
 private:
 	Timer* m_time;
 	Controller* m_controller;

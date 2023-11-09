@@ -140,7 +140,7 @@
       <Filter>Public\header</Filter>
     </ClInclude>
     <ClInclude Include="Source\LifeSystem.h">
-      <Filter>Public\cpp</Filter>
+      <Filter>Public\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
