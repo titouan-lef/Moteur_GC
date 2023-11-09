@@ -72,7 +72,15 @@ bool Collider::CheckCollision(Collider* collider) {
 	return overlapX && overlapY && overlapZ;
 }
 
-void Collider::OnCollision(Entity* e)
+void Collider::addListener(EventCallback callback)
 {
-	std::cout << "Collision" << std::endl;
+	m_callbacks.push_back(callback);
+}
+
+void Collider::triggerEvent(Entity* e)
+{
+	for (auto callback : m_callbacks)
+	{
+		callback(e);
+	}
 }
