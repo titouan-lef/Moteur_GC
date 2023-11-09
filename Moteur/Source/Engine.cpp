@@ -54,7 +54,7 @@ ID3D12GraphicsCommandList* Engine::CreateCommandList()
 {
     ID3D12GraphicsCommandList* cmdList = nullptr;
     GFX_THROW_INFO_ONLY(Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, CmdAllocator, nullptr, IID_PPV_ARGS(&cmdList)));
-    GFX_THROW_INFO_ONLY(cmdList->Close());// Indique que l'enregistrement des commandes est terminé et que le GPU peut les utiliser pour le rendu
+    GFX_THROW_INFO_ONLY(cmdList->Close());// Indique que l'enregistrement des commandes est terminï¿½ et que le GPU peut les utiliser pour le rendu
     return cmdList;
 }
 

@@ -1,13 +1,14 @@
 #include "framwork.h"
 #include "Entity.h"
 #include "Scene.h"
+#include "CollisionManager.h"
+#include "Collider.h"
 
 Scene::~Scene()
 {
 	for (auto& entity : m_entities)
 	{
 		delete entity;
-		m_entities.erase(m_entities.begin());
 	}
 }
 
@@ -47,6 +48,20 @@ void Scene::RemoveEntity(Entity* entity)
 		{
 			m_entities.erase(it);
 			return;
+		}
+	}
+}
+
+void Scene::KillThemAll()
+{
+	for (auto& entity : m_entities)
+	{
+		if (entity->IsDead())
+		{
+			m_entities.erase(m_entities.begin());
+			if (entity->GetComponent<Collider>() != nullptr)
+				CollisionManager::GetInstance()->RemoveEntity(entity);
+			delete entity;
 		}
 	}
 }

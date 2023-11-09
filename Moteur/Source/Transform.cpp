@@ -9,7 +9,7 @@ Transform::Transform()
 	Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	RotationQuat = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	Position = XMFLOAT3(0.0f, 0.0f, -1.0f);
 	Matrix = XMFLOAT4X4();
 	m_isDirty = true;
 	m_isActive = true;
@@ -27,10 +27,7 @@ void Transform::Update()
 		m_isDirty = false;
 	}
 
-	// vector Direction
-	//_31 = Position.x;
-	//_32 = Position.y;
-	//_33 = Position.z;
+	CheckIfOnScreen();
 }
 
 void Transform::MoveByVector(XMFLOAT3 vec, float elapsed)
@@ -82,61 +79,28 @@ void Transform::ChangeDirection(Transform* transform) {
 
 void Transform::CheckIfOnScreen()
 {
-	// Supposons que gWorld, gView et gProjection sont les matrices World, View et Projection
-	XMMATRIX worldViewProjection = XMMatrixMultiply(GetMatrix(), XMMatrixMultiply(Camera::GetInstance()->GetViewMatrix(), Camera::GetInstance()->GetProjMatrix()));
+	/*const XMMATRIX view = Camera::GetInstance()->GetViewMatrix();
+	const XMMATRIX invView = XMMatrixInverse(nullptr, view);
 
-	for (int i = 0; i < 8; i++)
-	{
-		// Coordonnées du point en espace local (objet)
-		XMFLOAT3 pointInLocalSpace;
-		switch (i)
-		{
-			case 0:
-				pointInLocalSpace = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-				break;
-			case 1:
-				pointInLocalSpace = XMFLOAT3(1.0f, 1.0f, -1.0f);
-				break;
-			case 2:
-				pointInLocalSpace = XMFLOAT3(1.0f, -1.0f, -1.0f);
-				break;
-			case 3:
-				pointInLocalSpace = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-				break;
-			case 4:
-				pointInLocalSpace = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-				break;
-			case 5:
-				pointInLocalSpace = XMFLOAT3(1.0f, 1.0f, 1.0f);
-				break;
-			case 6:
-				pointInLocalSpace = XMFLOAT3(1.0f, -1.0f, 1.0f);
-				break;
-			case 7:
-				pointInLocalSpace = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-				break;
-			default:
-				break;
-		}
+	BoundingSphere sphere;
+	sphere.Center = Position;
+	float scale = 0.0f;
 
-		// Transformez les coordonnées du point en espace écran
-		XMVECTOR pointInScreenSpace = XMVector2TransformCoord(XMLoadFloat3(&pointInLocalSpace), worldViewProjection);
+	if (Scale.x > Scale.y && Scale.x > Scale.z)
+		scale = Scale.x;
+	else if (Scale.y > Scale.x && Scale.y > Scale.z)
+		scale = Scale.y;
+	else
+		scale = Scale.z;
+	sphere.Radius = scale;
+	
+	BoundingFrustum frustum;
+	Camera::GetInstance()->GetFrustum()->Transform(frustum, invView);
 
-		// Convertissez les coordonnées normalisées en coordonnées écran
-		float xScreen = (pointInScreenSpace.m128_f32[0] + 1.0f) * 0.5f * Engine::GetInstance()->GetWindowSize().x;  // screenWidth est la largeur de la fenêtre
-		float yScreen = (1.0f - pointInScreenSpace.m128_f32[1]) * 0.5f * Engine::GetInstance()->GetWindowSize().y; // screenHeight est la hauteur de la fenêtre
-
-		// Vérifiez si le point est dans la fenêtre d'affichage
-		if (xScreen >= -1 && xScreen < 1 && yScreen >= -1 && yScreen < 1)
-		{
-			m_isOnScreen = true;
-			return;
-		}
-		else
-		{
-			m_isOnScreen = false;
-		}
-	}
+	if (frustum.Contains(sphere) == DirectX::DISJOINT)
+		m_isOnScreen = false;
+	else
+		m_isOnScreen = true;*/
 }
 
 void Transform::UpdateRotMatrix()

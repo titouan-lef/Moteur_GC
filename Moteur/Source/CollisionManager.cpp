@@ -38,6 +38,9 @@ void CollisionManager::Update()
 {
 	for (int i = 0; i < _entityList.size(); i++)
 	{
+		if (!_entityList[i]->GetComponent<Transform>()->IsOnScreen()) 
+			/*continue*/ std::cout << "pas on screen." << std::endl;
+
 		Collider* collider1 = _entityList[i]->GetComponent<Collider>();
 		if (!collider1->IsActive()) continue;
 		for (int j = i + 1; j < _entityList.size(); j++)
@@ -48,8 +51,8 @@ void CollisionManager::Update()
 			{
 				if (collider1->CheckCollision(collider2))
 				{
-					collider1->OnCollision(_entityList[j]);
-					collider2->OnCollision(_entityList[i]);
+					collider1->triggerEvent(_entityList[j]);
+					collider2->triggerEvent(_entityList[i]);
 				}
 			}
 		}

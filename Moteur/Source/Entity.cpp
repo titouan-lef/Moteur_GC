@@ -1,6 +1,6 @@
 #include "Component.h"
-#include "Entity.h"
 #include "Engine.h"
+#include "Entity.h"
 
 Entity::Entity()
 {
@@ -12,12 +12,10 @@ Entity::~Entity()
 	for (auto it : m_Components)
 	{
 		delete it;
-		m_Components.erase(m_Components.begin());
 	}
 	for (auto it : m_Children)
 	{
 		delete it;
-		m_Children.erase(m_Children.begin());
 	}
 }
 
@@ -48,6 +46,16 @@ void Entity::Render()
 	}
 }
 
+void Entity::Destroy()
+{
+	for (auto it = m_Children.begin(); it != m_Children.end(); ++it)
+	{
+		(*it)->Destroy();
+	}
+
+	m_isDead = true;
+}
+
 void Entity::AddChild(Entity* child)
 {
 	if (!CheckAddChild(child)) return;
@@ -57,12 +65,18 @@ void Entity::AddChild(Entity* child)
 
 void Entity::RealUpdate()
 {
+	if (!m_isBorn)
+	{
+		Born();
+	}
+
 	Update();
 	for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
 	{
 		if ((*it)->IsActive())
 			(*it)->Update();
 	}
+
 	PostUpdate();
 }
 

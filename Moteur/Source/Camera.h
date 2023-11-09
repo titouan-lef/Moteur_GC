@@ -7,10 +7,13 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	virtual void Update() override;	
+	virtual void Update() override;
+
+	void CreateFrustum();
 
 #pragma region Gets/Sets
 	static Camera* GetInstance();
+	inline BoundingFrustum* GetFrustum() { return m_frustum; }
 	inline XMMATRIX GetViewMatrix() { return XMLoadFloat4x4(&m_viewMatrix); }
 	inline XMMATRIX GetTransposedView() { return XMMatrixTranspose(XMLoadFloat4x4(&m_viewMatrix)); }
 	inline XMMATRIX GetProjMatrix() { return XMLoadFloat4x4(&m_projMatrix); }
@@ -23,6 +26,8 @@ protected:
 	float m_aspectRatio = -1;
 	float m_nearPlane = -1;
 	float m_farPlane = -1;
+
+	BoundingFrustum* m_frustum;
 
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projMatrix;
