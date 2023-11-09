@@ -22,7 +22,7 @@ Player::Player()
 
 Player::~Player()
 {
-	//delete m_controller;
+
 }
 
 void Player::Init()
