@@ -11,6 +11,7 @@ Asteroid::Asteroid() {
 
     std::uniform_real_distribution<float> y(-1.0f, 1.0f);
     std::uniform_real_distribution<float> x(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> z(-1.0f, 0.0f);
 
     this->AddComponent<Transform>();
     auto transform = this->GetComponent<Transform>();
@@ -23,32 +24,9 @@ Asteroid::Asteroid() {
     transform->SetPosition(x(gen), y(gen), 1);
     transform->UpdateMatrix();
     transform->SetRotationSpeed(45, 35, 90);
-    //Truc nul pour faire aller l'asteroid sur le joueur
-    if (transform->GetPosition().x > 0.2) {
-        if (transform->GetPosition().y > 0.2) {
-            transform->SetDirection(-0.001f, -0.001f, -0.001f);
-        }
-        if (transform->GetPosition().y < -0.2) {
-            transform->SetDirection(-0.001f, 0.001f, -0.001f);
-        }
-        else {
-            transform->SetDirection(-0.001f, 0, -0.001f);
-        }
-    }
-    if (transform->GetPosition().x < -0.2) {
-        if (transform->GetPosition().y > 0.2) {
-            transform->SetDirection(0.001f, -0.001f, -0.001f);
-        }
-        if (transform->GetPosition().y < -0.2) {
-            transform->SetDirection(0.001f, 0.001f, -0.001f);
-        }
-        else {
-            transform->SetDirection(0.001f, 0, -0.001f);
-        }
-    }
-    else {
-        transform->SetDirection(0, 0, -0.001f);
-    }
+
+    auto pos = transform->GetPosition();
+    transform->SetDirection((- pos.x / 1000), (- pos.y / 1000), (- pos.z / 1000));
 
     this->AddComponent<Collider>();
 }
