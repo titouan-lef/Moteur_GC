@@ -75,9 +75,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Source\pierre.jfif">
+    <Image Include="Source\pierre.dds">
       <Filter>ressource\texture</Filter>
     </Image>
-    <Image Include="Source\pierre.dds" />
   </ItemGroup>
 </Project>
