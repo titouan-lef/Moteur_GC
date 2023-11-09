@@ -22,6 +22,9 @@
     <ClCompile Include="Source\Bullet.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Shooter.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Controller.h">
@@ -43,6 +46,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="Source\Bullet.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Shooter.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>

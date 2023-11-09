@@ -17,7 +17,6 @@ public:
 
     void OnCollision(Entity* other);
 
-    void isTouch(Collider* collider);
     bool isDeadByTime();
 
 private:

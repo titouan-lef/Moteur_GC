@@ -67,5 +67,5 @@ void Asteroid::OnCollision(Entity* other)
 }
 
 bool Asteroid::isDeadByTime() {
-    return time.Peek() > 20;
+    return time.Peek() > 10;
 }

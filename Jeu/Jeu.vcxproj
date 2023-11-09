@@ -34,6 +34,7 @@
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\MyGame.h" />
     <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="Source\Shooter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\asteroidCube.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MyGame.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\shaders.hlsl">
