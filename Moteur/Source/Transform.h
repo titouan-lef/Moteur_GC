@@ -13,10 +13,10 @@ public:
 	virtual void Update() override;
 
 #pragma region Getters/Setters
-	XMFLOAT3 inline GetPosition() { return Position; }										// Retourne la position
-	XMFLOAT3 inline GetScale() { return Scale; }											// Retourne l'echelle
-	bool inline IsDirty() { return m_isDirty; }												// Retourne si l'entite est en mouvement
-	void inline SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }	// Change la position
+	XMFLOAT3* GetPosition() { return &Position; }										// Retourne la position
+	XMFLOAT3* GetScale() { return &Scale; }											// Retourne l'echelle
+	bool IsDirty() { return m_isDirty; }												// Retourne si l'entite est en mouvement
+	void SetPosition(float x, float y, float z) { Position = XMFLOAT3(x, y, z); }	// Change la position
 
 	// Change l'echelle
 	void inline SetScale(float x, float y, float z) { Scale = XMFLOAT3(x, y, z); }

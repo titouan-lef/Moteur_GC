@@ -1,6 +1,7 @@
 #include <Camera.h>
 #include <Collider.h>
 #include <LifeSystem.h>
+#include <Engine.h>
 #include "Player.h"
 
 Player::Player()
@@ -14,7 +15,8 @@ Player::Player()
     this->GetComponent<Transform>()->UpdateMatrix();
     this->AddComponent<Collider>();
     GetComponent<Collider>()->SetTag("Player");
-    this->AddComponent<LifeSystem>();
+    //this->AddComponent<LifeSystem>();
+    Engine::GetInstance()->SetPlayer(this);
 }
 
 Player::~Player()
@@ -58,7 +60,7 @@ void Player::OnCollision(Entity* e)
 {
     if (e->GetComponent<Collider>()->GetTag() == "Asteroid")
     {
-		this->GetComponent<LifeSystem>()->Damage(1);
+		//this->GetComponent<LifeSystem>()->Damage(1);
 	}
 }
 

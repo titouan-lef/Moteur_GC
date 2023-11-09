@@ -18,6 +18,7 @@ public:
 	//Get the instance of the engine
 	static Engine* GetInstance();
 
+	void SetPlayer(Entity* player) { GetInstance()->m_player = player; }
 	Entity* GetPlayer() { return GetInstance()->m_player; }
 
 	void SaveWindowSize(float w, float h) { GetInstance()->m_windowSize = XMFLOAT2(w,h); }

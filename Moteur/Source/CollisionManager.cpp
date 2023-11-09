@@ -1,6 +1,7 @@
 #include "Collider.h"
 #include "Entity.h"
 #include "CollisionManager.h"
+#include "Engine.h"
 
 CollisionManager::~CollisionManager()
 {
@@ -36,9 +37,21 @@ void CollisionManager::RemoveEntity(Entity* entity)
 
 void CollisionManager::Update()
 {
+	XMVECTOR playerVector;
+	if (Engine::GetInstance()->GetPlayer() != nullptr)
+		playerVector = XMLoadFloat3(Engine::GetInstance()->GetPlayer()->GetComponent<Transform>()->GetPosition());
+	else
+		return;
+
 	for (int i = 0; i < _entityList.size(); i++)
 	{
-		if (!_entityList[i]->GetComponent<Transform>()->IsOnScreen())
+		XMVECTOR vector = XMLoadFloat3(_entityList[i]->GetComponent<Transform>()->GetPosition());
+		XMVECTOR distanceVector = XMVector3Length(XMVectorSubtract(playerVector, vector));
+		float distance;
+		XMStoreFloat(&distance, distanceVector);
+
+		bool distFromPlayer =  distance > 3;
+		if (!_entityList[i]->GetComponent<Transform>()->IsOnScreen() || distFromPlayer)
 			continue;
 
 		Collider* collider1 = _entityList[i]->GetComponent<Collider>();

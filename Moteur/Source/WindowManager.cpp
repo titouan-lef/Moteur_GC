@@ -132,7 +132,6 @@ void WindowManager::LoadTextures()
 }
 #pragma endregion
 
-
 void WindowManager::PreRender()
 {
     // Réinitialisaion pour enregistrer de nouvelles commandes pour la frame actuelle

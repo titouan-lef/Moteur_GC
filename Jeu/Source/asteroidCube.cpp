@@ -23,7 +23,7 @@ Asteroid::Asteroid() {
     transform->SetPosition(x(gen), y(gen), 1);
     transform->UpdateMatrix();
 
-    auto pos = transform->GetPosition();
+    auto pos = *transform->GetPosition();
     transform->SetDirection((-pos.x / 100), (-pos.y / 100), (-pos.z / 100));
 
     this->AddComponent<Collider>();
