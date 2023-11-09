@@ -4,6 +4,7 @@
 #include "ShaderColor.h"
 #include <iostream>
 #include <random>
+#include <LifeSystem.h>
 
 Asteroid::Asteroid() {
     std::random_device rd;  // Utilisez une source d'entropie matérielle si disponible
@@ -32,6 +33,8 @@ Asteroid::Asteroid() {
     transform->SetDirection((-pos.x / 100), (-pos.y / 100), (-pos.z / 100));
 
     this->AddComponent<Collider>();
+    this->AddComponent<LifeSystem>();
+
 }
 
 Asteroid::~Asteroid() {
