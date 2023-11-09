@@ -1,15 +1,20 @@
-#pragma once 
+#pragma once
+#include "Collider.h"
+#include "Timer.h"
 #include "Entity.h"
 #include "Mesh.h"
 
-class Cube : public Entity
-{
+class Asteroid : public Entity{
 public:
-	Cube();
-	~Cube();
+    Timer time;
+    bool isDead = false;
 
-    virtual void Update() override;
+    Asteroid();
+    ~Asteroid();
 
+    void Update();
+    void isTouch(Collider* collider);
+    bool isDeadByTime();
 private:
     std::vector<Vertex> m_vertices = {
         // Front face
@@ -25,7 +30,7 @@ private:
         {{-0.5f, 0.5f, 0.5f}, {0.5f, 0.0f}},    // 7
     };
 
-	std::vector<UINT16> m_indices = {
+    std::vector<UINT16> m_indices = {
         // Front face
         0, 3, 2, 2, 1,0,
 

@@ -126,7 +126,6 @@
     <ClInclude Include="Source\Game.h">
       <Filter>Private\header</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Icosahedron.h" />
     <ClInclude Include="Source\Pyramid.h" />
     <ClInclude Include="Source\CollisionManager.h">
       <Filter>Private\header</Filter>
@@ -223,7 +222,6 @@
     <ClCompile Include="Source\Game.cpp">
       <Filter>Private\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Icosahedron.cpp" />
     <ClCompile Include="Source\Pyramid.cpp" />
     <ClCompile Include="Source\CollisionManager.cpp">
       <Filter>Private\cpp</Filter>

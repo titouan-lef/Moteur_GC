@@ -9,7 +9,6 @@ Scene::~Scene()
 	for (auto& entity : m_entities)
 	{
 		delete entity;
-		m_entities.erase(m_entities.begin());
 	}
 }
 

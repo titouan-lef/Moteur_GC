@@ -1,6 +1,4 @@
-
 #include <Camera.h>
-
 #include <Collider.h>
 #include <LifeSystem.h>
 #include "Player.h"
@@ -9,8 +7,6 @@ Player::Player()
 {
 	m_controller = new Controller();
     m_time = new Timer();
-    m_lifePoint = 3;
-    m_isDead = false;
 
     this->AddComponent<Transform>();
     this->GetComponent<Transform>()->SetScale(0.5f, 0.5f, 0.5f);
@@ -55,26 +51,4 @@ void Player::Update()
     m_time->Mark();
 }
 
-void Player::IsHit(std::list<Entity*>* listRock)
-{
-    for (auto caillou : *listRock)
-    {
-        auto collider = caillou->GetComponent<Collider>();
-        if (collider->CheckCollision(this->GetComponent<Collider>())) {
-            if (m_lifePoint - 1 <= 0) {
-                m_isDead = true;
-            }
-            else {
-                m_lifePoint--;
-            };
-        }
-    }
-    IsDead();
-}
 
-void Player::IsDead()
-{
-    if (m_isDead) {
-        system("pause");
-    }
-}

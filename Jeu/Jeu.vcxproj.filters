@@ -1,75 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <ClCompile Include="Source\Controller.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameScene.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MyGame.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\asteroidCube.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bullet.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Controller.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameScene.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\main.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MyGame.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\asteroidCube.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Bullet.h">
+      <Filter>header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\shaders.hlsl">
+      <Filter>ressource\shader</Filter>
+    </Text>
+    <Text Include="Source\shadersColor.hlsl">
+      <Filter>ressource\shader</Filter>
+    </Text>
+    <Text Include="Source\shadersTexture.hlsl">
+      <Filter>ressource\shader</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="cpp">
+      <UniqueIdentifier>{f9028fe8-531b-4763-8234-2e964036ffd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="header">
+      <UniqueIdentifier>{573bd767-4d16-4a01-94ee-8dfc7d61693a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="ressource">
+      <UniqueIdentifier>{f586ad51-3de6-40d0-a2ba-6110f2343b95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers de ressources\texture">
-      <UniqueIdentifier>{3a8fabca-83c0-4d1f-87ba-371bded72c9f}</UniqueIdentifier>
+    <Filter Include="ressource\shader">
+      <UniqueIdentifier>{6ed9e3e0-8dbf-4df9-b2c7-fb2aaf467594}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ressources">
-      <UniqueIdentifier>{eeee85a6-0035-40ab-a7fd-4cfdec0a3d75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ressources\Shaders">
-      <UniqueIdentifier>{e45af92c-1a00-49f8-a1fd-561aa4e3c928}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ressources\Texture">
-      <UniqueIdentifier>{e123f52a-638a-432e-9401-9a627b9751c6}</UniqueIdentifier>
+    <Filter Include="ressource\texture">
+      <UniqueIdentifier>{4c172885-7100-4a9a-860e-4e8d8837c171}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Source\pierre.jfif">
-      <Filter>Fichiers de ressources\texture</Filter>
+      <Filter>ressource\texture</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\main.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MyGame.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controller.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Player.h">
-    <ClInclude Include="Source\GameScene.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\main.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MyGame.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controller.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-    <ClCompile Include="Source\GameScene.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Source\shadersColor.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
-    <Text Include="Source\shadersTexture.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
-    <Text Include="Source\shaders.hlsl">
-      <Filter>Ressources\Shaders</Filter>
-    </Text>
   </ItemGroup>
 </Project>
